@@ -1,50 +1,47 @@
+"""PostgreSQL-backed LangGraph checkpoint storage for FinSight.
 
+Checkpoint tables live in the dedicated ``langgraph`` schema. Create that
+schema and grant the Render database role access using the supplied SQL setup
+script before the first deployment. No SQLite checkpoints are imported.
 """
-FinSight conversation memory.
 
-Initialises a separate SQLite database for LangGraph checkpoints.
-This database stores conversation state, not financial transactions.
-"""
+from __future__ import annotations
+import os
+import threading
+import psycopg
+from psycopg.rows import dict_row
 
-import sqlite3
-from pathlib import Path
+# Require the checkpoint serializer to reject unapproved msgpack payload types.
+os.environ.setdefault("LANGGRAPH_STRICT_MSGPACK", "true")
+from langgraph.checkpoint.postgres import PostgresSaver
 
-from langgraph.checkpoint.sqlite import SqliteSaver
-
-
-# Locate the FinSight project root directory.
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-# Keep chatbot checkpoints separate from the financial database.
-CHECKPOINT_DB_PATH = BASE_DIR / "chatbot_checkpoints.sqlite"
-
-# Maintain one shared connection and checkpointer for the application.
+_lock = threading.Lock()
 _connection = None
 _checkpointer = None
 
-
-def get_checkpointer():
-    """
-    Return the shared SQLite checkpointer.
-
-    Initialise the database and its checkpoint tables on first use.
-    """
-
+def get_checkpointer() -> PostgresSaver:
+    """Return one process-wide saver using a dedicated PostgreSQL connection."""
     global _connection, _checkpointer
-
-    # Create the connection only once.
-    if _checkpointer is None:
-
-        # Allow the connection to be used across application threads.
-        _connection = sqlite3.connect(
-            str(CHECKPOINT_DB_PATH),
-            check_same_thread=False
+    if _checkpointer is not None:
+        return _checkpointer
+    with _lock:
+        if _checkpointer is not None:
+            return _checkpointer
+        database_url = os.getenv("DATABASE_URL", "").strip()
+        if not database_url:
+            raise RuntimeError("DATABASE_URL is required for PostgreSQL chat memory.")
+        # Autocommit and dict_row are required by LangGraph's PostgresSaver.
+        connection = psycopg.connect(
+            database_url, autocommit=True, row_factory=dict_row
         )
-
-        # Create the LangGraph checkpoint manager.
-        _checkpointer = SqliteSaver(_connection)
-
-        # Create the required checkpoint tables if they do not exist.
-        _checkpointer.setup()
-
-    return _checkpointer
+        try:
+            # The schema is created explicitly by the deployment SQL, not at app startup.
+            connection.execute("SET search_path TO langgraph")
+            saver = PostgresSaver(connection)
+            saver.setup()
+        except Exception:
+            connection.close()
+            raise
+        _connection = connection
+        _checkpointer = saver
+        return _checkpointer
