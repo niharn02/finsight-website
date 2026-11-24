@@ -9,7 +9,7 @@ Read operations expose transaction, budget and analytics data.
 Write operations remain subject to the existing graph approval workflow.
 """
 
-from database import (
+from chatbot.scoped_database import (
     add_expense,
     get_categories,
     get_expenses,
@@ -397,7 +397,7 @@ def _find_category_by_name(category_name: str):
 def get_category_budgets_tool(budget_month: str) -> dict:
     """Retrieve every category's budget allocation for a month."""
     try:
-        from database import get_category_budgets
+        from chatbot.scoped_database import get_category_budgets
         return {"success": True, **get_category_budgets(budget_month)}
     except ValueError as error:
         return {"success": False, "message": str(error)}
