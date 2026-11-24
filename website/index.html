@@ -147,8 +147,8 @@
 <span class="material-symbols-outlined text-[20px] text-slate-700 dark:text-slate-300" id="theme-moon-icon" style="display: inline-block;">dark_mode</span>
 </button>
 <!-- Auth Links -->
-<a class="hidden sm:inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-on-surface-variant hover:text-on-surface transition-colors focus-visible:ring-2 focus-visible:ring-primary focus:outline-none rounded-lg" data-path="sign-in" href="{{DATA:SCREEN:SCREEN_15}}">Sign In</a>
-<a class="hidden sm:inline-flex items-center justify-center h-10 px-4 rounded-lg bg-primary-container hover:bg-primary text-white text-sm font-medium transition-colors shadow-sm focus-visible:ring-2 focus-visible:ring-primary focus:outline-none" data-path="create-account" href="{{DATA:SCREEN:SCREEN_17}}">Create Account</a>
+<a class="hidden sm:inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-on-surface-variant hover:text-on-surface transition-colors focus-visible:ring-2 focus-visible:ring-primary focus:outline-none rounded-lg" data-path="sign-in" href="sign_in.html">Sign In</a>
+<a class="hidden sm:inline-flex items-center justify-center h-10 px-4 rounded-lg bg-primary-container hover:bg-primary text-white text-sm font-medium transition-colors shadow-sm focus-visible:ring-2 focus-visible:ring-primary focus:outline-none" data-path="create-account" href="create_account.html">Create Account</a>
 <!-- Mobile Menu Toggle -->
 <button aria-controls="mobile-nav-drawer" aria-expanded="false" aria-label="Open navigation menu" class="lg:hidden w-10 h-10 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high focus-visible:ring-2 focus-visible:ring-primary focus:outline-none border border-border-light dark:border-border-dark cursor-pointer" id="mobile-menu-btn" type="button">
 <span class="material-symbols-outlined text-[22px]" id="mobile-menu-icon">menu</span>
@@ -170,8 +170,8 @@
 <a class="mobile-nav-link px-3 py-2 rounded-lg text-base font-medium text-on-surface hover:bg-surface-container-high" href="#faq">FAQ</a>
 </nav>
 <div class="pt-3 border-t border-border-light dark:border-border-dark flex flex-col gap-2">
-<a class="w-full h-10 flex items-center justify-center rounded-lg border border-border-light dark:border-border-dark text-on-surface font-medium text-sm" data-path="sign-in" href="{{DATA:SCREEN:SCREEN_15}}">Sign In</a>
-<a class="w-full h-10 flex items-center justify-center rounded-lg bg-primary-container hover:bg-primary text-white font-medium text-sm" data-path="create-account" href="{{DATA:SCREEN:SCREEN_17}}">Create Account</a>
+<a class="w-full h-10 flex items-center justify-center rounded-lg border border-border-light dark:border-border-dark text-on-surface font-medium text-sm" data-path="sign-in" href="sign_in.html">Sign In</a>
+<a class="w-full h-10 flex items-center justify-center rounded-lg bg-primary-container hover:bg-primary text-white font-medium text-sm" data-path="create-account" href="create_account.html">Create Account</a>
 </div>
 </div>
 </header>
@@ -197,7 +197,7 @@
             </p>
 <!-- Dual CTA -->
 <div class="flex flex-wrap items-center gap-4 pt-1">
-<a class="inline-flex items-center justify-center h-12 px-6 rounded-lg bg-primary-container hover:bg-primary text-white text-sm font-semibold transition-all shadow-md active:scale-95 focus-visible:ring-2 focus-visible:ring-primary focus:outline-none" data-path="create-account" href="{{DATA:SCREEN:SCREEN_17}}">
+<a class="inline-flex items-center justify-center h-12 px-6 rounded-lg bg-primary-container hover:bg-primary text-white text-sm font-semibold transition-all shadow-md active:scale-95 focus-visible:ring-2 focus-visible:ring-primary focus:outline-none" data-path="create-account" href="create_account.html">
                 Create Your Account
                 <span class="material-symbols-outlined ml-1.5 text-[18px]">arrow_forward</span>
 </a>
@@ -1019,11 +1019,11 @@
                 Set up your personal workspace in seconds. Track everyday purchases, watch category caps, and build peace of mind.
               </p>
 <div class="flex flex-wrap items-center justify-center md:justify-start gap-4 pt-2">
-<a class="inline-flex items-center justify-center h-12 px-6 rounded-lg bg-surface-container-lowest text-primary hover:bg-surface-bright text-sm font-semibold transition-all shadow-md active:scale-95 focus-visible:ring-2 focus-visible:ring-primary focus:outline-none" data-path="create-account" href="{{DATA:SCREEN:SCREEN_17}}">
+<a class="inline-flex items-center justify-center h-12 px-6 rounded-lg bg-surface-container-lowest text-primary hover:bg-surface-bright text-sm font-semibold transition-all shadow-md active:scale-95 focus-visible:ring-2 focus-visible:ring-primary focus:outline-none" data-path="create-account" href="create_account.html">
                   Create Your FinSight Account
                   <span class="material-symbols-outlined ml-1.5 text-[18px]">arrow_forward</span>
 </a>
-<a class="inline-flex items-center justify-center h-12 px-4 text-white hover:text-secondary-fixed text-sm font-medium underline underline-offset-4 transition-colors focus-visible:ring-2 focus-visible:ring-primary focus:outline-none rounded" data-path="sign-in" href="{{DATA:SCREEN:SCREEN_15}}">
+<a class="inline-flex items-center justify-center h-12 px-4 text-white hover:text-secondary-fixed text-sm font-medium underline underline-offset-4 transition-colors focus-visible:ring-2 focus-visible:ring-primary focus:outline-none rounded" data-path="sign-in" href="sign_in.html">
                   Already using FinSight? Sign In
                 </a>
 </div>
@@ -1058,7 +1058,7 @@
           </p>
 </div>
 
-<div class="flex flex-col gap-2.5"><span class="text-xs font-semibold text-on-surface uppercase tracking-wider">Account &amp; Legal</span><a class="text-xs sm:text-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#faq">FAQ</a><a class="text-xs sm:text-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="privacy-policy" href="{{DATA:SCREEN:SCREEN_6}}">Privacy Policy</a><a class="text-xs sm:text-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="terms-of-service" href="{{DATA:SCREEN:SCREEN_4}}">Terms of Service</a><a class="text-xs sm:text-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="security-compliance" href="{{DATA:SCREEN:SCREEN_2}}">Security</a><a class="text-xs sm:text-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#faq">Help Center</a></div>
+<div class="flex flex-col gap-2.5"><span class="text-xs font-semibold text-on-surface uppercase tracking-wider">Account &amp; Legal</span><a class="text-xs sm:text-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#faq">FAQ</a><a class="text-xs sm:text-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="privacy-policy" href="privacy_policy.html">Privacy Policy</a><a class="text-xs sm:text-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="terms-of-service" href="terms_of_service.html">Terms of Service</a><a class="text-xs sm:text-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="security-compliance" href="security.html">Security</a><a class="text-xs sm:text-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#faq">Help Center</a></div>
 </div>
 <div class="mt-10 pt-6 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-on-surface-variant border-t border-border-light dark:border-border-dark">
 <p>Sample data shown for demonstration purposes. Active cycle: October 2026.</p>
