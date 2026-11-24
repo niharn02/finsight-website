@@ -1,6 +1,6 @@
 
 # Import database functions required for monthly spending analytics.
-from database import (
+from chatbot.scoped_database import (
     get_category_summary,
     get_top_expenses,
     search_expenses,
