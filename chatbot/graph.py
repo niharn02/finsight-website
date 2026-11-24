@@ -11,7 +11,7 @@ from typing import Annotated, Any, Literal
 from typing_extensions import TypedDict
 from pydantic import BaseModel, Field
 
-from database import (
+from chatbot.scoped_database import (
     add_expense,
     delete_expense,
     get_expense_by_id,
