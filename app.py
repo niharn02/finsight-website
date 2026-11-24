@@ -1,9 +1,8 @@
 # Import the Libraries
-from flask import Flask, jsonify, request, render_template, send_from_directory
-import sqlite3
+from flask import Flask, jsonify, request, render_template, send_from_directory, g
+import psycopg
 import os
-from database import (
-    initialise_database,
+from chatbot.scoped_database import (
     get_categories_for_month,
     create_category,
     delete_category_for_month,
@@ -24,6 +23,7 @@ from database import (
     get_monthly_trend
 )
 import uuid
+from uuid import UUID
 import traceback
 from langchain_core.messages import HumanMessage
 from chatbot.graph import build_chatbot_graph
@@ -34,6 +34,8 @@ from chatbot.safety import (
 )
 import calendar
 from datetime import datetime, timezone, timedelta
+from auth import require_supabase_auth
+from database_postgres import initialise_database
 
 # Initialise Flask application
 app = Flask(__name__)
@@ -211,6 +213,7 @@ def health_check():
 
 # Retrieve all expense categories
 @app.route("/api/categories", methods=["GET"])
+@require_supabase_auth
 def categories():
     try:
         budget_month = request.args.get("month")
@@ -230,7 +233,7 @@ def categories():
     except ValueError as error:
         return jsonify({"status": "error", "message": str(error)}), 400
 
-    except sqlite3.Error:
+    except psycopg.Error:
         app.logger.exception("Database error while retrieving categories.")
         return jsonify({
             "status": "error",
@@ -241,6 +244,7 @@ def categories():
 
 # Create a category shared by expenses and monthly budgets.
 @app.route("/api/categories", methods=["POST"])
+@require_supabase_auth
 def create_expense_category():
     try:
         data = request.get_json(silent=True)
@@ -284,7 +288,7 @@ def create_expense_category():
             "message": str(error)
         }), 400
 
-    except sqlite3.Error:
+    except psycopg.Error:
         app.logger.exception("Database error while creating category.")
         return jsonify({
             "status": "error",
@@ -293,6 +297,7 @@ def create_expense_category():
 
 # Remove a category from the selected month in both Transactions and Budget.
 @app.route("/api/categories/<int:category_id>", methods=["DELETE"])
+@require_supabase_auth
 def remove_category_from_month(category_id):
     try:
         data = request.get_json(silent=True) or {}
@@ -312,7 +317,7 @@ def remove_category_from_month(category_id):
     except ValueError as error:
         return jsonify({"status": "error", "message": str(error)}), 409
 
-    except sqlite3.Error:
+    except psycopg.Error:
         app.logger.exception("Database error while removing category.")
         return jsonify({
             "status": "error",
@@ -322,6 +327,7 @@ def remove_category_from_month(category_id):
 
 # Retrieve expenses with optional filters
 @app.route("/api/expenses", methods=["GET"])
+@require_supabase_auth
 def retrieve_expenses():
     try:
         expense_name = request.args.get("expense_name")
@@ -370,7 +376,7 @@ def retrieve_expenses():
             "message": str(error)
         }), 400
 
-    except sqlite3.Error:
+    except psycopg.Error:
         app.logger.exception("Database error while retrieving expenses.")
 
         return jsonify({
@@ -380,6 +386,7 @@ def retrieve_expenses():
 
 # Fetch the Monthly Spending Trend
 @app.route("/api/analytics/monthly", methods=["GET"])
+@require_supabase_auth
 def fetch_monthly_analytics():
     try:
         start_date = request.args.get("start_date")
@@ -401,7 +408,7 @@ def fetch_monthly_analytics():
             "message": str(error)
         }), 400
 
-    except sqlite3.Error:
+    except psycopg.Error:
         app.logger.exception("Database error while retrieving monthly analytics.")
         return jsonify({
             "status": "error",
@@ -410,6 +417,7 @@ def fetch_monthly_analytics():
 
 # Retrieve a specific expense by ID
 @app.route("/api/expenses/<int:expense_id>", methods=["GET"])
+@require_supabase_auth
 def retrieve_expense(expense_id):
     try:
         expense = get_expense_by_id(expense_id)
@@ -425,7 +433,7 @@ def retrieve_expense(expense_id):
             "expense": expense
         }), 200
 
-    except sqlite3.Error:
+    except psycopg.Error:
         app.logger.exception("Database error while retrieving expense.")
 
         return jsonify({
@@ -436,6 +444,7 @@ def retrieve_expense(expense_id):
 
 # Add a new expense
 @app.route("/api/expenses", methods=["POST"])
+@require_supabase_auth
 def create_expense():
     try:
         data = request.get_json(silent=True)
@@ -506,7 +515,7 @@ def create_expense():
             "message": str(error)
         }), 400
 
-    except sqlite3.Error:
+    except psycopg.Error:
         app.logger.exception("Database error while adding expense.")
 
         return jsonify({
@@ -517,6 +526,7 @@ def create_expense():
 
 # Update an existing expense
 @app.route("/api/expenses/<int:expense_id>", methods=["PUT"])
+@require_supabase_auth
 def edit_expense(expense_id):
     try:
         data = request.get_json(silent=True)
@@ -584,7 +594,7 @@ def edit_expense(expense_id):
             "message": str(error)
         }), 400
 
-    except sqlite3.Error:
+    except psycopg.Error:
         app.logger.exception("Database error while updating expense.")
 
         return jsonify({
@@ -595,6 +605,7 @@ def edit_expense(expense_id):
 
 # Delete an existing expense
 @app.route("/api/expenses/<int:expense_id>", methods=["DELETE"])
+@require_supabase_auth
 def remove_expense(expense_id):
     try:
         # Check whether the expense exists
@@ -620,7 +631,7 @@ def remove_expense(expense_id):
             "expense_id": expense_id
         }), 200
 
-    except sqlite3.Error:
+    except psycopg.Error:
         app.logger.exception("Database error while deleting expense.")
 
         return jsonify({
@@ -632,6 +643,7 @@ def remove_expense(expense_id):
 # Retrieve category-wise allocations and the derived monthly total.
 # The first request for a month initialises missing category allocations to zero.
 @app.route("/api/budgets/categories", methods=["GET"])
+@require_supabase_auth
 def fetch_category_budgets():
     try:
         budget_month = request.args.get("month")
@@ -655,7 +667,7 @@ def fetch_category_budgets():
             "message": str(error)
         }), 400
 
-    except sqlite3.Error:
+    except psycopg.Error:
         app.logger.exception(
             "Database error while retrieving category budgets."
         )
@@ -667,6 +679,7 @@ def fetch_category_budgets():
 
 # Create or update one category's allocation for a selected month.
 @app.route("/api/budgets/categories", methods=["PUT"])
+@require_supabase_auth
 def save_category_budget():
     try:
         data = request.get_json(silent=True)
@@ -725,7 +738,7 @@ def save_category_budget():
             "message": str(error)
         }), 400
 
-    except sqlite3.Error:
+    except psycopg.Error:
         app.logger.exception("Database error while saving category budget.")
         return jsonify({
             "status": "error",
@@ -736,6 +749,7 @@ def save_category_budget():
 # Fetch the complete budget summary, including category spending
 # and the current month's spending projection.
 @app.route("/api/budget/summary", methods=["GET"])
+@require_supabase_auth
 def fetch_budget_summary():
     try:
         # Retrieve the selected month in MM-YYYY format.
@@ -814,7 +828,7 @@ def fetch_budget_summary():
             "message": str(error)
         }), 400
 
-    except sqlite3.Error:
+    except psycopg.Error:
         # Log database errors without exposing technical details.
         app.logger.exception(
             "Database error while retrieving budget summary."
@@ -829,6 +843,7 @@ def fetch_budget_summary():
 
 # Fetch the Analytics Dashboard
 @app.route("/api/analytics/dashboard", methods=["GET"])
+@require_supabase_auth
 def fetch_dashboard_analytics():
     try:
         start_date = request.args.get("start_date")
@@ -850,7 +865,7 @@ def fetch_dashboard_analytics():
             "message": str(error)
         }), 400
 
-    except sqlite3.Error:
+    except psycopg.Error:
         app.logger.exception("Database error while retrieving dashboard analytics.")
         return jsonify({
             "status": "error",
@@ -859,6 +874,7 @@ def fetch_dashboard_analytics():
 
 # Fetch the Category Analytics
 @app.route("/api/analytics/categories", methods=["GET"])
+@require_supabase_auth
 def fetch_category_analytics():
     try:
         start_date = request.args.get("start_date")
@@ -880,7 +896,7 @@ def fetch_category_analytics():
             "message": str(error)
         }), 400
 
-    except sqlite3.Error:
+    except psycopg.Error:
         app.logger.exception("Database error while retrieving category analytics.")
         return jsonify({
             "status": "error",
@@ -889,6 +905,7 @@ def fetch_category_analytics():
 
 # Get Daily Summary
 @app.route("/api/analytics/daily", methods=["GET"])
+@require_supabase_auth
 def fetch_daily_analytics():
     try:
         start_date = request.args.get("start_date")
@@ -923,7 +940,7 @@ def fetch_daily_analytics():
             "message": str(error)
         }), 400
 
-    except sqlite3.Error:
+    except psycopg.Error:
         app.logger.exception("Database error while retrieving daily analytics.")
         return jsonify({
             "status": "error",
@@ -932,6 +949,7 @@ def fetch_daily_analytics():
 
 # Get the Top Expenses
 @app.route("/api/analytics/top-expenses", methods=["GET"])
+@require_supabase_auth
 def fetch_top_expenses():
     try:
         limit = request.args.get("limit", default=5)
@@ -983,7 +1001,7 @@ def fetch_top_expenses():
             "message": str(error)
         }), 400
 
-    except sqlite3.Error:
+    except psycopg.Error:
         app.logger.exception("Database error while retrieving top expenses.")
         return jsonify({
             "status": "error",
@@ -992,6 +1010,7 @@ def fetch_top_expenses():
 
 # Fetch the Payment Method Summary
 @app.route("/api/analytics/payment-methods", methods=["GET"])
+@require_supabase_auth
 def fetch_payment_method_analytics():
     try:
         start_date = request.args.get("start_date")
@@ -1013,7 +1032,7 @@ def fetch_payment_method_analytics():
             "message": str(error)
         }), 400
 
-    except sqlite3.Error:
+    except psycopg.Error:
         app.logger.exception(
             "Database error while retrieving payment method analytics."
         )
@@ -1028,6 +1047,7 @@ def fetch_payment_method_analytics():
 # -------------------------------------------------
 
 @app.route("/api/chat", methods=["POST"])
+@require_supabase_auth
 def chat():
     """
     Receive a chatbot message, invoke the LangGraph workflow,
@@ -1070,6 +1090,14 @@ def chat():
                 "message": "Invalid session ID."
             }), 400
 
+        try:
+            # A browser session ID is only an opaque UUID, never a global thread key.
+            session_id = str(UUID(session_id))
+        except (ValueError, TypeError, AttributeError):
+            return jsonify({"status": "error", "message": "Invalid session ID."}), 400
+
+        thread_id = f"{g.user_id}:{session_id}"
+
         # Limit each conversation to ten user messages.
         # The server enforces this limit so changing frontend code or browser
         # storage cannot extend a conversation beyond the configured limit.
@@ -1080,7 +1108,7 @@ def chat():
         # 2. Build and invoke the LangGraph workflow.
         try:
             chatbot_graph = build_chatbot_graph()
-            thread_config = {"configurable": {"thread_id": session_id}}
+            thread_config = {"configurable": {"thread_id": thread_id}}
 
             # Check the existing checkpoint before adding the next message.
             # A HumanMessage represents one user interaction; assistant and
@@ -1101,8 +1129,9 @@ def chat():
                 if previous_user_turns >= max_user_turns:
                     session_id = str(uuid.uuid4())
                     conversation_reset = True
+                    thread_id = f"{g.user_id}:{session_id}"
                     thread_config = {
-                        "configurable": {"thread_id": session_id}
+                        "configurable": {"thread_id": thread_id}
                     }
                     previous_user_turns = 0
 
@@ -1215,6 +1244,7 @@ def chat():
 
 
 @app.route("/api/chat/history", methods=["GET"])
+@require_supabase_auth
 def chat_history():
     """Return the visible human/assistant messages for a LangGraph thread."""
     try:
@@ -1225,11 +1255,16 @@ def chat_history():
                 "status": "error",
                 "message": "A valid session ID is required."
             }), 400
+        try:
+            session_id = str(UUID(session_id))
+        except (ValueError, TypeError, AttributeError):
+            return jsonify({"status": "error", "message": "Invalid session ID."}), 400
 
-        # Read the existing checkpoint state; do not create a separate history store.
+        # Namespace the checkpoint by verified identity to prevent cross-user reads.
+        thread_id = f"{g.user_id}:{session_id}"
         chatbot_graph = build_chatbot_graph()
         state = chatbot_graph.get_state({
-            "configurable": {"thread_id": session_id}
+            "configurable": {"thread_id": thread_id}
         })
         state_values = getattr(state, "values", {}) or {}
         graph_messages = state_values.get("messages", [])
