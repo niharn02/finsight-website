@@ -1,0 +1,10 @@
+Flask
+langchain
+langchain-core
+langchain-community
+langgraph
+langchain-groq
+mcp==1.30.0
+pandas
+python-dotenv
+langgraph-checkpoint-sqlite
