@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@100..900&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={darkMode:"class",theme:{extend:{colors:{"tertiary":"#2338c2","tertiary-fixed-dim":"#bcc2ff","secondary-container":"#969eff","inverse-primary":"#bec2ff","accent-bg-dark":"#26316A","surface-subtle-dark":"#1B2338","on-background":"#151c2a","tertiary-fixed":"#dfe0ff","primary-accent-dark":"#5F6BF5","surface-variant":"#dce2f6","surface-container":"#e8edff","on-primary-fixed-variant":"#232bc7","primary-fixed-dim":"#bec2ff","nav-footer-dark":"#04070F","on-error":"#ffffff","background":"#f9f9ff","strong-surface":"#0D1323","state-warning":"#F79009","text-primary-dark":"#FFFFFF","card-bg-dark":"#111729","secondary-fixed-dim":"#bec2ff","state-danger":"#F04438","surface-container-low":"#f1f3ff","primary-fixed":"#e0e0ff","primary":"#2a33cc","on-surface-variant":"#454555","surface-container-lowest":"#ffffff","surface-bright":"#f9f9ff","on-secondary-fixed-variant":"#353c97","border-dark":"#2F3B5C","surface-container-high":"#e1e8fc","on-tertiary-fixed-variant":"#1c32be","state-success":"#12B76A","outline-variant":"#c6c5d8","tertiary-container":"#4154db","surface-tint":"#404ade","text-muted-dark":"#CBD3E6","input-border-light":"#E0E3E8","secondary":"#4d55b1","on-secondary-fixed":"#00036b","on-primary-fixed":"#00016d","outline":"#767686","on-secondary":"#ffffff","surface-dim":"#d3daee","inverse-on-surface":"#edf0ff","inverse-surface":"#29303f","card-bg-light":"#FFFFFF","on-primary":"#ffffff","secondary-fixed":"#e0e0ff","error-container":"#ffdad6","surface-subtle-light":"#F1F3F8","on-primary-container":"#dedeff","page-bg-light":"#F8F9FC","on-tertiary-container":"#dddeff","on-tertiary-fixed":"#000c61","surface-container-highest":"#dce2f6","on-secondary-container":"#29308b","on-error-container":"#93000a","error":"#ba1a1a","text-muted-light":"#696F7B","on-surface":"#151c2a","surface":"#f9f9ff","page-bg-dark":"#070B16","on-tertiary":"#ffffff","accent-bg-light":"#EBF0FE","strong-surface-text":"#B1B7C5","primary-container":"#4650e4","border-light":"#E3E6EC"},borderRadius:{"DEFAULT":"0.25rem","lg":"0.5rem","xl":"0.75rem","full":"9999px"},spacing:{"margin-mobile":"1.25rem","space-xl":"2.5rem","space-sm":"0.5rem","space-md":"1rem","margin":"2rem","gutter":"1.5rem","space-xs":"0.25rem","space-lg":"1.5rem","gutter-mobile":"1rem"},fontFamily:{"headline-lg-mobile":["Geist"],"display-hero-mobile":["Geist"],"body-lg":["Geist"],"label-sm":["Geist"],"label-md":["Geist"],"body-md":["Geist"],"body-sm":["Geist"],"headline-lg":["Geist"],"headline-md":["Geist"],"numeric-metric":["Geist"],"display-hero":["Geist"],"headline-sm":["Geist"]},fontSize:{"headline-lg-mobile":["28px",{"lineHeight":"36px","letterSpacing":"-0.01em","fontWeight":"600"}],"display-hero-mobile":["36px",{"lineHeight":"44px","letterSpacing":"-0.02em","fontWeight":"700"}],"body-lg":["18px",{"lineHeight":"28px","fontWeight":"400"}],"label-sm":["12px",{"lineHeight":"16px","letterSpacing":"0.02em","fontWeight":"500"}],"label-md":["14px",{"lineHeight":"20px","letterSpacing":"0.01em","fontWeight":"500"}],"body-md":["16px",{"lineHeight":"24px","fontWeight":"400"}],"body-sm":["14px",{"lineHeight":"20px","fontWeight":"400"}],"headline-lg":["36px",{"lineHeight":"44px","letterSpacing":"-0.02em","fontWeight":"600"}],"headline-md":["24px",{"lineHeight":"32px","letterSpacing":"-0.01em","fontWeight":"600"}],"numeric-metric":["28px",{"lineHeight":"34px","letterSpacing":"-0.02em","fontWeight":"600"}],"display-hero":["56px",{"lineHeight":"64px","letterSpacing":"-0.03em","fontWeight":"700"}],"headline-sm":["18px",{"lineHeight":"26px","fontWeight":"600"}]}}}};</script>
+<script>
+  function initTheme() {
+    const saved = localStorage.getItem('fs-theme');
+    if (saved === 'dark' || (!saved && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+    }
+  }
+  initTheme();
+  function toggleTheme() {
+    const isDark = document.documentElement.classList.toggle('dark');
+    localStorage.setItem('fs-theme', isDark ? 'dark' : 'light');
+    const icon = document.getElementById('theme-icon');
+    if (icon) {
+      icon.textContent = isDark ? 'light_mode' : 'dark_mode';
+    }
+  }
+</script>
+</head><body class="bg-background dark:bg-page-bg-dark font-body-md text-on-surface dark:text-text-primary-dark antialiased min-h-screen flex flex-col justify-between transition-colors duration-200"><header class="fixed top-0 w-full z-50 bg-surface/85 dark:bg-card-bg-dark/85 backdrop-blur-xl border-b border-border-light dark:border-border-dark"><div class="h-16 max-w-7xl mx-auto px-margin-mobile lg:px-margin flex items-center justify-between"><div class="flex items-center gap-space-sm"><a class="flex items-center gap-space-sm focus:outline-none focus:ring-2 focus:ring-primary rounded-lg" data-path="landing" href="#"><img alt="FinSight" class="h-8 w-auto object-contain dark:brightness-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC-ymUlrW01DyEWyjZzUUu0eAp9_WnNUSkd1TdotylgMtEH8rGF-9hM0m5hCtu32g9V2MBHQ-NveTj3tvn_cU5UHUm7Y85SiAYNxtBjUrsBlpWDWcIhe1dDfkvAa_lMKNZD81T0RAZdeg_eSAp3AtXhrjSXyTpjBoQJAncwkNnHuwKKt82Hp6o2AzafxFHGSVyRoS0Y1-khyNUi0juQtXsxMFNYK8LrDw6BKCSCUUjjYNAate61ockMEg"/></a></div><nav class="hidden md:flex items-center gap-space-md" data-active-classes="bg-surface-container dark:bg-surface-subtle-dark text-primary dark:text-primary-accent-dark font-label-md rounded-lg"><a class="font-label-md text-label-md text-on-surface-variant dark:text-text-muted-dark hover:text-on-surface dark:hover:text-text-primary-dark px-space-sm py-space-xs transition-colors rounded-lg" data-path="landing" href="#">Home</a><a class="font-label-md text-label-md text-on-surface-variant dark:text-text-muted-dark hover:text-on-surface dark:hover:text-text-primary-dark px-space-sm py-space-xs transition-colors rounded-lg" data-path="login" href="#">Sign In</a><a class="font-label-md text-label-md text-on-surface-variant dark:text-text-muted-dark hover:text-on-surface dark:hover:text-text-primary-dark px-space-sm py-space-xs transition-colors rounded-lg" data-path="register" href="#">Register</a><a class="font-label-md text-label-md text-on-surface-variant dark:text-text-muted-dark hover:text-on-surface dark:hover:text-text-primary-dark px-space-sm py-space-xs transition-colors rounded-lg" data-path="privacy-policy" href="#">Privacy</a><a aria-current="page" class="px-space-sm py-space-xs transition-colors bg-surface-container dark:bg-surface-subtle-dark text-primary dark:text-primary-accent-dark font-label-md rounded-lg font-semibold" data-path="terms-of-service" href="#">Terms</a></nav><div class="flex items-center gap-space-sm"><button aria-label="Toggle theme" class="w-10 h-10 rounded-lg flex items-center justify-center text-on-surface-variant dark:text-text-muted-dark hover:bg-surface-subtle-light dark:hover:bg-surface-subtle-dark hover:text-on-surface dark:hover:text-text-primary-dark transition-colors" onclick="toggleTheme()" type="button"><span class="material-symbols-outlined text-body-lg" id="theme-icon">dark_mode</span></button></div></div></header><main class="w-full flex-1 pt-20 bg-background dark:bg-page-bg-dark max-w-7xl mx-auto px-margin-mobile lg:px-margin"><div class="flex flex-col w-full">
+<div class="relative w-full overflow-hidden pb-space-xl">
+<!-- Ambient decorative glow -->
+<div class="absolute -top-32 left-1/2 -translate-x-1/2 w-[700px] h-[360px] bg-gradient-to-b from-primary/10 via-surface-container dark:via-primary-accent-dark/10 to-transparent rounded-full blur-3xl pointer-events-none opacity-70"></div>
+<div class="relative max-w-4xl mx-auto w-full flex flex-col gap-space-lg">
+<!-- Top Utility / Breadcrumb bar -->
+<div class="flex items-center justify-between pt-space-md">
+<a class="inline-flex items-center gap-space-xs font-label-md text-label-md text-primary dark:text-primary-accent-dark hover:text-tertiary dark:hover:text-primary-fixed transition-colors group" data-path="landing" href="#">
+<span class="material-symbols-outlined text-[18px] transition-transform group-hover:-translate-x-0.5">arrow_back</span>
+<span>Return to Home</span>
+</a>
+<div class="flex items-center gap-space-xs px-space-sm py-1 bg-surface-container-high dark:bg-surface-subtle-dark border border-outline-variant/30 dark:border-border-dark rounded-full">
+<span class="w-2 h-2 rounded-full bg-state-success animate-pulse"></span>
+<span class="font-label-sm text-label-sm text-on-surface-variant dark:text-text-muted-dark font-medium">Official Policy</span>
+</div>
+</div>
+<!-- Header Section -->
+<header class="flex flex-col gap-space-xs pt-space-xs">
+<div class="flex items-center gap-space-xs text-primary dark:text-primary-accent-dark font-label-sm text-label-sm uppercase tracking-wider font-semibold">
+<span class="material-symbols-outlined text-[16px]">verified_user</span>
+<span>Legal &amp; Compliance Document</span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface dark:text-text-primary-dark tracking-tight">FinSight Terms of Service</h1>
+<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-space-sm pt-space-xs">
+<div class="p-space-sm bg-surface-container-low dark:bg-card-bg-dark border border-border-light dark:border-border-dark rounded-lg flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant dark:text-text-muted-dark">Effective date</span>
+<span class="font-label-md text-label-md text-on-surface dark:text-text-primary-dark font-medium">30 November 2026</span>
+</div>
+<div class="p-space-sm bg-surface-container-low dark:bg-card-bg-dark border border-border-light dark:border-border-dark rounded-lg flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant dark:text-text-muted-dark">Last updated</span>
+<span class="font-label-md text-label-md text-on-surface dark:text-text-primary-dark font-medium">30 November 2026</span>
+</div>
+<div class="p-space-sm bg-surface-container-low dark:bg-card-bg-dark border border-border-light dark:border-border-dark rounded-lg flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant dark:text-text-muted-dark">Operated by</span>
+<span class="font-label-md text-label-md text-on-surface dark:text-text-primary-dark font-medium">Nihar Nandanwar</span>
+</div>
+<div class="p-space-sm bg-surface-container-low dark:bg-card-bg-dark border border-border-light dark:border-border-dark rounded-lg flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface-variant dark:text-text-muted-dark">Contact</span>
+<a class="font-label-md text-label-md text-primary dark:text-primary-accent-dark hover:underline truncate" href="mailto:nihar.devstudio@gmail.com">nihar.devstudio@gmail.com</a>
+</div>
+</div>
+</header>
+<!-- Main Document Stream -->
+<div class="flex flex-col gap-space-md text-on-surface dark:text-text-primary-dark">
+<!-- Section 1 -->
+<article class="bg-surface-container-lowest dark:bg-card-bg-dark border border-border-light dark:border-border-dark rounded-xl p-space-lg shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<span class="flex items-center justify-center w-8 h-8 rounded-full bg-surface-container dark:bg-surface-subtle-dark text-primary dark:text-primary-accent-dark font-label-md text-label-md font-semibold">1</span>
+<h2 class="font-headline-md text-headline-md text-on-surface dark:text-text-primary-dark">1. Introduction</h2>
+</div>
+<div class="font-body-md text-body-md text-on-surface dark:text-text-muted-dark leading-relaxed flex flex-col gap-space-xs pl-0 md:pl-10">
+<p>Welcome to FinSight.</p>
+<p>FinSight is a personal expense tracking and budgeting application intended for the owner and a limited group of invited users.</p>
+<p>By using FinSight, you agree to these Terms. If you do not agree, please do not use the application.</p>
+</div>
+</article>
+<!-- Section 2 -->
+<article class="bg-surface-container-lowest dark:bg-card-bg-dark border border-border-light dark:border-border-dark rounded-xl p-space-lg shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<span class="flex items-center justify-center w-8 h-8 rounded-full bg-surface-container dark:bg-surface-subtle-dark text-primary dark:text-primary-accent-dark font-label-md text-label-md font-semibold">2</span>
+<h2 class="font-headline-md text-headline-md text-on-surface dark:text-text-primary-dark">2. Use of FinSight</h2>
+</div>
+<div class="flex flex-col gap-space-sm pl-0 md:pl-10">
+<p class="font-body-md text-body-md text-on-surface dark:text-text-muted-dark">FinSight allows you to:</p>
+<ul class="flex flex-col gap-space-xs pl-2 font-body-md text-body-md text-on-surface-variant dark:text-text-muted-dark">
+<li class="flex items-start gap-space-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-primary dark:bg-primary-accent-dark mt-2 shrink-0"></span>
+<span>Record and manage expenses.</span>
+</li>
+<li class="flex items-start gap-space-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-primary dark:bg-primary-accent-dark mt-2 shrink-0"></span>
+<span>Create and monitor budgets.</span>
+</li>
+<li class="flex items-start gap-space-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-primary dark:bg-primary-accent-dark mt-2 shrink-0"></span>
+<span>View spending summaries and analytics.</span>
+</li>
+<li class="flex items-start gap-space-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-primary dark:bg-primary-accent-dark mt-2 shrink-0"></span>
+<span>Ask questions about your financial records using the AI chatbot.</span>
+</li>
+<li class="flex items-start gap-space-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-primary dark:bg-primary-accent-dark mt-2 shrink-0"></span>
+<span>Use supported chatbot features to manage expenses and budgets.</span>
+</li>
+</ul>
+<p class="font-body-md text-body-md text-on-surface-variant dark:text-text-muted-dark leading-relaxed pt-1">
+Access is limited to authorised users. The operator may approve, reject, suspend, or revoke access when necessary.
+</p>
+</div>
+</article>
+<!-- Section 3 -->
+<article class="bg-surface-container-lowest dark:bg-card-bg-dark border border-border-light dark:border-border-dark rounded-xl p-space-lg shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<span class="flex items-center justify-center w-8 h-8 rounded-full bg-surface-container dark:bg-surface-subtle-dark text-primary dark:text-primary-accent-dark font-label-md text-label-md font-semibold">3</span>
+<h2 class="font-headline-md text-headline-md text-on-surface dark:text-text-primary-dark">3. Your Responsibilities</h2>
+</div>
+<div class="flex flex-col gap-space-sm pl-0 md:pl-10">
+<p class="font-body-md text-body-md text-on-surface dark:text-text-muted-dark">You are responsible for:</p>
+<ul class="flex flex-col gap-space-xs pl-2 font-body-md text-body-md text-on-surface-variant dark:text-text-muted-dark">
+<li class="flex items-start gap-space-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-primary dark:bg-primary-accent-dark mt-2 shrink-0"></span>
+<span>Providing accurate information.</span>
+</li>
+<li class="flex items-start gap-space-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-primary dark:bg-primary-accent-dark mt-2 shrink-0"></span>
+<span>Keeping your account credentials private.</span>
+</li>
+<li class="flex items-start gap-space-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-primary dark:bg-primary-accent-dark mt-2 shrink-0"></span>
+<span>Not sharing your account with others.</span>
+</li>
+<li class="flex items-start gap-space-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-primary dark:bg-primary-accent-dark mt-2 shrink-0"></span>
+<span>Reviewing your expenses and budget entries.</span>
+</li>
+<li class="flex items-start gap-space-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-primary dark:bg-primary-accent-dark mt-2 shrink-0"></span>
+<span>Reporting suspicious account activity.</span>
+</li>
+<li class="flex items-start gap-space-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-primary dark:bg-primary-accent-dark mt-2 shrink-0"></span>
+<span>Using FinSight lawfully and responsibly.</span>
+</li>
+</ul>
+<!-- Warning Callout -->
+<div class="bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800/50 p-space-sm rounded-lg flex items-start gap-space-sm text-amber-900 dark:text-amber-200 mt-space-xs">
+<span class="material-symbols-outlined text-state-warning text-[22px] shrink-0 mt-0.5">warning</span>
+<div class="font-body-sm text-body-sm">
+<strong>Important Security Notice:</strong> Do not enter bank passwords, card PINs, CVVs, UPI PINs, or OTPs into the application.
+</div>
+</div>
+</div>
+</article>
+<!-- Section 4 -->
+<article class="bg-surface-container-lowest dark:bg-card-bg-dark border border-border-light dark:border-border-dark rounded-xl p-space-lg shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<span class="flex items-center justify-center w-8 h-8 rounded-full bg-surface-container dark:bg-surface-subtle-dark text-primary dark:text-primary-accent-dark font-label-md text-label-md font-semibold">4</span>
+<h2 class="font-headline-md text-headline-md text-on-surface dark:text-text-primary-dark">4. No Financial Advice</h2>
+</div>
+<div class="font-body-md text-body-md text-on-surface-variant dark:text-text-muted-dark leading-relaxed flex flex-col gap-space-xs pl-0 md:pl-10">
+<p class="font-medium text-on-surface dark:text-text-primary-dark">FinSight does not provide financial advice of any kind.</p>
+<p>FinSight is not a bank, financial adviser, investment adviser, broker, tax adviser, or accounting service.</p>
+<p>Its chatbot, analytics, charts, summaries, and calculations are provided only to help organise and understand your recorded expenses.</p>
+<p>They are not financial recommendations or instructions to make investments, purchases, payments, or other financial decisions.</p>
+<p>You are responsible for your own financial decisions and should consult qualified professionals when necessary.</p>
+</div>
+</article>
+<!-- Section 5 -->
+<article class="bg-surface-container-lowest dark:bg-card-bg-dark border border-border-light dark:border-border-dark rounded-xl p-space-lg shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<span class="flex items-center justify-center w-8 h-8 rounded-full bg-surface-container dark:bg-surface-subtle-dark text-primary dark:text-primary-accent-dark font-label-md text-label-md font-semibold">5</span>
+<h2 class="font-headline-md text-headline-md text-on-surface dark:text-text-primary-dark">5. AI Chatbot</h2>
+</div>
+<div class="font-body-md text-body-md text-on-surface-variant dark:text-text-muted-dark leading-relaxed flex flex-col gap-space-xs pl-0 md:pl-10">
+<p>FinSight uses third-party AI services to generate chatbot responses.</p>
+<p>AI responses may be inaccurate, incomplete, or misleading. You should verify important information, including amounts, dates, and transaction details.</p>
+<p>You are responsible for reviewing and confirming any expense or budget changes requested through the chatbot.</p>
+</div>
+</article>
+<!-- Section 6 -->
+<article class="bg-surface-container-lowest dark:bg-card-bg-dark border border-border-light dark:border-border-dark rounded-xl p-space-lg shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<span class="flex items-center justify-center w-8 h-8 rounded-full bg-surface-container dark:bg-surface-subtle-dark text-primary dark:text-primary-accent-dark font-label-md text-label-md font-semibold">6</span>
+<h2 class="font-headline-md text-headline-md text-on-surface dark:text-text-primary-dark">6. Service Availability and Data</h2>
+</div>
+<div class="font-body-md text-body-md text-on-surface-variant dark:text-text-muted-dark leading-relaxed flex flex-col gap-space-xs pl-0 md:pl-10">
+<p>FinSight is an evolving application. Features may change, become temporarily unavailable, or be discontinued.</p>
+<p>Although reasonable efforts may be made to protect application data, we cannot guarantee uninterrupted access or that all information will always be recoverable.</p>
+<p>You should keep copies of important financial records.</p>
+</div>
+</article>
+<!-- Section 7 -->
+<article class="bg-surface-container-lowest dark:bg-card-bg-dark border border-border-light dark:border-border-dark rounded-xl p-space-lg shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<span class="flex items-center justify-center w-8 h-8 rounded-full bg-surface-container dark:bg-surface-subtle-dark text-primary dark:text-primary-accent-dark font-label-md text-label-md font-semibold">7</span>
+<h2 class="font-headline-md text-headline-md text-on-surface dark:text-text-primary-dark">7. Acceptable Use</h2>
+</div>
+<div class="flex flex-col gap-space-sm pl-0 md:pl-10">
+<p class="font-body-md text-body-md text-on-surface dark:text-text-muted-dark">You must not:</p>
+<ul class="flex flex-col gap-space-xs pl-2 font-body-md text-body-md text-on-surface-variant dark:text-text-muted-dark">
+<li class="flex items-start gap-space-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-primary dark:bg-primary-accent-dark mt-2 shrink-0"></span>
+<span>Access another user's information without permission.</span>
+</li>
+<li class="flex items-start gap-space-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-primary dark:bg-primary-accent-dark mt-2 shrink-0"></span>
+<span>Attempt to bypass application security.</span>
+</li>
+<li class="flex items-start gap-space-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-primary dark:bg-primary-accent-dark mt-2 shrink-0"></span>
+<span>Misuse or disrupt the application.</span>
+</li>
+<li class="flex items-start gap-space-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-primary dark:bg-primary-accent-dark mt-2 shrink-0"></span>
+<span>Upload unlawful or harmful content.</span>
+</li>
+<li class="flex items-start gap-space-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-primary dark:bg-primary-accent-dark mt-2 shrink-0"></span>
+<span>Use FinSight for fraudulent or unauthorised activities.</span>
+</li>
+</ul>
+</div>
+</article>
+<!-- Section 8 -->
+<article class="bg-surface-container-lowest dark:bg-card-bg-dark border border-border-light dark:border-border-dark rounded-xl p-space-lg shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<span class="flex items-center justify-center w-8 h-8 rounded-full bg-surface-container dark:bg-surface-subtle-dark text-primary dark:text-primary-accent-dark font-label-md text-label-md font-semibold">8</span>
+<h2 class="font-headline-md text-headline-md text-on-surface dark:text-text-primary-dark">8. Limitation of Liability</h2>
+</div>
+<div class="font-body-md text-body-md text-on-surface-variant dark:text-text-muted-dark leading-relaxed flex flex-col gap-space-xs pl-0 md:pl-10">
+<p>To the maximum extent permitted by applicable law, FinSight and its operator are not responsible for financial losses resulting from independent decisions made by users, reliance on unverified AI responses, incorrect information entered by users, service interruptions, data loss, or third-party service failures.</p>
+<p>FinSight does not guarantee savings, financial stability, investment returns, or any particular financial outcome.</p>
+<p>Nothing in these Terms excludes liability or user rights that cannot legally be excluded under applicable law.</p>
+</div>
+</article>
+<!-- Section 9 -->
+<article class="bg-surface-container-lowest dark:bg-card-bg-dark border border-border-light dark:border-border-dark rounded-xl p-space-lg shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<span class="flex items-center justify-center w-8 h-8 rounded-full bg-surface-container dark:bg-surface-subtle-dark text-primary dark:text-primary-accent-dark font-label-md text-label-md font-semibold">9</span>
+<h2 class="font-headline-md text-headline-md text-on-surface dark:text-text-primary-dark">9. Account Suspension and Closure</h2>
+</div>
+<div class="font-body-md text-body-md text-on-surface-variant dark:text-text-muted-dark leading-relaxed flex flex-col gap-space-xs pl-0 md:pl-10">
+<p>The operator may suspend or terminate access if an account is misused, these Terms are breached, or continued access creates a security or operational risk.</p>
+<p>You may request account closure and data deletion by contacting us.</p>
+</div>
+</article>
+<!-- Section 10 -->
+<article class="bg-surface-container-lowest dark:bg-card-bg-dark border border-border-light dark:border-border-dark rounded-xl p-space-lg shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<span class="flex items-center justify-center w-8 h-8 rounded-full bg-surface-container dark:bg-surface-subtle-dark text-primary dark:text-primary-accent-dark font-label-md text-label-md font-semibold">10</span>
+<h2 class="font-headline-md text-headline-md text-on-surface dark:text-text-primary-dark">10. Changes to These Terms</h2>
+</div>
+<div class="font-body-md text-body-md text-on-surface-variant dark:text-text-muted-dark leading-relaxed flex flex-col gap-space-xs pl-0 md:pl-10">
+<p>These Terms may be updated as FinSight develops. The latest version will be available on the website.</p>
+</div>
+</article>
+<!-- Section 11 -->
+<article class="bg-surface-container-lowest dark:bg-card-bg-dark border border-border-light dark:border-border-dark rounded-xl p-space-lg shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<span class="flex items-center justify-center w-8 h-8 rounded-full bg-surface-container dark:bg-surface-subtle-dark text-primary dark:text-primary-accent-dark font-label-md text-label-md font-semibold">11</span>
+<h2 class="font-headline-md text-headline-md text-on-surface dark:text-text-primary-dark">11. Governing Law and Contact</h2>
+</div>
+<div class="font-body-md text-body-md text-on-surface-variant dark:text-text-muted-dark leading-relaxed flex flex-col gap-space-sm pl-0 md:pl-10">
+<p>These Terms are governed by the laws of India, subject to applicable legal protections.</p>
+<p>For questions or assistance:</p>
+<div class="bg-surface-container-low dark:bg-surface-subtle-dark border border-border-light dark:border-border-dark rounded-lg p-space-md flex flex-col gap-1">
+<strong class="font-label-md text-label-md text-on-surface dark:text-text-primary-dark">Nihar Nandanwar</strong>
+<div class="flex items-center gap-space-xs text-primary dark:text-primary-accent-dark">
+<span class="material-symbols-outlined text-[18px]">mail</span>
+<span>Email: </span>
+<a class="hover:underline font-medium" href="mailto:nihar.devstudio@gmail.com">nihar.devstudio@gmail.com</a>
+</div>
+</div>
+</div>
+</article>
+</div>
+<!-- Bottom Navigation Anchor CTA -->
+<div class="pt-space-md pb-space-lg flex flex-col sm:flex-row items-center justify-between gap-space-md border-t border-border-light dark:border-border-dark mt-space-md">
+<div class="flex items-center gap-space-xs text-on-surface-variant dark:text-text-muted-dark font-label-sm text-label-sm">
+<span class="material-symbols-outlined text-[18px] text-state-success">check_circle</span>
+<span>FinSight • Sovereign Personal Finance &amp; Budgeting</span>
+</div>
+<a class="inline-flex items-center justify-center gap-space-xs h-10 px-space-lg bg-primary hover:bg-tertiary text-on-primary font-label-md text-label-md rounded-lg transition-colors shadow-sm focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2" data-path="landing" href="#">
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+<span>Return to Home</span>
+</a>
+</div>
+</div>
+</div>
+</div></main><footer class="w-full bg-surface-container-low dark:bg-nav-footer-dark border-t border-border-light dark:border-border-dark mt-space-xl"><div class="max-w-7xl mx-auto px-margin-mobile lg:px-margin py-space-lg flex flex-col md:flex-row items-center justify-between gap-space-md"><div class="flex items-center gap-space-sm text-on-surface-variant dark:text-text-muted-dark font-label-sm text-label-sm"><span>© 2026 FinSight. All rights reserved.</span></div><div class="flex items-center gap-space-lg font-label-sm text-label-sm"><a class="text-on-surface-variant dark:text-text-muted-dark hover:text-on-surface dark:hover:text-text-primary-dark transition-colors" data-path="privacy-policy" href="#">Privacy Policy</a><a class="text-primary dark:text-primary-accent-dark font-medium transition-colors" data-path="terms-of-service" href="#">Terms of Service</a><a class="text-on-surface-variant dark:text-text-muted-dark hover:text-on-surface dark:hover:text-text-primary-dark transition-colors" data-path="security-compliance" href="#">Security &amp; Compliance</a><a class="text-on-surface-variant dark:text-text-muted-dark hover:text-on-surface dark:hover:text-text-primary-dark transition-colors" data-path="help-support" href="#">Help Center</a></div></div></footer>
+</body></html>

@@ -1,0 +1,1586 @@
+<!DOCTYPE html><html class="light" lang="en-IN"><head>
+<meta charset="utf-8">
+<meta content="width=device-width, initial-scale=1.0" name="viewport">
+<title>FinSight — Personal Expense Tracking &amp; Budget Intelligence</title>
+<meta content="Track daily expenses, set category budgets with proactive alerts, and query your spending in plain English with Clarry." name="description">
+<meta content="#4650E4" media="(prefers-color-scheme: light)" name="theme-color">
+<link href="https://finsight.app/" rel="canonical">
+<!-- Open Graph / Social -->
+<meta content="website" property="og:type">
+<meta content="https://finsight.app/" property="og:url">
+<meta content="FinSight — Personal Expense Tracking &amp; Budget Intelligence" property="og:title">
+<meta content="Track daily expenses, set category budgets with proactive alerts, and query your spending in plain English with Clarry." property="og:description">
+<meta content="https://lh3.googleusercontent.com/aida-public/AB6AXuBZcQgfgQuLRFGBYZxW3MoGhBYDLkjQQCAypzKYf36HibMaWY7gl4CGhWkQSBuJob2mM2i3XEhkAXpi5h9X3KFTUggqKv8y4YGoZegkm61Y3ZrwZjQNNqjzTK5dsddHnNT3sQG5n5VdE_aEJsMEL6CNt0eVkWXOVCPNmP8M82H51toStGft1Cso38A1t6b2f4XeX7q8L8yIRM0TRA4bSkUonRQITJnzZmPXRYNbfipnQ117IO_6G8443Q" property="og:image">
+<meta content="FinSight" property="og:site_name">
+<meta content="summary_large_image" name="twitter:card">
+<meta content="FinSight — Personal Expense Tracking &amp; Budget Intelligence" name="twitter:title">
+<meta content="Track daily expenses, set category budgets with proactive alerts, and query your spending in plain English with Clarry." name="twitter:description">
+<meta content="https://lh3.googleusercontent.com/aida-public/AB6AXuBZcQgfgQuLRFGBYZxW3MoGhBYDLkjQQCAypzKYf36HibMaWY7gl4CGhWkQSBuJob2mM2i3XEhkAXpi5h9X3KFTUggqKv8y4YGoZegkm61Y3ZrwZjQNNqjzTK5dsddHnNT3sQG5n5VdE_aEJsMEL6CNt0eVkWXOVCPNmP8M82H51toStGft1Cso38A1t6b2f4XeX7q8L8yIRM0TRA4bSkUonRQITJnzZmPXRYNbfipnQ117IO_6G8443Q" name="twitter:image">
+<!-- Favicon using app icon -->
+<link href="https://lh3.googleusercontent.com/aida-public/AB6AXuAKsJTz1r7-NLu0gK-FN09WG_HtT48knkKiGpjIDa54zRMg8bf4_kktd-oDM8u0CSSn3CvncWNQUewUK39wTqKDuJv_RlbNhR7t0qA32oRIXQk6uS9AExA6wNMPGsl9BGv44Fg0PfG-NvGhlxQIbsGRNnX8hqEcSasmvyTKi_TMzknbPtjL7_NW-iQ1i-yViSFsaJ8e-FKdnKLVmZ-KT5vE-G5rEIosBCgi6MmVonjwTi9LCr8bJneVUQ" rel="icon" type="image/png">
+<link href="https://lh3.googleusercontent.com/aida-public/AB6AXuAKsJTz1r7-NLu0gK-FN09WG_HtT48knkKiGpjIDa54zRMg8bf4_kktd-oDM8u0CSSn3CvncWNQUewUK39wTqKDuJv_RlbNhR7t0qA32oRIXQk6uS9AExA6wNMPGsl9BGv44Fg0PfG-NvGhlxQIbsGRNnX8hqEcSasmvyTKi_TMzknbPtjL7_NW-iQ1i-yViSFsaJ8e-FKdnKLVmZ-KT5vE-G5rEIosBCgi6MmVonjwTi9LCr8bJneVUQ" rel="apple-touch-icon">
+<!-- Google Fonts & Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script>
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "surface": "#f9f9ff",
+            "on-surface": "#151c2a",
+            "on-surface-variant": "#454555",
+            "surface-bright": "#f9f9ff",
+            "surface-container-lowest": "#ffffff",
+            "surface-container-low": "#f1f3ff",
+            "surface-container": "#e8edff",
+            "surface-container-high": "#e1e8fc",
+            "primary": "#2a33cc",
+            "primary-container": "#4650e4",
+            "primary-accent-dark": "#5F6BF5",
+            "primary-fixed-dim": "#bec2ff",
+            "secondary": "#4d55b1",
+            "secondary-fixed": "#e0e0ff",
+            "border-light": "#E3E6EC",
+            "border-dark": "#2F3B5C",
+            "text-muted-light": "#696F7B",
+            "text-muted-dark": "#CBD3E6",
+            "state-success": "#12B76A",
+            "state-warning": "#F79009",
+            "state-danger": "#F04438",
+            "accent-bg-light": "#EBF0FE",
+            "accent-bg-dark": "#26316A"
+          },
+          fontFamily: {
+            sans: ["Geist", "sans-serif"]
+          }
+        }
+      }
+    };
+  </script>
+<!-- Immediate theme check -->
+<script>
+    (function() {
+      try {
+        var saved = localStorage.getItem('fs-theme');
+        var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+        var doc = document.documentElement;
+        if (saved === 'dark' || (!saved && prefersDark)) {
+          doc.classList.add('dark');
+          doc.classList.remove('light');
+        } else {
+          doc.classList.remove('dark');
+          doc.classList.add('light');
+        }
+      } catch (e) {}
+    })();
+  </script>
+<style>
+    @layer base {
+      html, body { margin: 0; padding: 0; }
+      body { overscroll-behavior: none; }
+    }
+    ::-webkit-scrollbar { display: none; }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, ::before, ::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+      }
+    }
+
+    html.dark, html.dark body {
+      background-color: #070B16 !important;
+      color: #FFFFFF !important;
+    }
+    html.dark .bg-surface { background-color: #070B16 !important; }
+    html.dark .bg-surface-container-low { background-color: #0D1323 !important; }
+    html.dark .bg-surface-container { background-color: #172036 !important; }
+    html.dark .bg-surface-container-high { background-color: #1F2B48 !important; }
+    html.dark .bg-surface-container-lowest { background-color: #111729 !important; }
+    html.dark .bg-surface-bright { background-color: #0C1220 !important; }
+    html.dark header { background-color: rgba(13, 19, 35, 0.95) !important; border-color: #2F3B5C !important; }
+    html.dark footer { background-color: #04070F !important; border-color: #2F3B5C !important; }
+    html.dark .text-on-surface { color: #FFFFFF !important; }
+    html.dark .text-on-surface-variant { color: #CBD3E6 !important; }
+    html.dark .text-text-muted-light { color: #CBD3E6 !important; }
+    html.dark .border-border-light { border-color: #2F3B5C !important; }
+
+    .brand-logo-light { display: block; }
+    .brand-logo-dark { display: none; }
+    html.dark .brand-logo-light { display: none; }
+    html.dark .brand-logo-dark { display: block; }
+    html.dark .brand-logo-img-dark {
+      filter: brightness(0) invert(1) drop-shadow(0 0 1px rgba(255,255,255,0.8));
+    }
+  </style>
+</head>
+<body class="bg-surface font-sans text-on-surface min-h-screen flex flex-col transition-colors duration-200 antialiased">
+<!-- Header -->
+<header class="fixed top-0 left-0 w-full z-50 bg-surface/90 backdrop-blur-xl border-b border-border-light dark:border-border-dark transition-colors">
+<div class="h-16 max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-4">
+<!-- Brand Logo -->
+<a aria-label="FinSight Home" class="flex items-center gap-2 focus-visible:ring-2 focus-visible:ring-primary focus:outline-none rounded-lg p-1" href="#">
+<img alt="FinSight Logo" class="brand-logo-light h-8 md:h-9 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZcQgfgQuLRFGBYZxW3MoGhBYDLkjQQCAypzKYf36HibMaWY7gl4CGhWkQSBuJob2mM2i3XEhkAXpi5h9X3KFTUggqKv8y4YGoZegkm61Y3ZrwZjQNNqjzTK5dsddHnNT3sQG5n5VdE_aEJsMEL6CNt0eVkWXOVCPNmP8M82H51toStGft1Cso38A1t6b2f4XeX7q8L8yIRM0TRA4bSkUonRQITJnzZmPXRYNbfipnQ117IO_6G8443Q">
+<div class="brand-logo-dark">
+<img alt="FinSight Logo" class="brand-logo-img-dark h-8 md:h-9 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZcQgfgQuLRFGBYZxW3MoGhBYDLkjQQCAypzKYf36HibMaWY7gl4CGhWkQSBuJob2mM2i3XEhkAXpi5h9X3KFTUggqKv8y4YGoZegkm61Y3ZrwZjQNNqjzTK5dsddHnNT3sQG5n5VdE_aEJsMEL6CNt0eVkWXOVCPNmP8M82H51toStGft1Cso38A1t6b2f4XeX7q8L8yIRM0TRA4bSkUonRQITJnzZmPXRYNbfipnQ117IO_6G8443Q">
+</div>
+</a>
+<!-- Desktop Nav -->
+<nav aria-label="Main Navigation" class="hidden lg:flex items-center gap-1" id="top-nav-menu">
+<a class="nav-spy-link px-3 py-1.5 rounded-lg text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors focus-visible:ring-2 focus-visible:ring-primary focus:outline-none" href="#features">Features</a>
+<a class="nav-spy-link px-3 py-1.5 rounded-lg text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors focus-visible:ring-2 focus-visible:ring-primary focus:outline-none" href="#interactive-demos">Interactive Demos</a>
+<a class="nav-spy-link px-3 py-1.5 rounded-lg text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors focus-visible:ring-2 focus-visible:ring-primary focus:outline-none" href="#budgets-analytics">Budgets</a>
+<a class="nav-spy-link px-3 py-1.5 rounded-lg text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors focus-visible:ring-2 focus-visible:ring-primary focus:outline-none" href="#analytics">Analytics</a>
+<a class="nav-spy-link px-3 py-1.5 rounded-lg text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors focus-visible:ring-2 focus-visible:ring-primary focus:outline-none" href="#ai-assistant">Clarry AI</a>
+<a class="nav-spy-link px-3 py-1.5 rounded-lg text-sm font-medium text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high transition-colors focus-visible:ring-2 focus-visible:ring-primary focus:outline-none text-primary dark:text-primary-accent-dark bg-surface-container-high" href="#faq">FAQ</a>
+</nav>
+<!-- Header Actions -->
+<div class="flex items-center gap-3">
+<!-- Theme Toggle -->
+<button aria-label="Switch to dark mode" class="w-10 h-10 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all focus-visible:ring-2 focus-visible:ring-primary focus:outline-none border border-border-light dark:border-border-dark cursor-pointer" id="theme-toggle" type="button">
+<span class="material-symbols-outlined text-[20px] text-amber-500" id="theme-sun-icon" style="display: none;">light_mode</span>
+<span class="material-symbols-outlined text-[20px] text-slate-700 dark:text-slate-300" id="theme-moon-icon" style="display: inline-block;">dark_mode</span>
+</button>
+<!-- Auth Links -->
+<a class="hidden sm:inline-flex items-center justify-center px-3 py-2 text-sm font-medium text-on-surface-variant hover:text-on-surface transition-colors focus-visible:ring-2 focus-visible:ring-primary focus:outline-none rounded-lg" data-path="sign-in" href="{{DATA:SCREEN:SCREEN_15}}">Sign In</a>
+<a class="hidden sm:inline-flex items-center justify-center h-10 px-4 rounded-lg bg-primary-container hover:bg-primary text-white text-sm font-medium transition-colors shadow-sm focus-visible:ring-2 focus-visible:ring-primary focus:outline-none" data-path="create-account" href="{{DATA:SCREEN:SCREEN_17}}">Create Account</a>
+<!-- Mobile Menu Toggle -->
+<button aria-controls="mobile-nav-drawer" aria-expanded="false" aria-label="Open navigation menu" class="lg:hidden w-10 h-10 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-container-high focus-visible:ring-2 focus-visible:ring-primary focus:outline-none border border-border-light dark:border-border-dark cursor-pointer" id="mobile-menu-btn" type="button">
+<span class="material-symbols-outlined text-[22px]" id="mobile-menu-icon">menu</span>
+</button>
+</div>
+</div>
+<!-- Scroll Progress -->
+<div class="w-full h-1 bg-surface-container overflow-hidden relative">
+<div class="h-full bg-gradient-to-r from-primary to-primary-container dark:from-primary-accent-dark dark:to-primary-container w-0 transition-all duration-150 ease-out" id="scroll-progress-bar" style="width: 0%;"></div>
+</div>
+<!-- Mobile Drawer -->
+<div class="hidden lg:hidden w-full bg-surface-container-lowest border-b border-border-light dark:border-border-dark px-4 py-4 flex-col gap-3 shadow-lg" id="mobile-nav-drawer">
+<nav class="flex flex-col gap-2">
+<a class="mobile-nav-link px-3 py-2 rounded-lg text-base font-medium text-on-surface hover:bg-surface-container-high" href="#features">Features</a>
+<a class="mobile-nav-link px-3 py-2 rounded-lg text-base font-medium text-on-surface hover:bg-surface-container-high" href="#interactive-demos">Interactive Demos</a>
+<a class="mobile-nav-link px-3 py-2 rounded-lg text-base font-medium text-on-surface hover:bg-surface-container-high" href="#budgets-analytics">Budgets</a>
+<a class="mobile-nav-link px-3 py-2 rounded-lg text-base font-medium text-on-surface hover:bg-surface-container-high" href="#analytics">Analytics</a>
+<a class="mobile-nav-link px-3 py-2 rounded-lg text-base font-medium text-on-surface hover:bg-surface-container-high" href="#ai-assistant">Clarry AI</a>
+<a class="mobile-nav-link px-3 py-2 rounded-lg text-base font-medium text-on-surface hover:bg-surface-container-high" href="#faq">FAQ</a>
+</nav>
+<div class="pt-3 border-t border-border-light dark:border-border-dark flex flex-col gap-2">
+<a class="w-full h-10 flex items-center justify-center rounded-lg border border-border-light dark:border-border-dark text-on-surface font-medium text-sm" data-path="sign-in" href="{{DATA:SCREEN:SCREEN_15}}">Sign In</a>
+<a class="w-full h-10 flex items-center justify-center rounded-lg bg-primary-container hover:bg-primary text-white font-medium text-sm" data-path="create-account" href="{{DATA:SCREEN:SCREEN_17}}">Create Account</a>
+</div>
+</div>
+</header>
+<main class="w-full pt-16 flex-1 bg-surface transition-colors duration-200">
+<div class="flex flex-col w-full">
+<!-- SECTION 1: HERO -->
+<section class="relative max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 pt-12 pb-16 lg:pt-16 lg:pb-24">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+<!-- Hero Copy -->
+<div class="lg:col-span-6 flex flex-col gap-5">
+<div class="inline-flex items-center gap-2 self-start px-3 py-1 rounded-full bg-surface-container-high text-primary dark:text-primary-accent-dark text-xs font-semibold tracking-wide">
+<span class="w-2 h-2 rounded-full bg-primary dark:bg-primary-accent-dark animate-pulse"></span>
+              Personal Expense &amp; Budget Intelligence
+            </div>
+<h1 class="text-4xl sm:text-5xl lg:text-[54px] font-bold text-on-surface tracking-tight leading-[1.1]">
+              Finally, make sense of where your <span class="text-primary-container dark:text-primary-accent-dark">money goes.</span>
+</h1>
+<div class="flex items-center gap-2"><span class="text-xl sm:text-2xl font-semibold tracking-tight text-primary-container dark:text-primary-accent-dark">Your Finances, In Focus.</span></div><p class="text-lg text-on-surface-variant font-medium">
+              Track daily expenses. Set category budgets. Query your spending with Clarry.
+            </p>
+<p class="text-sm sm:text-base text-text-muted-light max-w-xl leading-relaxed">
+              Record daily cash, UPI, card, and net banking purchases in seconds. Keep category caps under watch with proactive alerts, explore month-by-month changes, and ask Clarry in plain English.
+            </p>
+<!-- Dual CTA -->
+<div class="flex flex-wrap items-center gap-4 pt-1">
+<a class="inline-flex items-center justify-center h-12 px-6 rounded-lg bg-primary-container hover:bg-primary text-white text-sm font-semibold transition-all shadow-md active:scale-95 focus-visible:ring-2 focus-visible:ring-primary focus:outline-none" data-path="create-account" href="{{DATA:SCREEN:SCREEN_17}}">
+                Create Your Account
+                <span class="material-symbols-outlined ml-1.5 text-[18px]">arrow_forward</span>
+</a>
+<a class="inline-flex items-center justify-center h-12 px-6 rounded-lg bg-surface-container-lowest hover:bg-surface-container-low text-on-surface text-sm font-medium transition-colors shadow-sm border border-border-light dark:border-border-dark focus-visible:ring-2 focus-visible:ring-primary focus:outline-none" href="#interactive-demos">
+<span class="material-symbols-outlined mr-1.5 text-primary dark:text-primary-accent-dark text-[18px]">play_circle</span>
+                Explore Interactive Demos
+              </a>
+</div>
+<!-- Touchpoint 1: Mascot Hero Badge -->
+<div class="flex items-center gap-3 p-3 rounded-xl bg-surface-container-low max-w-lg shadow-sm border border-border-light dark:border-border-dark">
+<div class="w-11 h-11 rounded-full overflow-hidden flex-shrink-0 border border-primary/20 bg-white">
+<img alt="Clarry Mascot" class="w-full h-full object-cover" height="44" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAKsJTz1r7-NLu0gK-FN09WG_HtT48knkKiGpjIDa54zRMg8bf4_kktd-oDM8u0CSSn3CvncWNQUewUK39wTqKDuJv_RlbNhR7t0qA32oRIXQk6uS9AExA6wNMPGsl9BGv44Fg0PfG-NvGhlxQIbsGRNnX8hqEcSasmvyTKi_TMzknbPtjL7_NW-iQ1i-yViSFsaJ8e-FKdnKLVmZ-KT5vE-G5rEIosBCgi6MmVonjwTi9LCr8bJneVUQ" width="44">
+</div>
+<p class="text-xs sm:text-sm text-on-surface">
+<span class="font-semibold text-primary dark:text-primary-accent-dark">Clarry says:</span> “Hey! I’m Clarry. Let’s explore how easy and stress-free money tracking can actually be.”
+              </p>
+</div>
+</div>
+<!-- Hero Right Preview Card -->
+<div class="lg:col-span-6 relative">
+<div class="w-full bg-surface-container-lowest rounded-xl shadow-xl p-5 sm:p-6 flex flex-col gap-4 border border-border-light dark:border-border-dark">
+<div class="flex items-center justify-between pb-2 border-b border-border-light dark:border-border-dark">
+<div class="flex items-center gap-2">
+<span class="w-3 h-3 rounded-full bg-state-danger inline-block"></span>
+<span class="w-3 h-3 rounded-full bg-state-warning inline-block"></span>
+<span class="w-3 h-3 rounded-full bg-state-success inline-block"></span>
+<span class="ml-2 text-xs font-semibold text-on-surface">FinSight Dashboard — October 2026</span>
+</div>
+<span class="text-[11px] font-semibold text-primary dark:text-primary-accent-dark px-2 py-0.5 rounded bg-surface-container-high border border-border-light dark:border-border-dark">
+                  Sample data
+                </span>
+</div>
+<!-- Monthly Overview KPI Pair -->
+<div class="grid grid-cols-2 gap-3 bg-surface-container-low p-4 rounded-lg border border-border-light dark:border-border-dark">
+<div class="flex flex-col">
+<span class="text-xs text-text-muted-light font-medium">Monthly spend (Oct 2026)</span>
+<span class="text-2xl sm:text-3xl text-on-surface font-semibold tracking-tight mt-0.5">₹1,42,850</span>
+<span class="text-xs text-state-success font-medium flex items-center gap-0.5 mt-1">
+<span class="material-symbols-outlined text-[14px]">trending_down</span>
+                    8.4% lower than September
+                  </span>
+</div>
+<div class="flex flex-col">
+<span class="text-xs text-text-muted-light font-medium">Remaining Budget</span>
+<span class="text-2xl sm:text-3xl text-primary dark:text-primary-accent-dark font-semibold tracking-tight mt-0.5">₹57,150</span>
+<span class="text-xs text-text-muted-light mt-1">of ₹2,00,000 monthly target</span>
+</div>
+</div>
+<!-- Progress Bar -->
+<div class="flex flex-col gap-1">
+<div class="flex justify-between items-center text-xs">
+<span class="font-medium text-on-surface">Overall Budget Utilization</span>
+<span class="font-semibold text-primary dark:text-primary-accent-dark">71.4% Utilized</span>
+</div>
+<div class="w-full h-2.5 rounded-full bg-surface-container overflow-hidden">
+<div class="h-full bg-primary-container rounded-full" style="width: 71.4%;"></div>
+</div>
+</div>
+<!-- Category Breakdown Badges -->
+<div class="flex flex-wrap gap-1.5 pt-1">
+<div class="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-container text-xs text-on-surface">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+<span>Food &amp; Dining</span>
+<span class="font-semibold text-text-muted-light ml-0.5">₹42,000</span>
+</div>
+<div class="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-container text-xs text-on-surface">
+<span class="w-2 h-2 rounded-full bg-state-success"></span>
+<span>Groceries</span>
+<span class="font-semibold text-text-muted-light ml-0.5">₹28,500</span>
+</div>
+<div class="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-container text-xs text-on-surface">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span>Shopping</span>
+<span class="font-semibold text-text-muted-light ml-0.5">₹24,350</span>
+</div>
+<div class="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-container text-xs text-on-surface">
+<span class="w-2 h-2 rounded-full bg-state-warning"></span>
+<span>Transport</span>
+<span class="font-semibold text-text-muted-light ml-0.5">₹18,000</span>
+</div>
+<div class="flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-surface-container text-xs text-on-surface">
+<span class="w-2 h-2 rounded-full bg-indigo-400"></span>
+<span>Utilities</span>
+<span class="font-semibold text-text-muted-light ml-0.5">₹12,000</span>
+</div>
+</div>
+<!-- Recent Recorded Expenses -->
+<div class="flex flex-col gap-2 pt-1">
+<span class="text-xs uppercase tracking-wider font-semibold text-text-muted-light">Recent recorded expenses</span>
+<div class="flex items-center justify-between p-2.5 rounded-lg bg-surface-bright border border-border-light dark:border-border-dark">
+<div class="flex items-center gap-2.5">
+<div class="w-7 h-7 rounded-full bg-accent-bg-light dark:bg-accent-bg-dark text-primary dark:text-primary-accent-dark flex items-center justify-center">
+<span class="material-symbols-outlined text-[15px]">checkroom</span>
+</div>
+<div class="flex flex-col">
+<span class="text-xs font-semibold text-on-surface">Uniqlo</span>
+<span class="text-[11px] text-text-muted-light">Oct 28 • Shopping • Credit Card</span>
+</div>
+</div>
+<span class="text-sm font-semibold text-on-surface">-₹5,400</span>
+</div>
+<div class="flex items-center justify-between p-2.5 rounded-lg bg-surface-bright border border-border-light dark:border-border-dark">
+<div class="flex items-center gap-2.5">
+<div class="w-7 h-7 rounded-full bg-accent-bg-light dark:bg-accent-bg-dark text-primary dark:text-primary-accent-dark flex items-center justify-center">
+<span class="material-symbols-outlined text-[15px]">shopping_basket</span>
+</div>
+<div class="flex flex-col">
+<span class="text-xs font-semibold text-on-surface">BigBasket</span>
+<span class="text-[11px] text-text-muted-light">Oct 25 • Groceries • UPI</span>
+</div>
+</div>
+<span class="text-sm font-semibold text-on-surface">-₹4,780</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-1 text-text-muted-light text-xs">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-state-success text-[15px]">check_circle</span>
+                  42 expenses recorded in October 2026
+                </span>
+<span class="text-primary dark:text-primary-accent-dark font-medium">INR active</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 2: FEATURES -->
+<section class="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-14 scroll-mt-20" id="features">
+<div class="flex flex-col items-center text-center max-w-2xl mx-auto mb-12">
+<span class="text-xs uppercase tracking-wider text-primary dark:text-primary-accent-dark font-semibold">Practical Tracking</span>
+<h2 class="text-3xl sm:text-4xl font-bold text-on-surface tracking-tight mt-2">
+            Built for how you actually spend.
+          </h2>
+<p class="text-base text-text-muted-light mt-2">
+            No complex spreadsheets or invasive bank aggregators. FinSight gives you clean, honest visibility over every purchase.
+          </p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+<div class="p-6 rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between border border-border-light dark:border-border-dark hover:shadow-md transition-shadow">
+<div class="flex flex-col gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high text-primary dark:text-primary-accent-dark flex items-center justify-center">
+<span class="material-symbols-outlined text-[22px]">add_circle</span>
+</div>
+<h3 class="text-lg font-semibold text-on-surface">Quick manual expense entry</h3>
+<p class="text-sm text-text-muted-light leading-relaxed">
+                Log cash, UPI, cards, or net banking outlays in seconds with merchant tags, notes, and exact dates.
+              </p>
+</div>
+<div class="mt-4 pt-3 font-medium text-xs text-primary dark:text-primary-accent-dark flex items-center gap-1 border-t border-border-light dark:border-border-dark">
+<span>Fast category assignment</span>
+<span class="material-symbols-outlined text-[16px]">check</span>
+</div>
+</div>
+<div class="p-6 rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between border border-border-light dark:border-border-dark hover:shadow-md transition-shadow">
+<div class="flex flex-col gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high text-primary dark:text-primary-accent-dark flex items-center justify-center">
+<span class="material-symbols-outlined text-[22px]">pie_chart</span>
+</div>
+<h3 class="text-lg font-semibold text-on-surface">Clear category breakdown</h3>
+<p class="text-sm text-text-muted-light leading-relaxed">
+                See exactly where your money flows across food, groceries, transport, shopping, utilities, health, and entertainment.
+              </p>
+</div>
+<div class="mt-4 pt-3 font-medium text-xs text-primary dark:text-primary-accent-dark flex items-center gap-1 border-t border-border-light dark:border-border-dark">
+<span>Percentage share calculation</span>
+<span class="material-symbols-outlined text-[16px]">check</span>
+</div>
+</div>
+<div class="p-6 rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between border border-border-light dark:border-border-dark hover:shadow-md transition-shadow">
+<div class="flex flex-col gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high text-primary dark:text-primary-accent-dark flex items-center justify-center">
+<span class="material-symbols-outlined text-[22px]">notifications_active</span>
+</div>
+<h3 class="text-lg font-semibold text-on-surface">Approaching &amp; exceeded alerts</h3>
+<p class="text-sm text-text-muted-light leading-relaxed">
+                Visual progress meters transition color as you near category caps, giving you time to adjust before the month ends.
+              </p>
+</div>
+<div class="mt-4 pt-3 font-medium text-xs text-primary dark:text-primary-accent-dark flex items-center gap-1 border-t border-border-light dark:border-border-dark">
+<span>Proactive threshold flags</span>
+<span class="material-symbols-outlined text-[16px]">check</span>
+</div>
+</div>
+<div class="p-6 rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between border border-border-light dark:border-border-dark hover:shadow-md transition-shadow md:col-span-2 lg:col-span-2">
+<div class="flex flex-col gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high text-primary dark:text-primary-accent-dark flex items-center justify-center">
+<span class="material-symbols-outlined text-[22px]">query_stats</span>
+</div>
+<h3 class="text-lg font-semibold text-on-surface">Understand spending month by month</h3>
+<p class="text-sm text-text-muted-light leading-relaxed">
+                Review August, September, and October side-by-side. Track category changes, observe seasonal patterns, and stay consistently within your planned totals.
+              </p>
+</div>
+<div class="mt-4 pt-3 font-medium text-xs text-primary dark:text-primary-accent-dark flex items-center gap-1 border-t border-border-light dark:border-border-dark">
+<span>Historical multi-month comparisons</span>
+<span class="material-symbols-outlined text-[16px]">check</span>
+</div>
+</div>
+<div class="p-6 rounded-xl bg-surface-container-lowest shadow-sm flex flex-col justify-between border border-border-light dark:border-border-dark hover:shadow-md transition-shadow">
+<div class="flex flex-col gap-3">
+<div class="w-10 h-10 rounded-lg bg-surface-container-high text-primary dark:text-primary-accent-dark flex items-center justify-center">
+<span class="material-symbols-outlined text-[22px]">chat</span>
+</div>
+<h3 class="text-lg font-semibold text-on-surface">Ask Clarry in plain English</h3>
+<p class="text-sm text-text-muted-light leading-relaxed">
+                Query your logged transactions conversational-style to get instant answers about specific vendors, dates, and budget caps.
+              </p>
+</div>
+<div class="mt-4 pt-3 font-medium text-xs text-primary dark:text-primary-accent-dark flex items-center gap-1 border-t border-border-light dark:border-border-dark">
+<span>Private assistant</span>
+<span class="material-symbols-outlined text-[16px]">check</span>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 3: DEMO 01 — CATEGORY SPENDING EXPLORER -->
+<section class="w-full bg-surface-container-low py-14 my-6 scroll-mt-20 border-y border-border-light dark:border-border-dark transition-colors" id="interactive-demos">
+<div class="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+<div>
+<span class="text-xs uppercase tracking-wider text-primary dark:text-primary-accent-dark font-semibold">Demo 01 • Interactive Explorer</span>
+<h2 class="text-3xl font-bold text-on-surface tracking-tight mt-1">
+                Category Spending Explorer
+              </h2>
+<p class="text-sm text-text-muted-light mt-1">
+                Click any category to inspect October 2026 allocations, percentage shares, and merchant items.
+              </p>
+</div>
+<div class="font-medium text-xs text-text-muted-light bg-surface-container px-3 py-1.5 rounded-md border border-border-light dark:border-border-dark self-start md:self-auto">
+              Active Month: October 2026
+            </div>
+</div>
+<div class="bg-surface-container-lowest rounded-xl shadow-lg p-6 border border-border-light dark:border-border-dark">
+<!-- Tabs -->
+<div aria-label="Category tabs" class="flex flex-wrap gap-2 pb-6 border-b border-border-light dark:border-border-dark" id="cat-explorer-tabs" role="tablist">
+<button aria-pressed="true" aria-selected="true" class="cat-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-colors bg-primary text-white focus-visible:ring-2 focus-visible:ring-primary focus:outline-none cursor-pointer" data-cat="food" role="tab" type="button">Food &amp; Dining (₹42,000)</button>
+<button aria-pressed="false" aria-selected="false" class="cat-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors bg-surface-container text-on-surface hover:bg-surface-container-high focus-visible:ring-2 focus-visible:ring-primary focus:outline-none cursor-pointer" data-cat="groceries" role="tab" type="button">Groceries (₹28,500)</button>
+<button aria-pressed="false" aria-selected="false" class="cat-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors bg-surface-container text-on-surface hover:bg-surface-container-high focus-visible:ring-2 focus-visible:ring-primary focus:outline-none cursor-pointer" data-cat="shopping" role="tab" type="button">Shopping (₹24,350)</button>
+<button aria-pressed="false" aria-selected="false" class="cat-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors bg-surface-container text-on-surface hover:bg-surface-container-high focus-visible:ring-2 focus-visible:ring-primary focus:outline-none cursor-pointer" data-cat="transport" role="tab" type="button">Transport (₹18,000)</button>
+<button aria-pressed="false" aria-selected="false" class="cat-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors bg-surface-container text-on-surface hover:bg-surface-container-high focus-visible:ring-2 focus-visible:ring-primary focus:outline-none cursor-pointer" data-cat="utilities" role="tab" type="button">Utilities (₹12,000)</button>
+<button aria-pressed="false" aria-selected="false" class="cat-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors bg-surface-container text-on-surface hover:bg-surface-container-high focus-visible:ring-2 focus-visible:ring-primary focus:outline-none cursor-pointer" data-cat="health" role="tab" type="button">Health (₹9,500)</button>
+<button aria-pressed="false" aria-selected="false" class="cat-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors bg-surface-container text-on-surface hover:bg-surface-container-high focus-visible:ring-2 focus-visible:ring-primary focus:outline-none cursor-pointer" data-cat="entertainment" role="tab" type="button">Entertainment (₹8,500)</button>
+</div>
+<!-- Dynamic Explorer View -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center pt-6">
+<div class="lg:col-span-5 flex flex-col gap-4">
+<div class="flex flex-col">
+<span class="text-xs text-text-muted-light font-medium" id="cat-name-label">Selected: Food &amp; Dining</span>
+<div class="flex items-baseline gap-3 mt-1">
+<span class="text-3xl sm:text-4xl text-on-surface font-bold tracking-tight" id="cat-amount-display">₹42,000</span>
+<span class="text-sm font-semibold text-primary dark:text-primary-accent-dark" id="cat-pct-display">29.4% of total</span>
+</div>
+</div>
+<div class="flex flex-col gap-1.5">
+<div class="flex justify-between text-xs text-text-muted-light">
+<span>Share of October 2026 spend (Total: ₹1,42,850)</span>
+<span class="font-semibold text-on-surface" id="cat-bar-subtext">29.4%</span>
+</div>
+<div class="w-full h-3 rounded-full bg-surface-container overflow-hidden">
+<div class="h-full bg-primary rounded-full transition-all duration-300" id="cat-bar-fill" style="width: 29.4%;"></div>
+</div>
+</div>
+<p class="text-xs sm:text-sm text-text-muted-light leading-relaxed" id="cat-desc-display">
+                  Includes dine-in meals, cafe visits, coffee passes, and food delivery orders.
+                </p>
+</div>
+<!-- Merchant List -->
+<div class="lg:col-span-7 bg-surface-container-low rounded-xl p-4 flex flex-col gap-2.5 border border-border-light dark:border-border-dark" id="cat-merchant-list">
+<div class="flex items-center justify-between p-3 rounded-lg bg-surface-container-lowest border border-border-light dark:border-border-dark">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary dark:text-primary-accent-dark text-[20px]">local_cafe</span>
+<div class="flex flex-col">
+<span class="text-sm font-semibold text-on-surface">Blue Tokai Coffee</span>
+<span class="text-xs text-text-muted-light">Oct 24, 2026 • UPI</span>
+</div>
+</div>
+<span class="text-sm font-semibold text-on-surface">-₹450</span>
+</div>
+<div class="flex items-center justify-between p-3 rounded-lg bg-surface-container-lowest border border-border-light dark:border-border-dark">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-primary dark:text-primary-accent-dark text-[20px]">delivery_dining</span>
+<div class="flex flex-col">
+<span class="text-sm font-semibold text-on-surface">Zomato</span>
+<span class="text-xs text-text-muted-light">Oct 22, 2026 • Dinner order • UPI</span>
+</div>
+</div>
+<span class="text-sm font-semibold text-on-surface">-₹1,250</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 4: DEMO 02 — BUDGET EXPLORER -->
+<section class="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-14 scroll-mt-20" id="budgets-analytics">
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-8">
+<div>
+<span class="text-xs uppercase tracking-wider text-primary dark:text-primary-accent-dark font-semibold">Demo 02 • Budget Discipline</span>
+<h2 class="text-3xl font-bold text-on-surface tracking-tight mt-1">
+              Category Budget Explorer
+            </h2>
+<p class="text-sm text-text-muted-light mt-1">
+              Thresholds: <span class="font-medium">On track</span> (&lt;80%), <span class="font-medium">Approaching</span> (80–99%), <span class="font-medium">Over</span> (=100%), <span class="font-medium">Overspent</span> (&gt;100%).
+            </p>
+</div>
+<div class="mt-2 md:mt-0 text-xs text-text-muted-light">
+            October 2026 Budget Status
+          </div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+<!-- Food & Dining -->
+<div class="bg-surface-container-lowest rounded-xl p-5 shadow-sm flex flex-col justify-between gap-4 border border-border-light dark:border-border-dark hover:shadow-md transition-shadow">
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="text-base font-semibold text-on-surface">Food &amp; Dining</span>
+<span class="px-2 py-0.5 rounded text-[11px] font-bold uppercase bg-amber-500/15 text-amber-600 dark:text-amber-400">Approaching</span>
+</div>
+<div class="flex items-baseline justify-between pt-1">
+<span class="text-2xl font-bold text-on-surface">₹42,000</span>
+<span class="text-xs text-text-muted-light">of ₹45,000 cap</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container overflow-hidden mt-1">
+<div class="h-full bg-amber-500 rounded-full" style="width: 93%;"></div>
+</div>
+</div>
+<div class="pt-2 flex items-center justify-between text-xs text-text-muted-light border-t border-border-light dark:border-border-dark">
+<span>Remaining: <strong class="text-on-surface">₹3,000</strong></span>
+<span class="font-semibold text-amber-600 dark:text-amber-400">93%</span>
+</div>
+</div>
+<!-- Groceries -->
+<div class="bg-surface-container-lowest rounded-xl p-5 shadow-sm flex flex-col justify-between gap-4 border border-border-light dark:border-border-dark hover:shadow-md transition-shadow">
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="text-base font-semibold text-on-surface">Groceries</span>
+<span class="px-2 py-0.5 rounded text-[11px] font-bold uppercase bg-amber-500/15 text-amber-600 dark:text-amber-400">Approaching</span>
+</div>
+<div class="flex items-baseline justify-between pt-1">
+<span class="text-2xl font-bold text-on-surface">₹28,500</span>
+<span class="text-xs text-text-muted-light">of ₹32,000 cap</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container overflow-hidden mt-1">
+<div class="h-full bg-amber-500 rounded-full" style="width: 89%;"></div>
+</div>
+</div>
+<div class="pt-2 flex items-center justify-between text-xs text-text-muted-light border-t border-border-light dark:border-border-dark">
+<span>Remaining: <strong class="text-on-surface">₹3,500</strong></span>
+<span class="font-semibold text-amber-600 dark:text-amber-400">89%</span>
+</div>
+</div>
+<!-- Shopping -->
+<div class="bg-surface-container-lowest rounded-xl p-5 shadow-sm flex flex-col justify-between gap-4 border border-border-light dark:border-border-dark hover:shadow-md transition-shadow">
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="text-base font-semibold text-on-surface">Shopping</span>
+<span class="px-2 py-0.5 rounded text-[11px] font-bold uppercase bg-state-danger/15 text-state-danger">Overspent</span>
+</div>
+<div class="flex items-baseline justify-between pt-1">
+<span class="text-2xl font-bold text-state-danger">₹24,350</span>
+<span class="text-xs text-text-muted-light">of ₹22,000 cap</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container overflow-hidden mt-1">
+<div class="h-full bg-state-danger rounded-full" style="width: 100%;"></div>
+</div>
+</div>
+<div class="pt-2 flex items-center justify-between text-xs text-state-danger border-t border-border-light dark:border-border-dark">
+<span>Deficit: <strong>-₹2,350</strong></span>
+<span class="font-semibold">111%</span>
+</div>
+</div>
+<!-- Entertainment -->
+<div class="bg-surface-container-lowest rounded-xl p-5 shadow-sm flex flex-col justify-between gap-4 border border-border-light dark:border-border-dark hover:shadow-md transition-shadow">
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="text-base font-semibold text-on-surface">Entertainment</span>
+<span class="px-2 py-0.5 rounded text-[11px] font-bold uppercase bg-state-success/15 text-state-success">On Track</span>
+</div>
+<div class="flex items-baseline justify-between pt-1">
+<span class="text-2xl font-bold text-on-surface">₹8,500</span>
+<span class="text-xs text-text-muted-light">of ₹15,000 cap</span>
+</div>
+<div class="w-full h-2 rounded-full bg-surface-container overflow-hidden mt-1">
+<div class="h-full bg-state-success rounded-full" style="width: 57%;"></div>
+</div>
+</div>
+<div class="pt-2 flex items-center justify-between text-xs text-text-muted-light border-t border-border-light dark:border-border-dark">
+<span>Remaining: <strong class="text-on-surface">₹6,500</strong></span>
+<span class="font-semibold text-state-success">57%</span>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 5: DEMO 03 — AI CHATBOT (CLARRY) -->
+<section class="w-full bg-surface-container-low py-14 my-6 scroll-mt-20 border-y border-border-light dark:border-border-dark transition-colors" id="ai-assistant">
+<div class="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
+<div class="lg:col-span-5 flex flex-col gap-5">
+<span class="text-xs uppercase tracking-wider text-primary dark:text-primary-accent-dark font-semibold">Demo 03 • Natural Language Assistant</span>
+<h2 class="text-3xl font-bold text-on-surface tracking-tight leading-tight">
+                Ask questions. Clarry does the arithmetic.
+              </h2>
+<p class="text-sm sm:text-base text-text-muted-light leading-relaxed">
+                Clarry queries your own recorded expenses to deliver instant calculations, category totals, and budget headroom figures without formula hassles.
+              </p>
+<!-- Merged Companion Info -->
+<div class="flex items-center gap-3 p-3.5 rounded-xl bg-surface-container-lowest border border-border-light dark:border-border-dark">
+<div class="w-12 h-12 rounded-full overflow-hidden flex-shrink-0 border border-primary/20 bg-white">
+<img alt="Clarry" class="w-full h-full object-cover" height="48" loading="lazy" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAKsJTz1r7-NLu0gK-FN09WG_HtT48knkKiGpjIDa54zRMg8bf4_kktd-oDM8u0CSSn3CvncWNQUewUK39wTqKDuJv_RlbNhR7t0qA32oRIXQk6uS9AExA6wNMPGsl9BGv44Fg0PfG-NvGhlxQIbsGRNnX8hqEcSasmvyTKi_TMzknbPtjL7_NW-iQ1i-yViSFsaJ8e-FKdnKLVmZ-KT5vE-G5rEIosBCgi6MmVonjwTi9LCr8bJneVUQ" width="48">
+</div>
+<div class="flex flex-col">
+<span class="text-sm font-semibold text-on-surface">Meet Clarry, your intelligent guide</span>
+<p class="text-xs text-text-muted-light">Reads only your recorded transactions. Never modifies data without confirmation.</p>
+</div>
+</div>
+<div class="p-3 rounded-lg bg-surface-container text-text-muted-light text-xs border border-border-light dark:border-border-dark">
+<span class="font-semibold text-on-surface">Interactive demo note:</span> This demo answers the suggested questions from October 2026 data.
+              </div>
+</div>
+<!-- Chat Interface -->
+<div class="lg:col-span-7">
+<div class="bg-surface-container-lowest rounded-xl shadow-lg overflow-hidden flex flex-col h-[520px] border border-border-light dark:border-border-dark">
+<!-- Chat Header (Touchpoint 2) -->
+<div class="p-3.5 bg-surface-container flex items-center justify-between border-b border-border-light dark:border-border-dark">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded-full overflow-hidden flex-shrink-0 border border-primary/20 bg-white">
+<img alt="Clarry Avatar" class="w-full h-full object-cover" height="32" loading="lazy" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAKsJTz1r7-NLu0gK-FN09WG_HtT48knkKiGpjIDa54zRMg8bf4_kktd-oDM8u0CSSn3CvncWNQUewUK39wTqKDuJv_RlbNhR7t0qA32oRIXQk6uS9AExA6wNMPGsl9BGv44Fg0PfG-NvGhlxQIbsGRNnX8hqEcSasmvyTKi_TMzknbPtjL7_NW-iQ1i-yViSFsaJ8e-FKdnKLVmZ-KT5vE-G5rEIosBCgi6MmVonjwTi9LCr8bJneVUQ" width="32">
+</div>
+<div class="flex flex-col">
+<span class="text-sm font-semibold text-on-surface">Clarry Assistant</span>
+<span class="text-[11px] text-state-success flex items-center gap-1 font-medium">
+<span class="w-1.5 h-1.5 rounded-full bg-state-success"></span> October 2026 data online
+                      </span>
+</div>
+</div>
+<button class="text-xs text-text-muted-light hover:text-primary dark:hover:text-primary-accent-dark transition-colors flex items-center gap-1 focus-visible:ring-2 focus-visible:ring-primary focus:outline-none rounded px-2 py-1 cursor-pointer" id="clarry-reset-btn" type="button">
+<span class="material-symbols-outlined text-[16px]">restart_alt</span> Reset
+                  </button>
+</div>
+<!-- Messages Container with aria-live -->
+<div aria-live="polite" class="flex-1 p-4 overflow-y-auto flex flex-col gap-3.5 bg-surface-bright" id="clarry-messages-container">
+<div class="flex items-start gap-2.5 max-w-[85%]">
+<div class="w-7 h-7 rounded-full overflow-hidden flex-shrink-0 mt-0.5 border border-primary/20 bg-white">
+<img alt="Clarry" class="w-full h-full object-cover" height="28" loading="lazy" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAKsJTz1r7-NLu0gK-FN09WG_HtT48knkKiGpjIDa54zRMg8bf4_kktd-oDM8u0CSSn3CvncWNQUewUK39wTqKDuJv_RlbNhR7t0qA32oRIXQk6uS9AExA6wNMPGsl9BGv44Fg0PfG-NvGhlxQIbsGRNnX8hqEcSasmvyTKi_TMzknbPtjL7_NW-iQ1i-yViSFsaJ8e-FKdnKLVmZ-KT5vE-G5rEIosBCgi6MmVonjwTi9LCr8bJneVUQ" width="28">
+</div>
+<div class="p-3.5 rounded-2xl rounded-tl-none bg-surface-container-low text-on-surface text-xs sm:text-sm shadow-sm border border-border-light dark:border-border-dark leading-relaxed">
+                      Hello! I have full visibility over your October 2026 expenses. Click any of the suggested questions below to see how I calculate totals and budgets.
+                    </div>
+</div>
+</div>
+<!-- Typing Indicator -->
+<div class="hidden px-4 py-2 text-text-muted-light text-xs items-center gap-2 bg-surface-bright border-t border-border-light dark:border-border-dark" id="clarry-typing-indicator">
+<span class="inline-flex gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-bounce"></span>
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-bounce [animation-delay:0.2s]"></span>
+<span class="w-1.5 h-1.5 rounded-full bg-primary animate-bounce [animation-delay:0.4s]"></span>
+</span>
+<span>Clarry is reading your October expenses...</span>
+</div>
+<!-- Prompt Pills -->
+<div class="p-2.5 bg-surface-container-low flex flex-wrap gap-1.5 border-t border-border-light dark:border-border-dark">
+<button class="clarry-prompt-pill px-3 py-1 rounded-full bg-surface-container-lowest hover:bg-primary hover:text-white text-xs text-on-surface transition-colors shadow-sm border border-border-light dark:border-border-dark focus-visible:ring-2 focus-visible:ring-primary focus:outline-none cursor-pointer" data-prompt="How much did I spend on Food this month?" type="button">
+                    How much did I spend on Food this month?
+                  </button>
+<button class="clarry-prompt-pill px-3 py-1 rounded-full bg-surface-container-lowest hover:bg-primary hover:text-white text-xs text-on-surface transition-colors shadow-sm border border-border-light dark:border-border-dark focus-visible:ring-2 focus-visible:ring-primary focus:outline-none cursor-pointer" data-prompt="What about last month?" type="button">
+                    What about last month?
+                  </button>
+<button class="clarry-prompt-pill px-3 py-1 rounded-full bg-surface-container-lowest hover:bg-primary hover:text-white text-xs text-on-surface transition-colors shadow-sm border border-border-light dark:border-border-dark focus-visible:ring-2 focus-visible:ring-primary focus:outline-none cursor-pointer" data-prompt="Show my recent top expenses." type="button">
+                    Show my recent top expenses.
+                  </button>
+<button class="clarry-prompt-pill px-3 py-1 rounded-full bg-surface-container-lowest hover:bg-primary hover:text-white text-xs text-on-surface transition-colors shadow-sm border border-border-light dark:border-border-dark focus-visible:ring-2 focus-visible:ring-primary focus:outline-none cursor-pointer" data-prompt="How much of my Groceries budget is remaining?" type="button">
+                    How much of my Groceries budget is remaining?
+                  </button>
+</div>
+<!-- Chat Input Form -->
+<form class="p-2.5 bg-surface-container-lowest flex items-center gap-2 border-t border-border-light dark:border-border-dark" id="clarry-input-form">
+<input autocomplete="off" class="flex-1 h-10 px-3 rounded-lg bg-surface-container text-on-surface text-xs sm:text-sm focus-visible:ring-2 focus-visible:ring-primary focus:outline-none border border-border-light dark:border-border-dark" id="clarry-user-input" placeholder="Ask Clarry about your expenses..." type="text">
+<button aria-label="Send query" class="w-10 h-10 rounded-lg bg-primary-container hover:bg-primary text-white flex items-center justify-center transition-colors focus-visible:ring-2 focus-visible:ring-primary focus:outline-none cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed" id="clarry-send-btn" type="submit">
+<span class="material-symbols-outlined text-[18px]">send</span>
+</button>
+</form>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 6: DEMO 04 — MONTHLY SPENDING COMPARISON -->
+<section class="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-14 scroll-mt-20" id="analytics">
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-4">
+<div>
+<span class="text-xs uppercase tracking-wider text-primary dark:text-primary-accent-dark font-semibold">Month by month</span>
+<h2 class="text-3xl font-bold text-on-surface tracking-tight mt-1">
+              Monthly Spending Comparison
+            </h2>
+<p class="text-sm text-text-muted-light mt-1">
+              Compare your spending across the last 3 months (August, September, and October 2026).
+            </p>
+</div>
+<!-- Tabs -->
+<div class="flex items-center gap-2 self-start md:self-auto" id="month-compare-tabs" role="tablist">
+<button aria-pressed="false" aria-selected="false" class="month-btn px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors border border-border-light dark:border-border-dark focus-visible:ring-2 focus-visible:ring-primary focus:outline-none cursor-pointer" data-month="aug" role="tab" type="button">Aug 2026: ₹1,38,000</button>
+<button aria-pressed="false" aria-selected="false" class="month-btn px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors border border-border-light dark:border-border-dark focus-visible:ring-2 focus-visible:ring-primary focus:outline-none cursor-pointer" data-month="sep" role="tab" type="button">Sep 2026: ₹1,56,000</button>
+<button aria-pressed="true" aria-selected="true" class="month-btn px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-primary text-white transition-colors border border-primary focus-visible:ring-2 focus-visible:ring-primary focus:outline-none cursor-pointer" data-month="oct" role="tab" type="button">Oct 2026: ₹1,42,850</button>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm border border-border-light dark:border-border-dark">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+<!-- Graph -->
+<div class="lg:col-span-7 flex flex-col gap-2">
+<div class="flex justify-between items-center text-xs text-text-muted-light pb-2">
+<span>Last 3 months spending</span>
+<span class="font-semibold text-primary dark:text-primary-accent-dark" id="chart-month-caption">Viewing: October 2026</span>
+</div>
+<div class="w-full h-56 bg-surface-bright rounded-lg p-5 flex items-end justify-between gap-6 border border-border-light dark:border-border-dark">
+<div class="flex-1 flex flex-col items-center gap-2 h-full justify-end">
+<span class="text-xs font-semibold text-on-surface">₹1,38,000</span>
+<div class="w-full bg-surface-container-high rounded-t-lg transition-all" style="height: 72%;"></div>
+<span class="text-xs text-text-muted-light font-medium">Aug 2026</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2 h-full justify-end">
+<span class="text-xs font-semibold text-on-surface">₹1,56,000</span>
+<div class="w-full bg-surface-container-high rounded-t-lg transition-all" style="height: 88%;"></div>
+<span class="text-xs text-text-muted-light font-medium">Sep 2026</span>
+</div>
+<div class="flex-1 flex flex-col items-center gap-2 h-full justify-end">
+<span class="text-xs font-semibold text-primary dark:text-primary-accent-dark" id="chart-oct-val">₹1,42,850</span>
+<div class="w-full bg-primary-container rounded-t-lg transition-all" id="chart-active-bar" style="height: 78%;"></div>
+<span class="text-xs font-semibold text-primary dark:text-primary-accent-dark">Oct 2026</span>
+</div>
+</div>
+</div>
+<!-- Insights -->
+<div class="lg:col-span-5 flex flex-col gap-4">
+<div class="p-4 rounded-lg bg-surface-container-low flex flex-col gap-1 border border-border-light dark:border-border-dark">
+<span class="text-xs text-text-muted-light font-medium">Selected Month Spend</span>
+<span class="text-3xl font-bold text-on-surface" id="month-stat-total">₹1,42,850</span>
+<span class="text-xs text-state-success font-medium flex items-center gap-1 mt-1" id="month-stat-delta">
+<span class="material-symbols-outlined text-[16px]">arrow_downward</span>
+                  8.4% lower than September (Down ₹13,150)
+                </span>
+</div>
+<div class="flex flex-col gap-1 text-xs text-text-muted-light">
+<span class="font-semibold uppercase tracking-wider text-on-surface">Monthly Observation</span>
+<p class="leading-relaxed" id="month-stat-insight">
+                  October showed improved dining containment, lowering restaurant charges by ₹11,500 compared to September.
+                </p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 7: RECENT TRANSACTIONS SHOWCASE -->
+<section class="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-14 scroll-mt-20" id="transactions-section">
+<div class="flex flex-col items-center text-center max-w-2xl mx-auto mb-10">
+<span class="text-xs uppercase tracking-wider text-primary dark:text-primary-accent-dark font-semibold">Your expenses, searchable</span>
+<h2 class="text-3xl font-bold text-on-surface tracking-tight mt-1">
+            Search, categorize, and filter your expenses.
+          </h2>
+<p class="text-sm text-text-muted-light mt-1">
+            Test how quickly you can filter through your recorded payments in October 2026.
+          </p>
+</div>
+<div class="bg-surface-container-lowest rounded-xl shadow-sm p-4 sm:p-6 border border-border-light dark:border-border-dark">
+<!-- Filter Controls -->
+<div class="flex flex-col md:flex-row items-center justify-between gap-3 pb-4 border-b border-border-light dark:border-border-dark">
+<div class="relative w-full md:w-80">
+<span class="material-symbols-outlined absolute left-3 top-2.5 text-text-muted-light text-[20px]">search</span>
+<input class="w-full h-10 pl-10 pr-3 rounded-lg bg-surface-container text-on-surface text-xs sm:text-sm focus-visible:ring-2 focus-visible:ring-primary focus:outline-none border border-border-light dark:border-border-dark" id="tx-search-input" placeholder="Filter by merchant (e.g. Uniqlo, Zomato)..." type="text">
+</div>
+<div class="flex items-center gap-2 w-full md:w-auto">
+<select class="h-10 px-3 rounded-lg bg-surface-container text-on-surface text-xs sm:text-sm focus-visible:ring-2 focus-visible:ring-primary focus:outline-none border border-border-light dark:border-border-dark" id="tx-category-select">
+<option value="all">All Categories</option>
+<option value="Shopping">Shopping</option>
+<option value="Groceries">Groceries</option>
+<option value="Food &amp; Dining">Food &amp; Dining</option>
+<option value="Transport">Transport</option>
+<option value="Utilities">Utilities</option>
+</select>
+<span class="text-xs text-text-muted-light whitespace-nowrap px-2" id="tx-count-label">Sample of 9 of 42 expenses recorded in October 2026.</span>
+</div>
+</div>
+<!-- Transaction Table -->
+<div class="overflow-x-auto mt-4">
+<table class="w-full text-left text-xs sm:text-sm">
+<thead>
+<tr class="bg-surface-container-high text-on-surface-variant text-[11px] uppercase tracking-wider font-semibold">
+<th class="p-3 rounded-l-lg">Date</th>
+<th class="p-3">Merchant / Note</th>
+<th class="p-3">Category</th>
+<th class="p-3">Payment Method</th>
+<th class="p-3 text-right rounded-r-lg">Amount</th>
+</tr>
+</thead>
+<tbody id="tx-table-body">
+<tr class="tx-row hover:bg-surface-bright transition-colors border-b border-border-light dark:border-border-dark" data-cat="Shopping" data-desc="Uniqlo autumn apparel">
+<td class="p-3 text-text-muted-light">Oct 28, 2026</td>
+<td class="p-3 font-semibold text-on-surface">Uniqlo</td>
+<td class="p-3"><span class="px-2 py-0.5 rounded-full text-xs bg-secondary-fixed/50 text-secondary dark:text-primary-accent-dark font-medium">Shopping</span></td>
+<td class="p-3 text-text-muted-light">Credit Card</td>
+<td class="p-3 text-right font-semibold text-on-surface">-₹5,400</td>
+</tr>
+<tr class="tx-row hover:bg-surface-bright transition-colors border-b border-border-light dark:border-border-dark" data-cat="Groceries" data-desc="BigBasket weekly grocery supplies">
+<td class="p-3 text-text-muted-light">Oct 25, 2026</td>
+<td class="p-3 font-semibold text-on-surface">BigBasket</td>
+<td class="p-3"><span class="px-2 py-0.5 rounded-full text-xs bg-state-success/15 text-state-success font-medium">Groceries</span></td>
+<td class="p-3 text-text-muted-light">UPI</td>
+<td class="p-3 text-right font-semibold text-on-surface">-₹4,780</td>
+</tr>
+<tr class="tx-row hover:bg-surface-bright transition-colors border-b border-border-light dark:border-border-dark" data-cat="Food &amp; Dining" data-desc="Blue Tokai Coffee morning brew">
+<td class="p-3 text-text-muted-light">Oct 24, 2026</td>
+<td class="p-3 font-semibold text-on-surface">Blue Tokai Coffee</td>
+<td class="p-3"><span class="px-2 py-0.5 rounded-full text-xs bg-primary-fixed-dim/40 text-primary dark:text-primary-accent-dark font-medium">Food &amp; Dining</span></td>
+<td class="p-3 text-text-muted-light">UPI</td>
+<td class="p-3 text-right font-semibold text-on-surface">-₹450</td>
+</tr>
+<tr class="tx-row hover:bg-surface-bright transition-colors border-b border-border-light dark:border-border-dark" data-cat="Food &amp; Dining" data-desc="Zomato dinner delivery">
+<td class="p-3 text-text-muted-light">Oct 22, 2026</td>
+<td class="p-3 font-semibold text-on-surface">Zomato</td>
+<td class="p-3"><span class="px-2 py-0.5 rounded-full text-xs bg-primary-fixed-dim/40 text-primary dark:text-primary-accent-dark font-medium">Food &amp; Dining</span></td>
+<td class="p-3 text-text-muted-light">UPI</td>
+<td class="p-3 text-right font-semibold text-on-surface">-₹1,250</td>
+</tr>
+<tr class="tx-row hover:bg-surface-bright transition-colors border-b border-border-light dark:border-border-dark" data-cat="Transport" data-desc="Namma Metro card smart recharge">
+<td class="p-3 text-text-muted-light">Oct 20, 2026</td>
+<td class="p-3 font-semibold text-on-surface">Namma Metro</td>
+<td class="p-3"><span class="px-2 py-0.5 rounded-full text-xs bg-amber-500/15 text-amber-600 dark:text-amber-400 font-medium">Transport</span></td>
+<td class="p-3 text-text-muted-light">UPI</td>
+<td class="p-3 text-right font-semibold text-on-surface">-₹850</td>
+</tr>
+<tr class="tx-row hover:bg-surface-bright transition-colors border-b border-border-light dark:border-border-dark" data-cat="Groceries" data-desc="Nature's Basket fruits pantry">
+<td class="p-3 text-text-muted-light">Oct 18, 2026</td>
+<td class="p-3 font-semibold text-on-surface">Nature's Basket</td>
+<td class="p-3"><span class="px-2 py-0.5 rounded-full text-xs bg-state-success/15 text-state-success font-medium">Groceries</span></td>
+<td class="p-3 text-text-muted-light">Debit Card</td>
+<td class="p-3 text-right font-semibold text-on-surface">-₹3,450</td>
+</tr>
+<tr class="tx-row hover:bg-surface-bright transition-colors border-b border-border-light dark:border-border-dark" data-cat="Utilities" data-desc="Jio Fiber home broadband plan">
+<td class="p-3 text-text-muted-light">Oct 15, 2026</td>
+<td class="p-3 font-semibold text-on-surface">Jio Fiber</td>
+<td class="p-3"><span class="px-2 py-0.5 rounded-full text-xs bg-surface-container-high text-on-surface font-medium">Utilities</span></td>
+<td class="p-3 text-text-muted-light">Internet Banking</td>
+<td class="p-3 text-right font-semibold text-on-surface">-₹1,180</td>
+</tr>
+<tr class="tx-row hover:bg-surface-bright transition-colors border-b border-border-light dark:border-border-dark" data-cat="Shopping" data-desc="Crossword Bookstore novels">
+<td class="p-3 text-text-muted-light">Oct 12, 2026</td>
+<td class="p-3 font-semibold text-on-surface">Crossword Bookstore</td>
+<td class="p-3"><span class="px-2 py-0.5 rounded-full text-xs bg-secondary-fixed/50 text-secondary dark:text-primary-accent-dark font-medium">Shopping</span></td>
+<td class="p-3 text-text-muted-light">Credit Card</td>
+<td class="p-3 text-right font-semibold text-on-surface">-₹1,850</td>
+</tr>
+<tr class="tx-row hover:bg-surface-bright transition-colors" data-cat="Utilities" data-desc="Airtel Mobile cellular recharge">
+<td class="p-3 text-text-muted-light">Oct 10, 2026</td>
+<td class="p-3 font-semibold text-on-surface">Airtel Mobile</td>
+<td class="p-3"><span class="px-2 py-0.5 rounded-full text-xs bg-surface-container-high text-on-surface font-medium">Utilities</span></td>
+<td class="p-3 text-text-muted-light">UPI</td>
+<td class="p-3 text-right font-semibold text-on-surface">-₹799</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="hidden p-8 text-center text-sm text-text-muted-light" id="tx-empty-state">
+            No transactions match your search filter.
+          </div>
+</div>
+</section>
+<!-- SECTION 8: DISPLAY CURRENCY SETTING -->
+<section class="w-full bg-surface-container-low py-14 my-6 border-y border-border-light dark:border-border-dark transition-colors">
+<div class="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
+<div class="flex flex-col lg:flex-row items-center justify-between gap-8">
+<div class="lg:w-1/2 flex flex-col gap-3">
+<span class="text-xs uppercase tracking-wider text-primary dark:text-primary-accent-dark font-semibold">Display Flexibility</span>
+<h2 class="text-3xl font-bold text-on-surface tracking-tight">Record in one primary currency; view your dashboard in INR, USD, EUR, GBP, JPY.</h2>
+<p class="text-sm text-text-muted-light leading-relaxed">
+                FinSight logs your daily outlays in your single primary account currency for strict accounting integrity. You can adjust your display preference at any time to inspect your dashboard figures under major international currency symbols. This is a display viewing setting and does not perform foreign exchange conversion.
+              </p>
+</div>
+<div class="lg:w-1/2 grid grid-cols-2 sm:grid-cols-3 gap-3 w-full">
+<!-- INR Card -->
+<div class="p-4 rounded-xl bg-surface-container-lowest shadow-sm flex flex-col items-center text-center border-2 border-primary dark:border-primary-accent-dark relative">
+<span class="absolute -top-2 px-2 py-0.2 rounded-full bg-primary text-white text-[10px] font-bold uppercase tracking-wider">Active</span>
+<span class="text-2xl font-bold text-primary dark:text-primary-accent-dark">₹</span>
+<span class="text-xs font-semibold text-on-surface mt-1">INR • India</span>
+<span class="text-xs text-primary dark:text-primary-accent-dark font-semibold mt-0.5">₹ 1,42,850</span>
+</div>
+<!-- USD Card -->
+<div class="p-4 rounded-xl bg-surface-container-lowest shadow-sm flex flex-col items-center text-center border border-border-light dark:border-border-dark">
+<span class="text-2xl font-bold text-on-surface">$</span>
+<span class="text-xs font-semibold text-on-surface mt-1">USD • United States</span>
+<span class="text-xs text-text-muted-light mt-0.5">$ 1,42,850</span>
+</div>
+<!-- EUR Card -->
+<div class="p-4 rounded-xl bg-surface-container-lowest shadow-sm flex flex-col items-center text-center border border-border-light dark:border-border-dark">
+<span class="text-2xl font-bold text-on-surface">€</span>
+<span class="text-xs font-semibold text-on-surface mt-1">EUR • Eurozone</span>
+<span class="text-xs text-text-muted-light mt-0.5">€ 1,42,850</span>
+</div>
+<!-- GBP Card -->
+<div class="p-4 rounded-xl bg-surface-container-lowest shadow-sm flex flex-col items-center text-center border border-border-light dark:border-border-dark">
+<span class="text-2xl font-bold text-on-surface">£</span>
+<span class="text-xs font-semibold text-on-surface mt-1">GBP • United Kingdom</span>
+<span class="text-xs text-text-muted-light mt-0.5">£ 1,42,850</span>
+</div>
+<!-- JPY Card -->
+<div class="p-4 rounded-xl bg-surface-container-lowest shadow-sm flex flex-col items-center text-center border border-border-light dark:border-border-dark">
+<span class="text-2xl font-bold text-on-surface">¥</span>
+<span class="text-xs font-semibold text-on-surface mt-1">JPY • Japan</span>
+<span class="text-xs text-text-muted-light mt-0.5">¥ 1,42,850</span>
+</div>
+<!-- User Setting Badge Card -->
+<div class="p-4 rounded-xl bg-surface-container flex flex-col items-center justify-center text-center border border-border-light dark:border-border-dark">
+<div class="flex items-center gap-1.5 text-primary dark:text-primary-accent-dark">
+<span class="material-symbols-outlined text-[18px]">tune</span>
+<span class="text-xs font-semibold">User Setting</span>
+</div>
+<span class="text-[11px] text-text-muted-light mt-0.5">Configurable in Profile Settings</span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 9: PRIVACY & DATA OWNERSHIP -->
+<section class="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-14">
+<div class="p-6 sm:p-8 rounded-2xl bg-surface-container-lowest shadow-sm border border-border-light dark:border-border-dark">
+<div class="max-w-3xl flex flex-col gap-4">
+<div class="inline-flex items-center gap-1.5 text-state-success text-xs font-semibold">
+<span class="material-symbols-outlined text-[18px]">verified_user</span>
+              Data Privacy &amp; Ownership
+            </div>
+<h2 class="text-2xl sm:text-3xl font-bold text-on-surface tracking-tight">
+              We don't sell your data.
+            </h2>
+<p class="text-sm text-text-muted-light leading-relaxed">
+              FinSight is built purely for personal expense discipline. We do not sell your spending information or spam you with unwanted financial products.
+            </p>
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+<div class="p-3.5 rounded-lg bg-surface-bright border border-border-light dark:border-border-dark flex flex-col gap-1">
+<span class="text-xs font-semibold text-on-surface">No Credential Scraping</span>
+<p class="text-xs text-text-muted-light">We never request or store your online banking passwords.</p>
+</div>
+<div class="p-3.5 rounded-lg bg-surface-bright border border-border-light dark:border-border-dark flex flex-col gap-1">
+<span class="text-xs font-semibold text-on-surface">CSV &amp; PDF Export</span>
+<p class="text-xs text-text-muted-light">Export your complete expense log in CSV or PDF formats at any time.</p>
+</div>
+<div class="p-3.5 rounded-lg bg-surface-bright border border-border-light dark:border-border-dark flex flex-col gap-1">
+<span class="text-xs font-semibold text-on-surface">Account Control</span>
+<p class="text-xs text-text-muted-light">Full control over your recorded data and account status whenever you decide.</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- SECTION 10: FAQ ACCORDION -->
+<section class="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-14 scroll-mt-20" id="faq">
+<div class="flex flex-col items-center text-center max-w-2xl mx-auto mb-10">
+<span class="text-xs uppercase tracking-wider text-primary dark:text-primary-accent-dark font-semibold">Clear Answers</span>
+<h2 class="text-3xl font-bold text-on-surface tracking-tight mt-1">
+            Frequently Asked Questions
+          </h2>
+<p class="text-sm text-text-muted-light mt-1">
+            Learn more about FinSight’s manual tracking model, budgets, and Clarry.
+          </p>
+</div>
+<div class="flex flex-col gap-3 max-w-3xl mx-auto w-full" id="faq-accordion">
+<div class="faq-item rounded-xl bg-surface-container-lowest shadow-sm overflow-hidden border border-border-light dark:border-border-dark">
+<button aria-controls="faq-answer-1" aria-expanded="false" class="faq-toggle w-full p-4 flex items-center justify-between text-left font-semibold text-sm sm:text-base text-on-surface hover:text-primary dark:hover:text-primary-accent-dark transition-colors focus-visible:ring-2 focus-visible:ring-primary focus:outline-none cursor-pointer" id="faq-btn-1" type="button">
+<span>How do I record expenses in FinSight?</span>
+<span class="material-symbols-outlined faq-icon text-text-muted-light transition-transform duration-200">expand_more</span>
+</button>
+<div aria-labelledby="faq-btn-1" class="faq-answer hidden px-4 pb-4 text-xs sm:text-sm text-text-muted-light leading-relaxed" id="faq-answer-1" role="region">
+              Expenses are recorded directly through the manual add-expense form with category, amount, payment method (Cash, UPI, Debit Card, Credit Card, or Internet Banking), and merchant notes.
+            </div>
+</div>
+<div class="faq-item rounded-xl bg-surface-container-lowest shadow-sm overflow-hidden border border-border-light dark:border-border-dark">
+<button aria-controls="faq-answer-2" aria-expanded="false" class="faq-toggle w-full p-4 flex items-center justify-between text-left font-semibold text-sm sm:text-base text-on-surface hover:text-primary dark:hover:text-primary-accent-dark transition-colors focus-visible:ring-2 focus-visible:ring-primary focus:outline-none cursor-pointer" id="faq-btn-2" type="button">
+<span>Does FinSight connect directly to my bank accounts?</span>
+<span class="material-symbols-outlined faq-icon text-text-muted-light transition-transform duration-200">expand_more</span>
+</button>
+<div aria-labelledby="faq-btn-2" class="faq-answer hidden px-4 pb-4 text-xs sm:text-sm text-text-muted-light leading-relaxed" id="faq-answer-2" role="region">
+              No. FinSight intentionally avoids screen-scraping banking aggregators that demand your online banking credentials. This guarantees your credentials never leave your custody.
+            </div>
+</div>
+<div class="faq-item rounded-xl bg-surface-container-lowest shadow-sm overflow-hidden border border-border-light dark:border-border-dark">
+<button aria-controls="faq-answer-3" aria-expanded="false" class="faq-toggle w-full p-4 flex items-center justify-between text-left font-semibold text-sm sm:text-base text-on-surface hover:text-primary dark:hover:text-primary-accent-dark transition-colors focus-visible:ring-2 focus-visible:ring-primary focus:outline-none cursor-pointer" id="faq-btn-3" type="button">
+<span>How do category budget alerts work?</span>
+<span class="material-symbols-outlined faq-icon text-text-muted-light transition-transform duration-200">expand_more</span>
+</button>
+<div aria-labelledby="faq-btn-3" class="faq-answer hidden px-4 pb-4 text-xs sm:text-sm text-text-muted-light leading-relaxed" id="faq-answer-3" role="region">
+              Budgets use four clear states: On track (under 80% utilized), Approaching (80% to 99%), Over (exactly 100%), and Overspent (greater than 100%). Visual indicators change to alert you proactively.
+            </div>
+</div>
+<div class="faq-item rounded-xl bg-surface-container-lowest shadow-sm overflow-hidden border border-border-light dark:border-border-dark">
+<button aria-controls="faq-answer-4" aria-expanded="false" class="faq-toggle w-full p-4 flex items-center justify-between text-left font-semibold text-sm sm:text-base text-on-surface hover:text-primary dark:hover:text-primary-accent-dark transition-colors focus-visible:ring-2 focus-visible:ring-primary focus:outline-none cursor-pointer" id="faq-btn-4" type="button">
+<span>How does Clarry answer my questions?</span>
+<span class="material-symbols-outlined faq-icon text-text-muted-light transition-transform duration-200">expand_more</span>
+</button>
+<div aria-labelledby="faq-btn-4" class="faq-answer hidden px-4 pb-4 text-xs sm:text-sm text-text-muted-light leading-relaxed" id="faq-answer-4" role="region">
+              Clarry parses your question, reads your recorded personal expenses for the requested period, computes sums or balances, and replies with exact numbers.
+            </div>
+</div>
+<div class="faq-item rounded-xl bg-surface-container-lowest shadow-sm overflow-hidden border border-border-light dark:border-border-dark">
+<button aria-controls="faq-answer-5" aria-expanded="false" class="faq-toggle w-full p-4 flex items-center justify-between text-left font-semibold text-sm sm:text-base text-on-surface hover:text-primary dark:hover:text-primary-accent-dark transition-colors focus-visible:ring-2 focus-visible:ring-primary focus:outline-none cursor-pointer" id="faq-btn-5" type="button">
+<span>Can I export my transaction history?</span>
+<span class="material-symbols-outlined faq-icon text-text-muted-light transition-transform duration-200">expand_more</span>
+</button>
+<div aria-labelledby="faq-btn-5" class="faq-answer hidden px-4 pb-4 text-xs sm:text-sm text-text-muted-light leading-relaxed" id="faq-answer-5" role="region">
+              Yes. You can export your filtered expenses and budget reports as CSV spreadsheets or formatted PDF documents whenever you need them.
+            </div>
+</div>
+</div>
+</section>
+<!-- SECTION 11: FINAL CTA -->
+<section class="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-14 my-6 w-full">
+<div class="relative rounded-2xl bg-gradient-to-br from-primary via-primary-container to-secondary p-8 sm:p-12 text-white overflow-hidden shadow-2xl">
+<div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-8">
+<div class="flex flex-col gap-3 max-w-xl text-center md:text-left">
+<span class="text-xs uppercase tracking-wider text-secondary-fixed font-semibold">Start tracking today</span>
+<h2 class="text-3xl sm:text-4xl font-bold text-white tracking-tight leading-tight">
+                Your expenses aren’t going to organise themselves.
+              </h2>
+<p class="text-sm sm:text-base text-secondary-fixed leading-relaxed">
+                Set up your personal workspace in seconds. Track everyday purchases, watch category caps, and build peace of mind.
+              </p>
+<div class="flex flex-wrap items-center justify-center md:justify-start gap-4 pt-2">
+<a class="inline-flex items-center justify-center h-12 px-6 rounded-lg bg-surface-container-lowest text-primary hover:bg-surface-bright text-sm font-semibold transition-all shadow-md active:scale-95 focus-visible:ring-2 focus-visible:ring-primary focus:outline-none" data-path="create-account" href="{{DATA:SCREEN:SCREEN_17}}">
+                  Create Your FinSight Account
+                  <span class="material-symbols-outlined ml-1.5 text-[18px]">arrow_forward</span>
+</a>
+<a class="inline-flex items-center justify-center h-12 px-4 text-white hover:text-secondary-fixed text-sm font-medium underline underline-offset-4 transition-colors focus-visible:ring-2 focus-visible:ring-primary focus:outline-none rounded" data-path="sign-in" href="{{DATA:SCREEN:SCREEN_15}}">
+                  Already using FinSight? Sign In
+                </a>
+</div>
+</div>
+<!-- Touchpoint 3: Mascot Avatar -->
+<div class="flex flex-col items-center gap-2 flex-shrink-0">
+<div class="w-24 h-24 rounded-full bg-surface-container-lowest/20 backdrop-blur-md p-1.5 flex items-center justify-center shadow-inner border-2 border-white/40">
+<img alt="Clarry" class="w-full h-full object-cover rounded-full" height="96" loading="lazy" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAKsJTz1r7-NLu0gK-FN09WG_HtT48knkKiGpjIDa54zRMg8bf4_kktd-oDM8u0CSSn3CvncWNQUewUK39wTqKDuJv_RlbNhR7t0qA32oRIXQk6uS9AExA6wNMPGsl9BGv44Fg0PfG-NvGhlxQIbsGRNnX8hqEcSasmvyTKi_TMzknbPtjL7_NW-iQ1i-yViSFsaJ8e-FKdnKLVmZ-KT5vE-G5rEIosBCgi6MmVonjwTi9LCr8bJneVUQ" width="96">
+</div>
+<div class="bg-surface-container-lowest text-on-surface px-3 py-1 rounded-full text-xs font-semibold shadow-sm border border-border-light dark:border-border-dark">
+                Clarry: “Ready when you are!”
+              </div>
+</div>
+</div>
+</div>
+</section>
+</div>
+</main>
+<!-- Footer -->
+<footer class="w-full bg-surface-container-low border-t border-border-light dark:border-border-dark transition-colors">
+<div class="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 py-12">
+<div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+<div class="md:col-span-2 flex flex-col gap-3">
+<div class="flex items-center gap-2">
+<img alt="FinSight Logo" class="brand-logo-light h-7 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZcQgfgQuLRFGBYZxW3MoGhBYDLkjQQCAypzKYf36HibMaWY7gl4CGhWkQSBuJob2mM2i3XEhkAXpi5h9X3KFTUggqKv8y4YGoZegkm61Y3ZrwZjQNNqjzTK5dsddHnNT3sQG5n5VdE_aEJsMEL6CNt0eVkWXOVCPNmP8M82H51toStGft1Cso38A1t6b2f4XeX7q8L8yIRM0TRA4bSkUonRQITJnzZmPXRYNbfipnQ117IO_6G8443Q">
+<div class="brand-logo-dark">
+<img alt="FinSight Logo" class="brand-logo-img-dark h-7 w-auto object-contain" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBZcQgfgQuLRFGBYZxW3MoGhBYDLkjQQCAypzKYf36HibMaWY7gl4CGhWkQSBuJob2mM2i3XEhkAXpi5h9X3KFTUggqKv8y4YGoZegkm61Y3ZrwZjQNNqjzTK5dsddHnNT3sQG5n5VdE_aEJsMEL6CNt0eVkWXOVCPNmP8M82H51toStGft1Cso38A1t6b2f4XeX7q8L8yIRM0TRA4bSkUonRQITJnzZmPXRYNbfipnQ117IO_6G8443Q">
+</div>
+</div>
+<p class="text-xs sm:text-sm text-on-surface-variant max-w-md leading-relaxed">
+            Personal finance and disciplined budgeting workspace. Clean expense categorization, proactive category alerts, and conversational guidance with Clarry.
+          </p>
+</div>
+
+<div class="flex flex-col gap-2.5"><span class="text-xs font-semibold text-on-surface uppercase tracking-wider">Account &amp; Legal</span><a class="text-xs sm:text-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#faq">FAQ</a><a class="text-xs sm:text-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="privacy-policy" href="{{DATA:SCREEN:SCREEN_6}}">Privacy Policy</a><a class="text-xs sm:text-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="terms-of-service" href="{{DATA:SCREEN:SCREEN_4}}">Terms of Service</a><a class="text-xs sm:text-sm text-on-surface-variant hover:text-on-surface transition-colors" data-path="security-compliance" href="{{DATA:SCREEN:SCREEN_2}}">Security</a><a class="text-xs sm:text-sm text-on-surface-variant hover:text-on-surface transition-colors" href="#faq">Help Center</a></div>
+</div>
+<div class="mt-10 pt-6 flex flex-col md:flex-row items-center justify-between gap-3 text-xs text-on-surface-variant border-t border-border-light dark:border-border-dark">
+<p>Sample data shown for demonstration purposes. Active cycle: October 2026.</p>
+<p>© <span id="current-year">2026</span> FinSight. All rights reserved.</p>
+</div>
+</div>
+</footer>
+<!-- Floating Back to Top Button -->
+<button aria-label="Back to top" class="fixed bottom-6 right-6 z-50 flex items-center justify-center w-11 h-11 rounded-full bg-surface-container-lowest/90 hover:bg-primary hover:text-white text-primary dark:text-primary-accent-dark border border-border-light dark:border-border-dark shadow-md opacity-0 pointer-events-none translate-y-3 transition-all duration-200 focus-visible:ring-2 focus-visible:ring-primary focus:outline-none cursor-pointer" id="back-to-top-btn" type="button">
+<span class="material-symbols-outlined text-[20px]">arrow_upward</span>
+</button>
+<!-- Script Interactions -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+      // 1. Navigation Scroll Handler: Explicit click listener on all internal anchor links a[href^="#"]
+      document.querySelectorAll('a[href^="#"]').forEach(function(anchor) {
+        anchor.addEventListener('click', function(e) {
+          var href = this.getAttribute('href');
+          if (href === '#' || href === '#top') {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            return;
+          }
+          if (href && href.startsWith('#')) {
+            var target = document.querySelector(href);
+            if (target) {
+              e.preventDefault();
+              var topPos = target.getBoundingClientRect().top + window.pageYOffset - 72;
+              window.scrollTo({ top: topPos, behavior: 'smooth' });
+            }
+          }
+        });
+      });
+
+      // Dynamic footer year
+      var yearSpan = document.getElementById('current-year');
+      if (yearSpan) {
+        yearSpan.textContent = new Date().getFullYear();
+      }
+
+      // Mobile Menu Drawer
+      var mobileBtn = document.getElementById('mobile-menu-btn');
+      var mobileDrawer = document.getElementById('mobile-nav-drawer');
+      var mobileIcon = document.getElementById('mobile-menu-icon');
+      if (mobileBtn && mobileDrawer) {
+        mobileBtn.addEventListener('click', function() {
+          var isExpanded = mobileBtn.getAttribute('aria-expanded') === 'true';
+          mobileBtn.setAttribute('aria-expanded', !isExpanded);
+          if (!isExpanded) {
+            mobileDrawer.classList.remove('hidden');
+            mobileDrawer.classList.add('flex');
+            if (mobileIcon) mobileIcon.textContent = 'close';
+          } else {
+            mobileDrawer.classList.add('hidden');
+            mobileDrawer.classList.remove('flex');
+            if (mobileIcon) mobileIcon.textContent = 'menu';
+          }
+        });
+
+        document.querySelectorAll('.mobile-nav-link').forEach(function(l) {
+          l.addEventListener('click', function() {
+            mobileDrawer.classList.add('hidden');
+            mobileDrawer.classList.remove('flex');
+            mobileBtn.setAttribute('aria-expanded', 'false');
+            if (mobileIcon) mobileIcon.textContent = 'menu';
+          });
+        });
+      }
+
+      // Theme Switcher
+      var themeToggle = document.getElementById('theme-toggle');
+      var sunIcon = document.getElementById('theme-sun-icon');
+      var moonIcon = document.getElementById('theme-moon-icon');
+
+      function syncThemeUI(isDark) {
+        if (sunIcon && moonIcon) {
+          sunIcon.style.display = isDark ? 'inline-block' : 'none';
+          moonIcon.style.display = isDark ? 'none' : 'inline-block';
+        }
+        if (themeToggle) {
+          themeToggle.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode');
+        }
+      }
+
+      var isDarkInitial = document.documentElement.classList.contains('dark');
+      syncThemeUI(isDarkInitial);
+
+      if (themeToggle) {
+        themeToggle.addEventListener('click', function() {
+          var doc = document.documentElement;
+          var willBeDark = !doc.classList.contains('dark');
+          if (willBeDark) {
+            doc.classList.add('dark');
+            doc.classList.remove('light');
+            localStorage.setItem('fs-theme', 'dark');
+          } else {
+            doc.classList.remove('dark');
+            doc.classList.add('light');
+            localStorage.setItem('fs-theme', 'light');
+          }
+          syncThemeUI(willBeDark);
+        });
+      }
+
+      // Scroll Progress & Spy
+      var progressBar = document.getElementById('scroll-progress-bar');
+      var backToTopBtn = document.getElementById('back-to-top-btn');
+      var spyLinks = document.querySelectorAll('.nav-spy-link');
+      var trackedSections = ['features', 'interactive-demos', 'budgets-analytics', 'analytics', 'ai-assistant', 'faq'];
+
+      function handleScroll() {
+        var scrollY = window.scrollY || document.documentElement.scrollTop;
+        var scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+        var progress = scrollHeight > 0 ? (scrollY / scrollHeight) * 100 : 0;
+        if (progressBar) progressBar.style.width = Math.min(100, Math.max(0, progress)) + '%';
+
+        if (backToTopBtn) {
+          if (scrollY > 350) {
+            backToTopBtn.classList.remove('opacity-0', 'pointer-events-none', 'translate-y-3');
+            backToTopBtn.classList.add('opacity-100', 'pointer-events-auto', 'translate-y-0');
+          } else {
+            backToTopBtn.classList.add('opacity-0', 'pointer-events-none', 'translate-y-3');
+            backToTopBtn.classList.remove('opacity-100', 'pointer-events-auto', 'translate-y-0');
+          }
+        }
+
+        var current = '';
+        var offset = 120;
+        for (var i = 0; i < trackedSections.length; i++) {
+          var sec = document.getElementById(trackedSections[i]);
+          if (sec) {
+            var top = sec.offsetTop - offset;
+            var height = sec.offsetHeight;
+            if (scrollY >= top && scrollY < top + height) {
+              current = trackedSections[i];
+              break;
+            }
+          }
+        }
+        if (scrollY + window.innerHeight >= document.documentElement.scrollHeight - 60) {
+          current = 'faq';
+        }
+        spyLinks.forEach(function(link) {
+          var href = link.getAttribute('href');
+          if (href === '#' + current) {
+            link.classList.add('text-primary', 'dark:text-primary-accent-dark', 'bg-surface-container-high');
+          } else {
+            link.classList.remove('text-primary', 'dark:text-primary-accent-dark', 'bg-surface-container-high');
+          }
+        });
+      }
+
+      window.addEventListener('scroll', handleScroll, { passive: true });
+      handleScroll();
+
+      if (backToTopBtn) {
+        backToTopBtn.addEventListener('click', function() {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      }
+
+      // Demo 01: Category Spending Explorer
+      var catData = {
+        food: {
+          name: "Selected: Food & Dining",
+          amount: "₹42,000",
+          pct: "29.4% of total",
+          bar: "29.4%",
+          desc: "Includes dine-in meals, cafe visits, coffee passes, and food delivery orders.",
+          merchants: [
+            { icon: "local_cafe", name: "Blue Tokai Coffee", note: "Oct 24, 2026 • UPI", val: "-₹450" },
+            { icon: "delivery_dining", name: "Zomato", note: "Oct 22, 2026 • Dinner order • UPI", val: "-₹1,250" }
+          ]
+        },
+        groceries: {
+          name: "Selected: Groceries",
+          amount: "₹28,500",
+          pct: "20.0% of total",
+          bar: "20.0%",
+          desc: "Fresh produce, daily dairy, staples, and organic household essentials.",
+          merchants: [
+            { icon: "shopping_basket", name: "BigBasket", note: "Oct 25, 2026 • Weekly staples • UPI", val: "-₹4,780" },
+            { icon: "local_grocery_store", name: "Nature's Basket", note: "Oct 18, 2026 • Organic groceries • Debit Card", val: "-₹3,450" }
+          ]
+        },
+        shopping: {
+          name: "Selected: Shopping",
+          amount: "₹24,350",
+          pct: "17.0% of total",
+          bar: "17.0%",
+          desc: "Apparel, books, personal workspace goods, and lifestyle items.",
+          merchants: [
+            { icon: "checkroom", name: "Uniqlo", note: "Oct 28, 2026 • Winter layers • Credit Card", val: "-₹5,400" },
+            { icon: "menu_book", name: "Crossword Bookstore", note: "Oct 12, 2026 • Books • Credit Card", val: "-₹1,850" }
+          ]
+        },
+        transport: {
+          name: "Selected: Transport",
+          amount: "₹18,000",
+          pct: "12.6% of total",
+          bar: "12.6%",
+          desc: "Metro cards, taxi rides, vehicle refueling, and commuter transit passes.",
+          merchants: [
+            { icon: "directions_subway", name: "Namma Metro", note: "Oct 20, 2026 • UPI", val: "-₹850" }
+          ]
+        },
+        utilities: {
+          name: "Selected: Utilities",
+          amount: "₹12,000",
+          pct: "8.4% of total",
+          bar: "8.4%",
+          desc: "Electricity, home fiber broadband, mobile telephony plans, and piped water.",
+          merchants: [
+            { icon: "wifi", name: "Jio Fiber", note: "Oct 15, 2026 • Home internet • Internet Banking", val: "-₹1,180" },
+            { icon: "smartphone", name: "Airtel Mobile", note: "Oct 10, 2026 • Monthly recharge • UPI", val: "-₹799" }
+          ]
+        },
+        health: {
+          name: "Selected: Health",
+          amount: "₹9,500",
+          pct: "6.7% of total",
+          bar: "6.7%",
+          desc: "Prescriptions, doctor consultations, dental routine, and health supplements.",
+          merchants: [
+            { icon: "medication", name: "Apollo Pharmacy", note: "Oct 16, 2026 • Wellness items • UPI", val: "-₹1,420" }
+          ]
+        },
+        entertainment: {
+          name: "Selected: Entertainment",
+          amount: "₹8,500",
+          pct: "6.0% of total",
+          bar: "6.0%",
+          desc: "Movie admissions, digital streaming subscriptions, and hobby workshops.",
+          merchants: [
+            { icon: "theaters", name: "PVR Cinemas", note: "Oct 14, 2026 • Weekend film tickets • Debit Card", val: "-₹960" }
+          ]
+        }
+      };
+
+      var catButtons = document.querySelectorAll('.cat-btn');
+      var nameLabel = document.getElementById('cat-name-label');
+      var amountDisplay = document.getElementById('cat-amount-display');
+      var pctDisplay = document.getElementById('cat-pct-display');
+      var barSubtext = document.getElementById('cat-bar-subtext');
+      var barFill = document.getElementById('cat-bar-fill');
+      var descDisplay = document.getElementById('cat-desc-display');
+      var merchantList = document.getElementById('cat-merchant-list');
+
+      catButtons.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var key = this.getAttribute('data-cat');
+          var d = catData[key];
+          if (!d) return;
+
+          catButtons.forEach(function(b) {
+            b.className = 'cat-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-medium transition-colors bg-surface-container text-on-surface hover:bg-surface-container-high focus-visible:ring-2 focus-visible:ring-primary focus:outline-none cursor-pointer';
+            b.setAttribute('aria-selected', 'false');
+            b.setAttribute('aria-pressed', 'false');
+          });
+          this.className = 'cat-btn px-4 py-2 rounded-lg text-xs sm:text-sm font-semibold transition-colors bg-primary text-white focus-visible:ring-2 focus-visible:ring-primary focus:outline-none cursor-pointer';
+          this.setAttribute('aria-selected', 'true');
+          this.setAttribute('aria-pressed', 'true');
+
+          if (nameLabel) nameLabel.textContent = d.name;
+          if (amountDisplay) amountDisplay.textContent = d.amount;
+          if (pctDisplay) pctDisplay.textContent = d.pct;
+          if (barSubtext) barSubtext.textContent = d.bar;
+          if (barFill) barFill.style.width = d.bar;
+          if (descDisplay) descDisplay.textContent = d.desc;
+
+          if (merchantList) {
+            merchantList.innerHTML = d.merchants.map(function(m) {
+              return '<div class="flex items-center justify-between p-3 rounded-lg bg-surface-container-lowest border border-border-light dark:border-border-dark">' +
+                '<div class="flex items-center gap-3">' +
+                  '<span class="material-symbols-outlined text-primary dark:text-primary-accent-dark text-[20px]">' + m.icon + '</span>' +
+                  '<div class="flex flex-col">' +
+                    '<span class="text-sm font-semibold text-on-surface">' + m.name + '</span>' +
+                    '<span class="text-xs text-text-muted-light">' + m.note + '</span>' +
+                  '</div>' +
+                '</div>' +
+                '<span class="text-sm font-semibold text-on-surface">' + m.val + '</span>' +
+              '</div>';
+            }).join('');
+          }
+        });
+      });
+
+      // Demo 03: Clarry Chat Assistant
+      var chatContainer = document.getElementById('clarry-messages-container');
+      var typingIndicator = document.getElementById('clarry-typing-indicator');
+      var promptPills = document.querySelectorAll('.clarry-prompt-pill');
+      var chatForm = document.getElementById('clarry-input-form');
+      var chatInput = document.getElementById('clarry-user-input');
+      var sendBtn = document.getElementById('clarry-send-btn');
+      var resetBtn = document.getElementById('clarry-reset-btn');
+
+      var clarryKnowledge = {
+        "how much did i spend on food this month?": "In October 2026, you spent ₹42,000 on Food & Dining across merchants like Blue Tokai (₹450) and Zomato (₹1,250), accounting for 29.4% of your total monthly expenses.",
+        "what about last month?": "In September 2026 you spent ₹53,500 on Food & Dining, ₹11,500 more than October.",
+        "show my recent top expenses.": "Your top recorded expenses for October 2026 are: 1. Uniqlo — ₹5,400 (Shopping), 2. BigBasket — ₹4,780 (Groceries), 3. Nature's Basket — ₹3,450 (Groceries).",
+        "how much of my groceries budget is remaining?": "You have allocated ₹32,000 for Groceries and spent ₹28,500 (89% utilised, Approaching limit). You have ₹3,500 remaining for October."
+      };
+
+      function appendUserMessage(text) {
+        if (!chatContainer) return;
+        var msgDiv = document.createElement('div');
+        msgDiv.className = 'flex items-start justify-end gap-2.5 self-end max-w-[85%]';
+        
+        var bubble = document.createElement('div');
+        bubble.className = 'p-3 rounded-2xl rounded-tr-none bg-primary text-white text-xs sm:text-sm shadow-sm';
+        bubble.textContent = text;
+
+        msgDiv.appendChild(bubble);
+        chatContainer.appendChild(msgDiv);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      }
+
+      function appendAssistantMessage(text) {
+        if (!chatContainer) return;
+        var msgDiv = document.createElement('div');
+        msgDiv.className = 'flex items-start gap-2.5 max-w-[85%]';
+        
+        var avatar = document.createElement('div');
+        avatar.className = 'w-7 h-7 rounded-full overflow-hidden flex-shrink-0 mt-0.5 border border-primary/20 bg-white';
+        avatar.innerHTML = '<img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAKsJTz1r7-NLu0gK-FN09WG_HtT48knkKiGpjIDa54zRMg8bf4_kktd-oDM8u0CSSn3CvncWNQUewUK39wTqKDuJv_RlbNhR7t0qA32oRIXQk6uS9AExA6wNMPGsl9BGv44Fg0PfG-NvGhlxQIbsGRNnX8hqEcSasmvyTKi_TMzknbPtjL7_NW-iQ1i-yViSFsaJ8e-FKdnKLVmZ-KT5vE-G5rEIosBCgi6MmVonjwTi9LCr8bJneVUQ" alt="Clarry" width="28" height="28" class="w-full h-full object-cover">';
+
+        var bubble = document.createElement('div');
+        bubble.className = 'p-3.5 rounded-2xl rounded-tl-none bg-surface-container-low text-on-surface text-xs sm:text-sm shadow-sm border border-border-light dark:border-border-dark leading-relaxed';
+        bubble.textContent = text;
+
+        msgDiv.appendChild(avatar);
+        msgDiv.appendChild(bubble);
+        chatContainer.appendChild(msgDiv);
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      }
+
+      function handleClarryQuery(rawQuery) {
+        var clean = rawQuery.trim().toLowerCase();
+        if (typingIndicator) {
+          typingIndicator.classList.remove('hidden');
+          typingIndicator.classList.add('flex');
+        }
+        if (sendBtn) sendBtn.disabled = true;
+
+        setTimeout(function() {
+          if (typingIndicator) {
+            typingIndicator.classList.add('hidden');
+            typingIndicator.classList.remove('flex');
+          }
+          if (sendBtn) sendBtn.disabled = false;
+
+          var reply = clarryKnowledge[clean];
+          if (!reply) {
+            reply = "This demo answers the suggested questions. Create an account to ask Clarry anything about your own spending.";
+          }
+          appendAssistantMessage(reply);
+        }, 600);
+      }
+
+      promptPills.forEach(function(pill) {
+        pill.addEventListener('click', function() {
+          var promptText = this.getAttribute('data-prompt');
+          if (!promptText) return;
+          appendUserMessage(promptText);
+          handleClarryQuery(promptText);
+        });
+      });
+
+      if (chatForm && chatInput) {
+        chatForm.addEventListener('submit', function(e) {
+          e.preventDefault();
+          var q = chatInput.value.trim();
+          if (!q) return;
+          appendUserMessage(q);
+          chatInput.value = '';
+          handleClarryQuery(q);
+        });
+      }
+
+      if (resetBtn && chatContainer) {
+        resetBtn.addEventListener('click', function() {
+          chatContainer.innerHTML = '<div class="flex items-start gap-2.5 max-w-[85%]">' +
+            '<div class="w-7 h-7 rounded-full overflow-hidden flex-shrink-0 mt-0.5 border border-primary/20 bg-white">' +
+              '<img src="https://lh3.googleusercontent.com/aida-public/AB6AXuAKsJTz1r7-NLu0gK-FN09WG_HtT48knkKiGpjIDa54zRMg8bf4_kktd-oDM8u0CSSn3CvncWNQUewUK39wTqKDuJv_RlbNhR7t0qA32oRIXQk6uS9AExA6wNMPGsl9BGv44Fg0PfG-NvGhlxQIbsGRNnX8hqEcSasmvyTKi_TMzknbPtjL7_NW-iQ1i-yViSFsaJ8e-FKdnKLVmZ-KT5vE-G5rEIosBCgi6MmVonjwTi9LCr8bJneVUQ" alt="Clarry" width="28" height="28" class="w-full h-full object-cover">' +
+            '</div>' +
+            '<div class="p-3.5 rounded-2xl rounded-tl-none bg-surface-container-low text-on-surface text-xs sm:text-sm shadow-sm border border-border-light dark:border-border-dark leading-relaxed">' +
+              'Chat reset. Click any suggested question below or enter your question to test Clarry.' +
+            '</div>' +
+          '</div>';
+        });
+      }
+
+      // Demo 04: Monthly Spending Comparison
+      var monthData = {
+        aug: {
+          caption: "Viewing: August 2026",
+          total: "₹1,38,000",
+          delta: '<span class="material-symbols-outlined text-[16px]">remove</span> Baseline autumnal quarter start',
+          insight: "August marked stable spending across essential groceries and regular utility commitments."
+        },
+        sep: {
+          caption: "Viewing: September 2026",
+          total: "₹1,56,000",
+          delta: '<span class="material-symbols-outlined text-[16px]">arrow_upward</span> Up ₹18,000 (+13.0%) vs August',
+          insight: "September experienced dining and apparel seasonal peaks, reaching ₹1,56,000 total spend."
+        },
+        oct: {
+          caption: "Viewing: October 2026",
+          total: "₹1,42,850",
+          delta: '<span class="material-symbols-outlined text-[16px]">arrow_downward</span> 8.4% lower than September (Down ₹13,150)',
+          insight: "October showed improved dining containment, lowering restaurant charges by ₹11,500 compared to September."
+        }
+      };
+
+      var monthBtns = document.querySelectorAll('.month-btn');
+      var chartCaption = document.getElementById('chart-month-caption');
+      var monthTotal = document.getElementById('month-stat-total');
+      var monthDelta = document.getElementById('month-stat-delta');
+      var monthInsight = document.getElementById('month-stat-insight');
+
+      monthBtns.forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var m = this.getAttribute('data-month');
+          var d = monthData[m];
+          if (!d) return;
+
+          monthBtns.forEach(function(b) {
+            b.className = 'month-btn px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium bg-surface-container text-on-surface hover:bg-surface-container-high transition-colors border border-border-light dark:border-border-dark focus-visible:ring-2 focus-visible:ring-primary focus:outline-none cursor-pointer';
+            b.setAttribute('aria-selected', 'false');
+            b.setAttribute('aria-pressed', 'false');
+          });
+          this.className = 'month-btn px-3 py-1.5 rounded-lg text-xs sm:text-sm font-semibold bg-primary text-white transition-colors border border-primary focus-visible:ring-2 focus-visible:ring-primary focus:outline-none cursor-pointer';
+          this.setAttribute('aria-selected', 'true');
+          this.setAttribute('aria-pressed', 'true');
+
+          if (chartCaption) chartCaption.textContent = d.caption;
+          if (monthTotal) monthTotal.textContent = d.total;
+          if (monthDelta) monthDelta.innerHTML = d.delta;
+          if (monthInsight) monthInsight.textContent = d.insight;
+        });
+      });
+
+      // Filterable Transactions Table
+      var txSearch = document.getElementById('tx-search-input');
+      var txCatSelect = document.getElementById('tx-category-select');
+      var txRows = document.querySelectorAll('.tx-row');
+      var txCountLabel = document.getElementById('tx-count-label');
+      var txEmptyState = document.getElementById('tx-empty-state');
+
+      function filterTxTable() {
+        var query = (txSearch ? txSearch.value : '').toLowerCase().trim();
+        var cat = txCatSelect ? txCatSelect.value : 'all';
+        var visibleCount = 0;
+
+        txRows.forEach(function(row) {
+          var rCat = row.getAttribute('data-cat') || '';
+          var rDesc = (row.getAttribute('data-desc') || '').toLowerCase();
+          var rText = row.textContent.toLowerCase();
+
+          var matchesCat = (cat === 'all' || rCat === cat);
+          var matchesQuery = (!query || rDesc.indexOf(query) !== -1 || rText.indexOf(query) !== -1);
+
+          if (matchesCat && matchesQuery) {
+            row.style.display = '';
+            visibleCount++;
+          } else {
+            row.style.display = 'none';
+          }
+        });
+
+        if (txCountLabel) {
+          if (!query && cat === 'all') {
+            txCountLabel.textContent = 'Sample of 9 of 42 expenses recorded in October 2026.';
+          } else {
+            txCountLabel.textContent = 'Showing ' + visibleCount + ' expense' + (visibleCount === 1 ? '' : 's');
+          }
+        }
+        if (txEmptyState) {
+          if (visibleCount === 0) {
+            txEmptyState.classList.remove('hidden');
+          } else {
+            txEmptyState.classList.add('hidden');
+          }
+        }
+      }
+
+      if (txSearch) txSearch.addEventListener('input', filterTxTable);
+      if (txCatSelect) txCatSelect.addEventListener('change', filterTxTable);
+
+      // FAQ Accordion
+      var faqToggles = document.querySelectorAll('.faq-toggle');
+      faqToggles.forEach(function(toggle) {
+        toggle.addEventListener('click', function() {
+          var isExpanded = this.getAttribute('aria-expanded') === 'true';
+          var answerId = this.getAttribute('aria-controls');
+          var answer = document.getElementById(answerId);
+          var icon = this.querySelector('.faq-icon');
+
+          faqToggles.forEach(function(otherToggle) {
+            if (otherToggle !== toggle) {
+              otherToggle.setAttribute('aria-expanded', 'false');
+              var otherAns = document.getElementById(otherToggle.getAttribute('aria-controls'));
+              if (otherAns) otherAns.classList.add('hidden');
+              var otherIcon = otherToggle.querySelector('.faq-icon');
+              if (otherIcon) otherIcon.style.transform = 'rotate(0deg)';
+            }
+          });
+
+          this.setAttribute('aria-expanded', !isExpanded);
+          if (!isExpanded) {
+            if (answer) answer.classList.remove('hidden');
+            if (icon) icon.style.transform = 'rotate(180deg)';
+          } else {
+            if (answer) answer.classList.add('hidden');
+            if (icon) icon.style.transform = 'rotate(0deg)';
+          }
+        });
+      });
+    });
+  </script>
+
+
+
+
+</body></html>
