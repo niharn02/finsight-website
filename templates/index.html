@@ -2033,7 +2033,28 @@ async function loadDatabaseData(){
  await loadBudgetAllocations();
  if(!window.__anRangeSet){window.__anRangeSet=true;anSetRange(AN_CUR,AN_END,'cur')}else{const pb=document.querySelector('#an-presets [aria-pressed="true"]');anSetRange(anF.from,anF.to,pb?pb.dataset.preset:'')}
 }
-(async()=>{try{await loadDatabaseData();renderAll()}catch(error){console.error(error);toast(error.message||'Unable to load FinSight data.');renderAll()}})();
+(async()=>{
+ // Do not silently render empty financial pages when the initial API load fails.
+ try{
+  await loadDatabaseData();
+  renderAll();
+ }catch(error){
+  console.error('FinSight initial data load failed.',error);
+  const message=error?.message||'Unable to load your financial data. Please try again.';
+  ['#bu-hero','#bu-kpis','#bu-grid'].forEach(selector=>{
+   const node=$(selector);if(!node)return;
+   node.innerHTML='';
+   if(selector==='#bu-hero')node.innerHTML='<div class="fs-card p-5"><p class="font-medium">Budgets could not be loaded</p><p class="text-sm text-muted-foreground" id="bu-load-error"></p><button type="button" class="fs-btn fs-btn-p mt-3" id="bu-retry">Retry loading budgets</button></div>';
+  });
+  const errorNode=$('#bu-load-error');if(errorNode)errorNode.textContent=message;
+  $('#bu-retry')?.addEventListener('click',async()=>{
+   const button=$('#bu-retry');if(button){button.disabled=true;button.textContent='Loading…'}
+   try{await loadDatabaseData();renderAll();}
+   catch(retryError){const target=$('#bu-load-error');if(target)target.textContent=retryError?.message||'Unable to load budgets. Please try again.';}
+   finally{const retry=$('#bu-retry');if(retry){retry.disabled=false;retry.textContent='Retry loading budgets'}}
+  });
+ }
+})();
 
 
 /* ===================== Notifications ===================== */
