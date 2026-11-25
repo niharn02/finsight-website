@@ -206,7 +206,13 @@ def calculate_spending_projection(budget_month, monthly_summary):
 @app.route("/analytics.html")
 @app.route("/budget.html")
 def home():
-    return send_from_directory(app.template_folder, "index.html")
+    # Always serve the current dashboard HTML instead of allowing browsers or
+    # intermediary caches to reuse an older inline-JavaScript version.
+    response = send_from_directory(app.template_folder, "index.html")
+    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
 
 
 # Test API connection
