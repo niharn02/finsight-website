@@ -1237,13 +1237,12 @@ def chat():
             "show_turn_limit_warning": previous_user_turns + 1 == max_user_turns - 1
         }), 200
 
-    except Exception as e:
-        
-        traceback.print_exc()
-
+    except Exception:
+        # Log diagnostic details server-side without exposing them to the browser.
+        app.logger.exception("Unexpected error while processing chat request.")
         return jsonify({
             "status": "error",
-            "message": str(e)
+            "message": "An unexpected error occurred. Please try again."
         }), 500
 
 
