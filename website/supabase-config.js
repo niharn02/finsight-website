@@ -1,15 +1,31 @@
 // Shared Supabase client setup for FinSight's static Cloudflare Pages website.
 const SUPABASE_URL = "https://iglfciogemwqpfhqhwkl.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Bhz5fQTPgDVLG2MToojskg_s2gZkug3";
-const FINSIGHT_RENDER_URL = "https://finsight-dashboard-xtk6.onrender.com";
+
+// Only these exact dashboard origins are allowed as handoff destinations.
+const ALLOWED_DASHBOARD_ORIGINS = new Set([
+  "https://finsight-dashboard-xtk6.onrender.com",
+  "https://finsight-dashboard-pr-3.onrender.com"
+]);
+const DEFAULT_DASHBOARD_ORIGIN = "https://finsight-dashboard-xtk6.onrender.com";
+const FINSIGHT_RENDER_URL = DEFAULT_DASHBOARD_ORIGIN;
 window.supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
+
+// Accept a return destination only when it exactly matches an allowlisted dashboard origin.
+function finsightReturnOrigin() {
+  const candidate = new URLSearchParams(location.search).get("return");
+  return ALLOWED_DASHBOARD_ORIGINS.has(candidate) ? candidate : DEFAULT_DASHBOARD_ORIGIN;
+}
 
 // Exchange a Supabase token for a short-lived, one-time dashboard handoff.
 async function finsightHandoff(session) {
   if (!session?.access_token) throw new Error("No active authentication session.");
+  const targetOrigin = finsightReturnOrigin();
   const response = await fetch(FINSIGHT_RENDER_URL + "/auth/handoff/start", {
-    method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ access_token: session.access_token })
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    // The backend independently validates this origin against its own allowlist.
+    body: JSON.stringify({ access_token: session.access_token, return_origin: targetOrigin })
   });
   const payload = await response.json().catch(() => ({}));
   if (!response.ok || !payload.redirect_url) throw new Error(payload.error || "Dashboard sign-in handoff failed.");
@@ -18,9 +34,11 @@ async function finsightHandoff(session) {
 document.addEventListener("DOMContentLoaded", async () => {
   const client = window.supabaseClient, status = document.getElementById("auth-message");
   const message = (text, error=false) => { if(status){status.textContent=text;status.className="mt-3 text-sm "+(error?"text-red-600":"text-primary");} };
+  // Preserve the validated destination across Google's OAuth round-trip to Pages.
+  const callbackUrl = () => location.origin + "/sign_in.html?handoff=1&return=" + encodeURIComponent(finsightReturnOrigin());
   document.querySelectorAll("[data-google-auth]").forEach(button => button.addEventListener("click", async () => {
     button.disabled=true;message("Redirecting to Google...");
-    const {error}=await client.auth.signInWithOAuth({provider:"google",options:{redirectTo:location.origin+"/sign_in.html?handoff=1"}});
+    const {error}=await client.auth.signInWithOAuth({provider:"google",options:{redirectTo:callbackUrl()}});
     if(error){message(error.message,true);button.disabled=false;}
   }));
   const {data:{session}}=await client.auth.getSession();
@@ -32,7 +50,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
   const signup=document.getElementById("signup-form");
   if(signup)signup.addEventListener("submit",async event=>{event.preventDefault();const btn=signup.querySelector('[type="submit"]');btn.disabled=true;const password=document.getElementById("password").value,confirm=document.getElementById("confirm-password").value;if(password!==confirm){message("Passwords do not match.",true);btn.disabled=false;return;}message("Creating your account...");
-    const {data,error}=await client.auth.signUp({email:document.getElementById("email").value.trim(),password,options:{emailRedirectTo:location.origin+"/sign_in.html?handoff=1"}});
+    const {data,error}=await client.auth.signUp({email:document.getElementById("email").value.trim(),password,options:{emailRedirectTo:callbackUrl()}});
     if(error){message(error.message,true);btn.disabled=false;return;}if(!data.session){message("Account created. Check your email to confirm, then sign in.");btn.disabled=false;return;}try{await finsightHandoff(data.session);}catch(e){message(e.message,true);btn.disabled=false;}
   });
   const reset=document.getElementById("forgot-password");if(reset)reset.addEventListener("click",async()=>{const email=document.getElementById("email").value.trim();if(!email){message("Enter your email address first.",true);return;}const {error}=await client.auth.resetPasswordForEmail(email,{redirectTo:location.origin+"/sign_in.html"});message(error?error.message:"Password reset email sent.",!!error);});
