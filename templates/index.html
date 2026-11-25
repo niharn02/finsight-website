@@ -787,9 +787,11 @@ aside[aria-label="Primary"]{transition:width .3s ease,transform .3s ease}
 /* Donut styling shared by Dashboard and Analytics.
    Filled sector outlines create a crisp ~1px gap; analytics arcs use butt caps. */
 .recharts-sector {
+  /* A slightly wider card-colored keyline separates slices while preserving
+     Recharts' rounded corner geometry, matching the supplied donut reference. */
   stroke: var(--card) !important;
-  stroke-width: 1.25px !important;
-  stroke-linejoin: miter !important;
+  stroke-width: 3.5px !important;
+  stroke-linejoin: round !important;
   transition: filter .2s ease, opacity .2s ease;
 }
 .fs-an-c .an-sl {
@@ -2651,14 +2653,9 @@ function setPrivacy(on,save=true){const was=PRIV.on;PRIV.on=on;document.body.cla
  if(save)try{localStorage.setItem('fs-privacy',on?'1':'0')}catch(e){}}
 try{if(localStorage.getItem('fs-privacy')==='1')setPrivacy(true,false)}catch(e){}
 
-/* Remove Recharts' baked-in rounded sector corners on the Dashboard donut. */
+/* Preserve Recharts' native rounded corners on Dashboard donut segments. */
 function squareDashboardDonut(root=document) {
-  root.querySelectorAll('svg.recharts-surface path.recharts-sector').forEach(path => {
-    const d = path.getAttribute('d');
-    if (d && /A\s*4(?:\.0*)?,\s*4(?:\.0*)?,\s*0,\s*0,\s*[01],/i.test(d)) {
-      path.setAttribute('d', d.replace(/A\s*4(?:\.0*)?,\s*4(?:\.0*)?,\s*0,\s*0,\s*[01],/gi, 'L'));
-    }
-  });
+  // Intentionally no-op: rounded sector-corner geometry is part of the design.
 }
 function syncDashboardDonutSelection() {
   const svg = document.querySelector('svg.recharts-surface');
