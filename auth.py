@@ -18,6 +18,7 @@ proof that financial data is isolated.
 from __future__ import annotations
 
 import os
+import psycopg
 from functools import wraps
 from uuid import UUID
 
@@ -25,6 +26,8 @@ import requests
 from flask import current_app, g, jsonify, request
 
 from user_context import user_context
+
+# Signup approval is checked on each protected API request, not merely in the UI.\ndef _approval_status(user_id: str) -> str:\n    admins = {x.strip() for x in os.getenv('FINANCE_ADMIN_USER_IDS', '').split(',') if x.strip()}\n    if user_id in admins:\n        return 'approved'\n    database_url = os.getenv('DATABASE_URL', '').strip()\n    if not database_url:\n        raise RuntimeError('DATABASE_URL is not configured')\n    with psycopg.connect(database_url) as conn:\n        row = conn.execute('SELECT status FROM public.finsight_access_requests WHERE user_id=%s', (user_id,)).fetchone()\n    return row[0] if row else 'pending'
 
 
 class SupabaseAuthConfigurationError(RuntimeError):
