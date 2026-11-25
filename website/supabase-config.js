@@ -26,7 +26,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   const message = (text, error=false) => { if(status){status.textContent=text;status.className="mt-3 text-sm "+(error?"text-red-600":"text-primary");} };
   document.querySelectorAll("[data-google-auth]").forEach(button => button.addEventListener("click", async () => {
     button.disabled=true;message("Redirecting to Google...");
-    const {error}=await client.auth.signInWithOAuth({provider:"google",options:{redirectTo:location.origin+"/sign_in.html?handoff=1"}});
+    const {error}=await client.auth.signInWithOAuth({provider:"google",options:{redirectTo:location.origin+"/sign_in.html?handoff=1&return="+encodeURIComponent(FINSIGHT_RENDER_URL)}});
     if(error){message(error.message,true);button.disabled=false;}
   }));
   const {data:{session}}=await client.auth.getSession();
@@ -38,7 +38,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   });
   const signup=document.getElementById("signup-form");
   if(signup)signup.addEventListener("submit",async event=>{event.preventDefault();const btn=signup.querySelector('[type="submit"]');btn.disabled=true;const password=document.getElementById("password").value,confirm=document.getElementById("confirm-password").value;if(password!==confirm){message("Passwords do not match.",true);btn.disabled=false;return;}message("Creating your account...");
-    const {data,error}=await client.auth.signUp({email:document.getElementById("email").value.trim(),password,options:{emailRedirectTo:location.origin+"/sign_in.html?handoff=1"}});
+    const {data,error}=await client.auth.signUp({email:document.getElementById("email").value.trim(),password,options:{emailRedirectTo:location.origin+"/sign_in.html?handoff=1&return="+encodeURIComponent(FINSIGHT_RENDER_URL)}});
     if(error){message(error.message,true);btn.disabled=false;return;}if(!data.session){message("Account created. Check your email to confirm, then sign in.");btn.disabled=false;return;}try{await finsightHandoff(data.session);}catch(e){message(e.message,true);btn.disabled=false;}
   });
   const reset=document.getElementById("forgot-password");if(reset)reset.addEventListener("click",async()=>{const email=document.getElementById("email").value.trim();if(!email){message("Enter your email address first.",true);return;}const {error}=await client.auth.resetPasswordForEmail(email,{redirectTo:location.origin+"/sign_in.html"});message(error?error.message:"Password reset email sent.",!!error);});
