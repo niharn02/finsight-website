@@ -2392,7 +2392,7 @@ function setChat(o){open=o;HID.forEach(c=>panel.classList.toggle(c,!o));panel.to
 fab.addEventListener('click',()=>setChat(!open));
 $('[aria-label="Close assistant"]',panel).addEventListener('click',()=>setChat(false));
 document.addEventListener('keydown',e=>{if(e.key==='Escape'&&open&&!modal.open)setChat(false)});
-const QUICK=['Total spent','Top categories','Budget status','Recent expenses','Saving tips'];
+const QUICK=['Total spent','Top categories','Budget status','Recent expenses'];
 let thread=null;
 let sessionId=null;
 
