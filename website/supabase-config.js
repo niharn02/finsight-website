@@ -1,7 +1,13 @@
 // Shared Supabase client setup for FinSight's static Cloudflare Pages website.
 const SUPABASE_URL = "https://iglfciogemwqpfhqhwkl.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Bhz5fQTPgDVLG2MToojskg_s2gZkug3";
-const FINSIGHT_RENDER_URL = "https://finsight-dashboard-xtk6.onrender.com";
+// Allow only known dashboard origins passed from the dashboard auth gate.
+const ALLOWED_DASHBOARD_ORIGINS = [
+  "https://finsight-dashboard-xtk6.onrender.com",
+  "https://finsight-dashboard-pr-3.onrender.com"
+];
+const ret = new URLSearchParams(location.search).get("return");
+const FINSIGHT_RENDER_URL = ALLOWED_DASHBOARD_ORIGINS.includes(ret) ? ret : ALLOWED_DASHBOARD_ORIGINS[0];
 window.supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
 // Exchange a Supabase token for a short-lived, one-time dashboard handoff.
