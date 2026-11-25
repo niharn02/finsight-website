@@ -44,7 +44,7 @@ async function finsightHandoff(session) {
   const payload = await response.json().catch(() => ({}));
 
   if (!response.ok || !payload.redirect_url) {
-    throw new Error(payload.error || "Dashboard sign-in handoff failed.");
+    const accessError = new Error(payload.error || "Dashboard sign-in handoff failed."); accessError.accessStatus = payload.access_status || null; throw accessError;
   }
 
   // Redirect only after the backend successfully generates the handoff URL.
@@ -108,7 +108,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     try {
       await finsightHandoff(session);
     } catch (e) {
-      message(e.message, true);
+      message(e.accessStatus === "pending" ? "Your FinSight account is awaiting administrator approval. You can sign in again after approval." : e.accessStatus === "rejected" ? "Your access request was rejected. Please contact the administrator." : e.accessStatus === "revoked" ? "Your FinSight access has been revoked. Please contact the administrator." : e.message, true);
     }
   }
 
