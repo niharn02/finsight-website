@@ -38,6 +38,7 @@ from auth import require_supabase_auth
 from database_postgres import initialise_database
 from auth_handoff import handoff_bp
 from chatbot.memory import initialise_checkpointer
+from chatbot.memory import initialise_checkpointer
 
 # Initialise Flask application
 app = Flask(__name__)
