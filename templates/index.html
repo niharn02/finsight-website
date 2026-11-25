@@ -1977,7 +1977,15 @@ const relNodes=[];(function(){const w=document.createTreeWalker(document.body,No
 function relabel(){const l=MLAB();relNodes.forEach(n=>{if(n.isConnected)n.nodeValue=n.__tpl.replace(/\{M\}/g,l)});
  const hp=[...document.querySelectorAll('header p')].find(p=>/^Today,/.test(p.textContent));if(hp){const t=new Date();hp.textContent=`Today, ${t.getDate()} ${MS[t.getMonth()]} ${t.getFullYear()}`}}
 $('#mf-m').value=String(MFm);[$('#an-from'),$('#an-to'),$('#add-date')].forEach(i=>{i.max=AN_END});$('#add-date').min='2000-01-01';$('#add-date').value=AN_END;$('#an-from').value=AN_CUR;$('#an-to').value=AN_END;
-function renderAll(){setPeriodVars();fillCats();renderDash();relabel();renderTx();renderAn();renderBu();ntRefresh()}
+function renderAll(){
+ // Keep independent dashboard sections rendering even if one section fails.
+ // This prevents a chart or analytics error from blanking the Budgets page.
+ setPeriodVars();
+ const renderers=[['categories',fillCats],['dashboard',renderDash],['transactions',renderTx],['analytics',renderAn],['budgets',renderBu],['notifications',ntRefresh]];
+ for(const [section,renderer] of renderers){try{renderer()}catch(error){console.error('FinSight section rendering failed:',section,error);if(section==='budgets'){$('#bu-hero').innerHTML='<p class="text-sm">Budget overview is temporarily unavailable. Please refresh.</p>';$('#bu-kpis').innerHTML='';$('#bu-grid').innerHTML=''}}
+ }
+ try{relabel()}catch(error){console.error('FinSight transaction labels could not be updated.',error)}
+}
 async function loadBudgetAllocations(){
  const month=`${String(DM()+1).padStart(2,'0')}-${selectedYear()}`;
  const response=await fetch(`/api/budgets/categories?month=${encodeURIComponent(month)}`);
