@@ -30,9 +30,9 @@ def _db():
     return psycopg.connect(url)
 
 
-def _cors(response):
+def _cors(response, origin=CLOUDFLARE_ORIGIN):
     # Restrict browser access to the static authentication site.
-    response.headers["Access-Control-Allow-Origin"] = CLOUDFLARE_ORIGIN
+    response.headers["Access-Control-Allow-Origin"] = origin
     response.headers["Access-Control-Allow-Headers"] = "Content-Type"
     response.headers["Access-Control-Allow-Methods"] = "POST, OPTIONS"
     response.headers["Vary"] = "Origin"
@@ -78,7 +78,7 @@ def exchange_handoff():
         return _cors(jsonify(error="Origin not allowed")), 403
     code = (request.get_json(silent=True) or {}).get("code", "")
     if not isinstance(code, str) or not code:
-        return _cors(jsonify(error="Invalid handoff code")), 400
+        return _cors(jsonify(error="Invalid handoff code"), request.headers.get("Origin", "")), 400
     code_hash = hashlib.sha256(code.encode()).hexdigest()
     # DELETE ... RETURNING makes consumption atomic and strictly single-use.
     with _db() as conn:
@@ -87,12 +87,12 @@ def exchange_handoff():
             (code_hash,),
         ).fetchone()
     if not row:
-        return _cors(jsonify(error="Code expired or already used")), 401
+        return _cors(jsonify(error="Code expired or already used"), request.headers.get("Origin", "")), 401
     try:
         token = _fernet().decrypt(row[0].encode()).decode()
     except InvalidToken:
-        return _cors(jsonify(error="Handoff could not be completed")), 500
-    return _cors(jsonify(access_token=token))
+        return _cors(jsonify(error="Handoff could not be completed"), request.headers.get("Origin", "")), 500
+    return _cors(jsonify(access_token=token), request.headers.get("Origin", ""))
 
 
 @handoff_bp.route("/auth/handoff/consume", methods=["GET"])
