@@ -94,3 +94,20 @@ def access_notifications():
     with _db() as conn:
         rows=conn.execute("SELECT notification_id,message,created_at,read_at FROM public.finsight_access_notifications WHERE user_id=%s ORDER BY created_at DESC LIMIT 50",(user["id"],)).fetchall()
     return jsonify(notifications=[dict(id=r[0],message=r[1],created_at=str(r[2]),read_at=str(r[3]) if r[3] else None) for r in rows])
+
+# Permit requests from the static Cloudflare site and the dashboard previews.
+_ALLOWED_ORIGINS = {
+    "https://finsight-website.pages.dev",
+    "https://finsight-dashboard-xtk6.onrender.com",
+    "https://finsight-dashboard-pr-3.onrender.com",
+}
+
+@approval_bp.after_request
+def _approval_cors(response):
+    origin = request.headers.get("Origin", "")
+    if origin in _ALLOWED_ORIGINS:
+        response.headers["Access-Control-Allow-Origin"] = origin
+        response.headers["Access-Control-Allow-Headers"] = "Authorization, Content-Type"
+        response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
+        response.headers["Vary"] = "Origin"
+    return response
