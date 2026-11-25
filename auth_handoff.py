@@ -73,9 +73,9 @@ def start_handoff():
 @handoff_bp.route("/auth/handoff/exchange", methods=["POST", "OPTIONS"])
 def exchange_handoff():
     if request.method == "OPTIONS":
-        return _cors(make_response("", 204))
+        return _cors(make_response("", 204), request.headers.get("Origin", ""))
     if request.headers.get("Origin") not in ALLOWED_DASHBOARD_ORIGINS:
-        return _cors(jsonify(error="Origin not allowed")), 403
+        return _cors(jsonify(error="Origin not allowed"), request.headers.get("Origin", "")), 403
     code = (request.get_json(silent=True) or {}).get("code", "")
     if not isinstance(code, str) or not code:
         return _cors(jsonify(error="Invalid handoff code"), request.headers.get("Origin", "")), 400
