@@ -1716,7 +1716,8 @@ function anRender(roll=true){
   +kcard('Largest category',top&&top.v?esc(top.c):'—','target',top&&top.v?`${(top.v/D.total*100).toFixed(1)}% of spend`:'No spend');
 
 
- // ---- Insight engine: every card is computed from the filtered transactions + budget data ----
+ // DEBUG_BRANCH_SOURCE: security/langgraph-init-and-data-isolation-review
+// ---- Insight engine: every card is computed from the filtered transactions + budget data ----
  {
   const cards=[],pct=(a,b)=>b?a/b*100:0,dim=k=>new Date(+k.slice(0,4),+k.slice(5,7),0).getDate();
   const add=(prio,tone,icon,title,stat,body)=>cards.push({prio,tone,icon,title,stat,body});
