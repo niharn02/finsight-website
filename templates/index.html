@@ -1707,7 +1707,8 @@ function anCompute(){
  return D}
 const fdate=d=>{const x=new Date(d+'T00:00:00');return `${x.getDate()} ${MS[x.getMonth()]} ${x.getFullYear()}`};
 function anRender(roll=true){
- anSyncOpts();const D=anD=anCompute();
+ anSyncOpts();
+ const D=anD=anCompute();
  const {rangeValid,from,to}=D; // Use computed range values explicitly within the renderer.
  {const f=D.from<=D.to?fdate(D.from):'No matching dates',t=D.from<=D.to?fdate(D.to):'';$('#an-sub').textContent=`${f}${t&&t!==f?' to '+t:''} · ${D.global.month<0?'Year '+D.global.year:MF[D.global.month]+' '+D.global.year}`;$('#an-period-notice').textContent=`Reporting period: ${D.global.month<0?'All months in '+D.global.year:MF[D.global.month]+' '+D.global.year}. The KPIs, category share, weekly and daily patterns, payment methods, and top expenses follow this top-bar selection. The monthly trend ends at the selected period and shows the previous ${anTrN-1} month${anTrN===2?'':'s'} as context.`}
  $('#an-fsum').textContent=`${D.n} ${D.n===1?'transaction':'transactions'} · ${inr(D.total)}`;
