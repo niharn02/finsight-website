@@ -779,7 +779,7 @@ aside[aria-label="Primary"]{transition:width .3s ease,transform .3s ease}
 
 /* Date filter sizing is defined with the single-row transaction toolbar above. */
 /* Rounded, separated donut arcs based on the supplied reference style. */
-.fs-an-c .an-sl{fill:none!important;stroke-linecap:round!important;stroke-linejoin:round!important;pointer-events:stroke;cursor:pointer}
+.fs-an-c .an-sl{pointer-events:visiblePainted;cursor:pointer}
 .fs-an-c .an-sl.is-hl{opacity:1!important}
 .fs-an-c .an-sl:not(.is-hl){transition:opacity .2s ease,filter .2s ease}
 
@@ -795,8 +795,6 @@ aside[aria-label="Primary"]{transition:width .3s ease,transform .3s ease}
   transition: filter .2s ease, opacity .2s ease;
 }
 .fs-an-c .an-sl {
-  stroke-linecap: butt !important;
-  stroke-linejoin: miter !important;
   transition: filter .2s ease, opacity .2s ease;
 }
 /* Hovering an arc softens its neighbours without hiding them. */
@@ -842,7 +840,7 @@ svg.hov .recharts-sector.is-hl,
 .fs-an-c svg.hov .an-sl:not(.is-hl),
 .fs-an-c .an-sl.is-blur {
   opacity: .8 !important;
-  filter: var(--dn-blur, blur(2.4px)) !important;
+  filter: var(--dn-blur, blur(1.1px)) !important;
   visibility: visible !important;
 }
 .fs-an-c svg.hov .an-sl.is-hl,
@@ -852,7 +850,7 @@ svg.hov .recharts-sector.is-hl,
   filter: none !important;
   visibility: visible !important;
 }
-.fs-an-c svg.hov .an-sl.is-sel:not(.is-hl) { filter: var(--dn-blur, blur(2.4px)) !important; opacity: .8 !important; }
+.fs-an-c svg.hov .an-sl.is-sel:not(.is-hl) { filter: var(--dn-blur, blur(1.1px)) !important; opacity: .8 !important; }
 .fs-an-c svg.hov .an-sl.is-sel.is-hl { filter: none !important; opacity: 1 !important; }
 
 /* ===== Insight cards: real tinted backgrounds (Tailwind tone classes are not in the compiled sheet) ===== */
@@ -1579,14 +1577,17 @@ let _dnU=0;
 function sweepDonut(g,dur=1600){
  const arcs=[...g.querySelectorAll('.an-sl')];if(!arcs.length)return;
  if(matchMedia('(prefers-reduced-motion:reduce)').matches)return;
- const span=a=>[parseFloat(a.dataset.a0),parseFloat(a.dataset.a1)];
+ const svg=g.ownerSVGElement,wp=svg&&svg.querySelector('.fs-sweep');if(!wp)return;
+ const cx=+g.dataset.cx,cy=+g.dataset.cy,Rr=+g.dataset.rr;
  const apply=p=>{
-  g.querySelectorAll('.an-sl,.fs-arc-outline').forEach(a=>{
-   const t=a.classList.contains('fs-arc-outline')?a.nextElementSibling:a;if(!t||!t.dataset.a0)return;
-   const [a0,a1]=span(t),f=Math.max(0,Math.min(1,(p-a0)/Math.max(a1-a0,1e-6)));
-   a.setAttribute('stroke-dasharray',f+' 2')})};
- const clear=()=>g.querySelectorAll('.an-sl,.fs-arc-outline').forEach(a=>a.removeAttribute('stroke-dasharray'));
- g._sweepId=(g._sweepId||0)+1;const id=g._sweepId,t0=performance.now();apply(0);
+  const th=Math.max(0,Math.min(1,p))*Math.PI*2;
+  if(th<=0){wp.setAttribute('d','M0 0');return}
+  if(th>=Math.PI*2-1e-4){wp.setAttribute('d',`M${cx-Rr} ${cy}A${Rr} ${Rr} 0 1 1 ${cx+Rr} ${cy}A${Rr} ${Rr} 0 1 1 ${cx-Rr} ${cy}Z`);return}
+  const ex=cx+Rr*Math.sin(th),ey=cy-Rr*Math.cos(th);
+  wp.setAttribute('d',`M${cx} ${cy}L${cx} ${cy-Rr}A${Rr} ${Rr} 0 ${th>Math.PI?1:0} 1 ${ex} ${ey}Z`)};
+ const clear=()=>g.removeAttribute('clip-path');
+ g._sweepId=(g._sweepId||0)+1;const id=g._sweepId,t0=performance.now();
+ apply(0);g.setAttribute('clip-path','url(#'+g.dataset.mask+')');
  const step=now=>{
   if(!g.isConnected||g._sweepId!==id)return;
   const k=Math.min(1,(now-t0)/dur),p=1-Math.pow(1-k,3);
@@ -1595,22 +1596,41 @@ function sweepDonut(g,dur=1600){
  requestAnimationFrame(step)}
 function donut(w,h,items,sel,fill=.92){
  const fid='dnb'+(++_dnU);
- // Draw each category as a clean arc with flat ends and a 1px gap.
- // Butt line caps keep segment edges square; the angular gap separates categories.
+ // Each category is a filled ring segment with softly rounded corners and a small, constant-width gap.
+ // Corner radius shrinks automatically on very small slices (e.g. Entertainment, Health) so they stay clean.
  const positive=items.filter(i=>i.v>0),tot=positive.reduce((a,i)=>a+i.v,0);
  const cx=w/2,cy=h/2,R=h/2*fill,r=R*.729,mid=(R+r)/2,thickness=R-r;
- const gapAngle=1/Math.max(mid,1); // Approximately 1px of visible space between adjacent categories.
+ const GAP=3,BASE_CR=Math.min(7,thickness*.22);
+ const f=n=>+n.toFixed(3),P=(x,y)=>f(x)+' '+f(y);
+ const seg=(a0,a1)=>{
+  const sw=a1-a0,g2=GAP/2;
+  // corner radius limited by the slice's own width (measured on the narrower inner edge)
+  let cr=Math.min(BASE_CR,(sw*r-GAP)*.32,thickness*.3);
+  if(!(cr>.4))cr=0;
+  const edge=(ang,sgn)=>{ // sgn=+1 start edge (offset toward +t), -1 end edge (offset toward -t)
+   const u=[Math.cos(ang),Math.sin(ang)],t=[-Math.sin(ang),Math.cos(ang)],o=sgn*g2,k=o+sgn*cr;
+   const pt=(s,off)=>[s*u[0]+off*t[0],s*u[1]+off*t[1]];
+   const sO=Math.sqrt(Math.max(0,(R-cr)**2-k*k)),sI=Math.sqrt(Math.max(0,(r+cr)**2-k*k));
+   const cO=pt(sO,k),cI=pt(sI,k);
+   return {eO:pt(sO,o),eI:pt(sI,o),aO:[cO[0]*R/(R-cr||1),cO[1]*R/(R-cr||1)],aI:[cI[0]*r/(r+cr||1),cI[1]*r/(r+cr||1)]};
+  };
+  const S=edge(a0,1),E=edge(a1,-1);
+  const sa=Math.atan2(S.aO[1],S.aO[0]),ea=Math.atan2(E.aO[1],E.aO[0]);
+  let span=ea-sa;while(span<0)span+=Math.PI*2;
+  const large=span>Math.PI?1:0,C=cr?`A ${f(cr)} ${f(cr)} 0 0 1 `:'L ';
+  const X=(q)=>P(cx+q[0],cy+q[1]);
+  return `M ${X(S.eI)} L ${X(S.eO)} ${C}${X(S.aO)} A ${f(R)} ${f(R)} 0 ${large} 1 ${X(E.aO)} ${C}${X(E.eO)} L ${X(E.eI)} ${C}${X(E.aI)} A ${f(r)} ${f(r)} 0 ${large} 0 ${X(S.aI)} ${C}${X(S.eI)} Z`;
+ };
  let angle=-Math.PI/2;
- const sl=positive.map((i,index)=>{
+ const sl=positive.map(i=>{
   const rawSweep=i.v/tot*Math.PI*2,fa0=(angle+Math.PI/2)/(Math.PI*2),fa1=fa0+rawSweep/(Math.PI*2);
-  const start=angle+gapAngle/2,end=angle+rawSweep-gapAngle/2;
+  const d=positive.length===1
+   ?`M ${P(cx+R,cy)} A ${f(R)} ${f(R)} 0 1 1 ${P(cx-R,cy)} A ${f(R)} ${f(R)} 0 1 1 ${P(cx+R,cy)} Z M ${P(cx+r,cy)} A ${f(r)} ${f(r)} 0 1 0 ${P(cx-r,cy)} A ${f(r)} ${f(r)} 0 1 0 ${P(cx+r,cy)} Z`
+   :seg(angle,angle+rawSweep);
   angle+=rawSweep;
-  const x1=cx+mid*Math.cos(start),y1=cy+mid*Math.sin(start);
-  const x2=cx+mid*Math.cos(end),y2=cy+mid*Math.sin(end);
-  const large=(end-start)>Math.PI?1:0;
-  return `<path class="an-sl${sel?(i.k===sel?' is-sel':' is-blur'):''}" pathLength="1" data-a0="${fa0.toFixed(5)}" data-a1="${fa1.toFixed(5)}" data-k="${esc(i.k)}" d="M ${x1} ${y1} A ${mid} ${mid} 0 ${large} 1 ${x2} ${y2}" fill="none" stroke="${i.c}" stroke-width="${thickness}" stroke-linecap="butt" stroke-linejoin="butt"${tipA(esc(i.l),inr(i.v)+' · '+(i.v/tot*100).toFixed(1)+'%')}/>`;
+  return `<path class="an-sl${sel?(i.k===sel?' is-sel':' is-blur'):''}" data-a0="${fa0.toFixed(5)}" data-a1="${fa1.toFixed(5)}" data-k="${esc(i.k)}" d="${d}" fill="${i.c}" fill-rule="evenodd" stroke="none"${tipA(esc(i.l),inr(i.v)+' · '+(i.v/tot*100).toFixed(1)+'%')}/>`;
  }).join('');
- return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" role="img" aria-label="Donut chart" style="--dn-blur:url(#${fid})"><defs><filter id="${fid}" filterUnits="userSpaceOnUse" x="-40" y="-40" width="${w+80}" height="${h+80}" color-interpolation-filters="sRGB"><feGaussianBlur stdDeviation="2.4"/></filter></defs><g class="an-pie">${sl}</g></svg>`;
+ return `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" role="img" aria-label="Donut chart" style="--dn-blur:url(#${fid})"><defs><filter id="${fid}" filterUnits="userSpaceOnUse" x="-40" y="-40" width="${w+80}" height="${h+80}" color-interpolation-filters="sRGB"><feGaussianBlur stdDeviation="1.1"/></filter><clipPath id="${fid}m"><path class="fs-sweep" d="M0 0"/></clipPath></defs><g class="an-pie" data-mask="${fid}m" data-cx="${cx}" data-cy="${cy}" data-rr="${R+6}">${sl}</g></svg>`;
 }
 const lgd=(items)=>`<div class="fs-an-lg">${items.map(([c,t,d])=>`<span><i style="background:${c}"></i>${t}</span>`).join('')}</div>`;
 let anTrN=3;
@@ -2681,10 +2701,11 @@ function syncWhiteArcOutlines(root=document) {
       outline = path.cloneNode(false);
       outline.removeAttribute('data-tip');
       outline.setAttribute('class', 'fs-arc-outline');
+      outline.setAttribute('fill', '#fff');
       outline.setAttribute('stroke', '#fff');
-      outline.setAttribute('stroke-width', String((parseFloat(path.getAttribute('stroke-width')) || 12) + 3));
-      outline.setAttribute('stroke-linecap', 'butt');
-      outline.setAttribute('stroke-linejoin', 'miter');
+      outline.setAttribute('stroke-width', '3');
+      outline.setAttribute('stroke-linecap', 'round');
+      outline.setAttribute('stroke-linejoin', 'round');
       outline.setAttribute('pointer-events', 'none');
       outline.removeAttribute('tabindex');
       path.parentNode.insertBefore(outline, path);
