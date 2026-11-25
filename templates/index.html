@@ -1694,8 +1694,8 @@ function anCompute(){
  D.budgetCats=budgetNames.map(c=>({c,budget:Number(CATS[c]?.limit)||0,actual:budgetActualRows.filter(t=>t.cat===c).reduce((sum,t)=>sum+t.amt,0)}))
   .filter(r=>r.budget>0||r.actual>0).sort((a,b)=>Math.max(b.budget,b.actual)-Math.max(a.budget,a.actual));
  $('#an-budget-chart-sub').textContent=`Allocated budget vs actual spending for ${MF[DM()]} ${selectedYear()}`;
- $('#an-weekly-sub').textContent=`Weekly totals · ${fdate(rangeValid?from:gp.from)} to ${fdate(rangeValid?to:gp.to)}`;
- D.avgLine=months.length?D.total/months.length:0;
+ $('#an-weekly-sub').textContent=`Weekly totals · ${fdate(D.from<=D.to?D.from:gp.from)} to ${fdate(D.from<=D.to?D.to:gp.to)}`;
+ D.avgLine=D.months.length?D.total/D.months.length:0;
  const done=months.filter(x=>x.full);D.avgMonth=(done.length?done:months).reduce((a,x)=>a+x.v,0)/Math.max(1,(done.length?done:months).length);
  D.peak=months.reduce((b,x)=>!b||x.v>b.v?x:b,null);
  D.cats=CL.filter(c=>!anF.cats.size||anF.cats.has(c)).map(c=>({c,n:rows.filter(t=>t.cat===c).length,v:rows.filter(t=>t.cat===c).reduce((a,t)=>a+t.a,0)})).filter(r=>r.v>0).sort((a,b)=>b.v-a.v);
