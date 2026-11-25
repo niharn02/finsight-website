@@ -71,7 +71,9 @@ def start_handoff():
             return _cors(jsonify(error='Approval service unavailable')), 503
         if approval_status != 'approved':
             return _cors(jsonify(error='FinSight access is '+approval_status+'. Please wait for administrator approval.', access_status=approval_status)), 403
-\n    # Code is random, short-lived and stored by hash; the token is encrypted at rest.
+
+
+    # Code is random, short-lived and stored by hash; the token is encrypted at rest.
     code = secrets.token_urlsafe(32)
     code_hash = hashlib.sha256(code.encode()).hexdigest()
     encrypted_token = _fernet().encrypt(access_token.encode()).decode()
