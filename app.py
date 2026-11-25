@@ -235,7 +235,8 @@ def profile():
             "name": user.get("name") or (user.get("email") or "").split("@")[0] or "User",
             "email": user.get("email") or "Email unavailable",
             # OAuth metadata may expose the Google profile image under these keys.
-            "avatar_url": (user.get("user_metadata") or {}).get("avatar_url") or (user.get("user_metadata") or {}).get("picture") or (user.get("user_metadata") or {}).get("avatar") or "",
+            # Prefer the verified avatar URL exposed by the auth helper.
+            "avatar_url": user.get("avatar_url") or "",
         },
     }), 200
 
