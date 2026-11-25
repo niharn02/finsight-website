@@ -15,7 +15,7 @@ async function finsightHandoff(session) {
   if (!session?.access_token) throw new Error("No active authentication session.");
   const response = await fetch(FINSIGHT_RENDER_URL + "/auth/handoff/start", {
     method: "POST", headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ access_token: session.access_token })
+    body: JSON.stringify({ access_token: session.access_token, return_origin: FINSIGHT_RENDER_URL })
   });
   const payload = await response.json().catch(() => ({}));
   if (!response.ok || !payload.redirect_url) throw new Error(payload.error || "Dashboard sign-in handoff failed.");
