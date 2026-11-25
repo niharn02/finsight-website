@@ -60,7 +60,18 @@ def start_handoff():
     except Exception:
         return _cors(jsonify(error="Unable to verify authentication")), 400
 
-    # Gate dashboard handoff until the account has explicitly been approved.\n    admins = {x.strip() for x in os.getenv('FINANCE_ADMIN_USER_IDS', '').split(',') if x.strip()}\n    if user['id'] not in admins:\n        try:\n            with _db() as conn:\n                status_row = conn.execute('SELECT status FROM public.finsight_access_requests WHERE user_id=%s', (user['id'],)).fetchone()\n                approval_status = status_row[0] if status_row else 'pending'\n        except Exception:\n            return _cors(jsonify(error='Approval service unavailable')), 503\n        if approval_status != 'approved':\n            return _cors(jsonify(error='FinSight access is '+approval_status+'. Please wait for administrator approval.', access_status=approval_status)), 403\n\n    # Code is random, short-lived and stored by hash; the token is encrypted at rest.
+    # Gate dashboard handoff until the account has explicitly been approved.
+    admins = {x.strip() for x in os.getenv('FINANCE_ADMIN_USER_IDS', '').split(',') if x.strip()}
+    if user['id'] not in admins:
+        try:
+            with _db() as conn:
+                status_row = conn.execute('SELECT status FROM public.finsight_access_requests WHERE user_id=%s', (user['id'],)).fetchone()
+                approval_status = status_row[0] if status_row else 'pending'
+        except Exception:
+            return _cors(jsonify(error='Approval service unavailable')), 503
+        if approval_status != 'approved':
+            return _cors(jsonify(error='FinSight access is '+approval_status+'. Please wait for administrator approval.', access_status=approval_status)), 403
+\n    # Code is random, short-lived and stored by hash; the token is encrypted at rest.
     code = secrets.token_urlsafe(32)
     code_hash = hashlib.sha256(code.encode()).hexdigest()
     encrypted_token = _fernet().encrypt(access_token.encode()).decode()
