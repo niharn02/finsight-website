@@ -87,6 +87,11 @@ def get_supabase_user(access_token: str) -> dict:
         "id": user_id,
         "email": user.get("email"),
         "name": metadata.get("full_name") or metadata.get("name") or metadata.get("fullName"),
+        # Include the verified OAuth profile photo for the dashboard profile UI.
+        # Supabase commonly stores Google's picture URL in "picture", but
+        # providers/clients may also populate avatar_url or avatar.
+        "avatar_url": metadata.get("avatar_url") or metadata.get("picture") or metadata.get("avatar") or "",
+        "user_metadata": metadata,
         "role": user.get("role"),
     }
 
