@@ -80,10 +80,13 @@ def get_supabase_user(access_token: str) -> dict:
     except (ValueError, TypeError, KeyError, requests.JSONDecodeError) as exc:
         raise PermissionError("Supabase returned an invalid user identity.") from exc
 
-    # Return only the small identity payload needed by the application.
+    # Return verified identity fields needed by the profile UI. Keep this
+    # payload limited to non-sensitive display information from Supabase Auth.
+    metadata = user.get("user_metadata") or {}
     return {
         "id": user_id,
         "email": user.get("email"),
+        "name": metadata.get("full_name") or metadata.get("name") or metadata.get("fullName"),
         "role": user.get("role"),
     }
 
