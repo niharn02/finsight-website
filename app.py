@@ -37,6 +37,7 @@ from datetime import datetime, timezone, timedelta
 from auth import require_supabase_auth
 from database_postgres import initialise_database
 from auth_handoff import handoff_bp
+from chatbot.memory import initialise_checkpointer
 
 # Initialise Flask application
 app = Flask(__name__)
@@ -1317,4 +1318,4 @@ def chat_history():
 # -------------------------------------------------
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=False)
