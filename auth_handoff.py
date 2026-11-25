@@ -10,6 +10,10 @@ from auth import get_supabase_user
 handoff_bp = Blueprint("auth_handoff", __name__)
 CLOUDFLARE_ORIGIN = "https://finsight-website.pages.dev"
 RENDER_ORIGIN = "https://finsight-dashboard-xtk6.onrender.com"
+ALLOWED_DASHBOARD_ORIGINS = {
+    RENDER_ORIGIN,
+    "https://finsight-dashboard-pr-3.onrender.com",
+}
 
 
 def _fernet():
@@ -42,7 +46,7 @@ def start_handoff():
     if request.headers.get("Origin") != CLOUDFLARE_ORIGIN:
         return _cors(jsonify(error="Origin not allowed")), 403
     payload = request.get_json(silent=True) or {}
-    access_token = payload.get("access_token")
+    access_token = payload.get("access_token")\n    target_origin = payload.get("return_origin", RENDER_ORIGIN)\n    if target_origin not in ALLOWED_DASHBOARD_ORIGINS:\n        target_origin = RENDER_ORIGIN
     try:
         user = get_supabase_user(access_token)
     except PermissionError as exc:
@@ -63,14 +67,14 @@ def start_handoff():
             "INSERT INTO finsight_auth_handoff(code_hash,user_id,encrypted_token,expires_at) VALUES (%s,%s,%s,%s)",
             (code_hash, user["id"], encrypted_token, expiry),
         )
-    return _cors(jsonify(redirect_url=f"{RENDER_ORIGIN}/auth/handoff/consume?code={code}"))
+    return _cors(jsonify(redirect_url=f"{target_origin}/auth/handoff/consume?code={code}"))
 
 
 @handoff_bp.route("/auth/handoff/exchange", methods=["POST", "OPTIONS"])
 def exchange_handoff():
     if request.method == "OPTIONS":
         return _cors(make_response("", 204))
-    if request.headers.get("Origin") != RENDER_ORIGIN:
+    if request.headers.get("Origin") not in ALLOWED_DASHBOARD_ORIGINS:
         return _cors(jsonify(error="Origin not allowed")), 403
     code = (request.get_json(silent=True) or {}).get("code", "")
     if not isinstance(code, str) or not code:
