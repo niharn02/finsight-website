@@ -46,7 +46,10 @@ def start_handoff():
     if request.headers.get("Origin") != CLOUDFLARE_ORIGIN:
         return _cors(jsonify(error="Origin not allowed")), 403
     payload = request.get_json(silent=True) or {}
-    access_token = payload.get("access_token")\n    target_origin = payload.get("return_origin", RENDER_ORIGIN)\n    if target_origin not in ALLOWED_DASHBOARD_ORIGINS:\n        target_origin = RENDER_ORIGIN
+    access_token = payload.get("access_token")
+    target_origin = payload.get("return_origin", RENDER_ORIGIN)
+    if target_origin not in ALLOWED_DASHBOARD_ORIGINS:
+        target_origin = RENDER_ORIGIN
     try:
         user = get_supabase_user(access_token)
     except PermissionError as exc:
