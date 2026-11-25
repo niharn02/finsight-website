@@ -1486,24 +1486,23 @@ function syncProfileUI(){
  }
 }
 async function loadGoogleAccountProfile(){
- // The Supabase client is created by the authentication bootstrap when Google sign-in is enabled.
- const client=window.supabaseClient;
- if(!client?.auth?.getUser){syncProfileUI();return}
+ // Load display identity from the authenticated backend, which verifies the
+ // access token and retrieves the profile directly from Supabase Auth.
  try{
-  const {data,error}=await client.auth.getUser();
-  if(error)throw error;
-  const user=data?.user;
-  if(!user){syncProfileUI();return}
-  const metadata=user.user_metadata||{};
-  profileState.name=metadata.full_name||metadata.name||metadata.fullName||user.email?.split('@')[0]||'Google account';
+  const response=await fetch('/api/profile',{headers:{'Accept':'application/json'}});
+  const payload=await response.json();
+  if(!response.ok||payload.status!=='success')throw new Error(payload.message||'Unable to load account details.');
+  const user=payload.data||{};
+  profileState.name=user.name||'User';
   profileState.email=user.email||'Email unavailable';
-  syncProfileUI();
  }catch(error){
-  console.warn('Could not load the signed-in Google account details:',error);
-  syncProfileUI();
+  console.warn('Could not load signed-in account details.');
+  profileState.name='User';
+  profileState.email='Email unavailable';
  }
+ syncProfileUI();
 }
-// Display the Google identity after the authentication client is available.
+// Render the placeholder immediately, then replace it with verified identity.
 syncProfileUI();
 loadGoogleAccountProfile();
 $$('[data-toast]').forEach(b=>b.addEventListener('click',()=>toast(b.dataset.toast)));
