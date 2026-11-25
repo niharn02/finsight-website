@@ -24,7 +24,6 @@ from chatbot.scoped_database import (
 )
 import uuid
 from uuid import UUID
-import traceback
 from langchain_core.messages import HumanMessage
 from chatbot.graph import build_chatbot_graph
 from chatbot.safety import (
@@ -37,6 +36,7 @@ from datetime import datetime, timezone, timedelta
 from auth import require_supabase_auth
 from database_postgres import initialise_database
 from auth_handoff import handoff_bp
+from chatbot.memory import initialise_checkpointer
 
 # Initialise Flask application
 app = Flask(__name__)
@@ -47,6 +47,9 @@ app.register_blueprint(handoff_bp)
 
 # Initialise database
 initialise_database()
+
+# Initialize LangGraph checkpoint storage during startup, not on first chat.
+initialise_checkpointer()
 
 
 # -------------------------------------------------
@@ -1058,7 +1061,6 @@ def chat():
     and return the assistant response with the persistent session ID.
     """
 
-    print("[DEBUG] /api/chat route was reached", flush=True)
     try:
         # 1. Read and validate the incoming JSON request
         data = request.get_json(silent=True)
@@ -1145,14 +1147,12 @@ def chat():
                 previous_user_turns
             )
 
-            print("[DEBUG] About to invoke LangGraph", flush=True)
 
             result = chatbot_graph.invoke(
                 {"messages": [HumanMessage(content=message.strip())]},
                 config=thread_config
             )
 
-            print("[DEBUG] LangGraph invocation completed", flush=True)
             # Log the result structure only, not the financial message content
             app.logger.info(
                 "Chatbot workflow completed. Result type: %s, messages: %s",

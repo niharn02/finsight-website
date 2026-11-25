@@ -45,3 +45,10 @@ def get_checkpointer() -> PostgresSaver:
         _connection = connection
         _checkpointer = saver
         return _checkpointer
+
+
+
+def initialise_checkpointer() -> None:
+    """Initialize persistent checkpoint tables during backend startup."""
+    # Fail startup if the configured database or schema cannot initialize memory.
+    get_checkpointer()
