@@ -218,6 +218,20 @@ def health_check():
     }), 200
 
 
+# Return the authenticated user's display identity for the dashboard.
+@app.route("/api/profile", methods=["GET"])
+@require_supabase_auth
+def profile():
+    user = g.supabase_user
+    return jsonify({
+        "status": "success",
+        "data": {
+            "name": user.get("name") or (user.get("email") or "").split("@")[0] or "User",
+            "email": user.get("email") or "Email unavailable",
+        },
+    }), 200
+
+
 # Retrieve all expense categories
 @app.route("/api/categories", methods=["GET"])
 @require_supabase_auth
