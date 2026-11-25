@@ -35,14 +35,16 @@ import calendar
 from datetime import datetime, timezone, timedelta
 from auth import require_supabase_auth
 from database_postgres import initialise_database
-from auth_handoff import handoff_bp\nfrom signup_approval import approval_bp
+from auth_handoff import handoff_bp
+from signup_approval import approval_bp
 from chatbot.memory import initialise_checkpointer
 
 # Initialise Flask application
 app = Flask(__name__)
 
 # Register the short-lived authentication handoff routes.
-app.register_blueprint(handoff_bp)\napp.register_blueprint(approval_bp)
+app.register_blueprint(handoff_bp)
+app.register_blueprint(approval_bp)
 
 
 # Initialise database
