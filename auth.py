@@ -24,6 +24,8 @@ from uuid import UUID
 import requests
 from flask import current_app, g, jsonify, request
 
+from user_context import user_context
+
 
 class SupabaseAuthConfigurationError(RuntimeError):
     """Raised when required Supabase Auth configuration is missing."""
@@ -129,9 +131,13 @@ def require_supabase_auth(view_function):
                 "message": "Unable to verify your login right now. Please try again.",
             }), 503
 
-        # Downstream routes must use this verified identity, never client input.
+        # Downstream routes use this verified identity, never client input.
         g.supabase_user = user
         g.user_id = user["id"]
-        return view_function(*args, **kwargs)
+
+        # Establish the ContextVar identity for all scoped database adapters.
+        # The context manager restores it even when the route raises an error.
+        with user_context(user["id"]):
+            return view_function(*args, **kwargs)
 
     return wrapped_view
