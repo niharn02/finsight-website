@@ -206,7 +206,13 @@ def calculate_spending_projection(budget_month, monthly_summary):
 @app.route("/analytics.html")
 @app.route("/budget.html")
 def home():
-    return send_from_directory(app.template_folder, "index.html")
+    # Always serve the current dashboard HTML instead of allowing browsers or
+    # intermediary caches to reuse an older inline-JavaScript version.
+    response = send_from_directory(app.template_folder, "index.html")
+    response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
 
 
 # Test API connection
@@ -215,6 +221,23 @@ def health_check():
     return jsonify({
         "status": "success",
         "message": "FinSight API is running."
+    }), 200
+
+
+# Return the authenticated user's display identity for the dashboard.
+@app.route("/api/profile", methods=["GET"])
+@require_supabase_auth
+def profile():
+    user = g.supabase_user
+    return jsonify({
+        "status": "success",
+        "data": {
+            "name": user.get("name") or (user.get("email") or "").split("@")[0] or "User",
+            "email": user.get("email") or "Email unavailable",
+            # OAuth metadata may expose the Google profile image under these keys.
+            # Prefer the verified avatar URL exposed by the auth helper.
+            "avatar_url": user.get("avatar_url") or "",
+        },
     }), 200
 
 
