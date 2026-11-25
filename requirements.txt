@@ -11,3 +11,4 @@ langgraph-checkpoint-sqlite
 gunicorn
 psycopg[binary]>=3.2,<4
 requests>=2.31,<3
+langgraph-checkpoint-postgres>=2.0,<4
