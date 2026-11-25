@@ -1664,6 +1664,8 @@ const AR=(up,ok)=>`<svg xmlns="http://www.w3.org/2000/svg" width="12" height="12
 function anCompute(){
  const gp0=globalPeriod(),gp=(anF.from<gp0.from||anF.to>gp0.to)?{...gp0,from:DB_MIN_DATE,to:AN_END}:gp0,from=anF.from>gp.from?anF.from:gp.from,to=anF.to<gp.to?anF.to:gp.to;
  const rangeValid=from<=to;
+ // Preserve range validity in the returned data so renderers never reference
+ // variables that are local to this calculation function.
  const rows=anAll().filter(t=>rangeValid&&t.d>=from&&t.d<=to&&(!anF.pay.size||anF.pay.has(t.p))&&(!anF.cats.size||anF.cats.has(t.cat)));
  const CL=anCatAll(),D={n:rows.length,rows,total:rows.reduce((a,t)=>a+t.a,0),from,to,global:gp};
  D.budget=anF.cats.size?[...anF.cats].reduce((a,c)=>a+(CATS[c]?.limit||0),0):totalLimit();
@@ -1706,7 +1708,7 @@ function anCompute(){
 const fdate=d=>{const x=new Date(d+'T00:00:00');return `${x.getDate()} ${MS[x.getMonth()]} ${x.getFullYear()}`};
 function anRender(roll=true){
  anSyncOpts();const D=anD=anCompute();
- {const f=rangeValid?fdate(from):'No matching dates',t=rangeValid?fdate(to):'';$('#an-sub').textContent=`${f}${t&&t!==f?' to '+t:''} · ${D.global.month<0?'Year '+D.global.year:MF[D.global.month]+' '+D.global.year}`;$('#an-period-notice').textContent=`Reporting period: ${D.global.month<0?'All months in '+D.global.year:MF[D.global.month]+' '+D.global.year}. The KPIs, category share, weekly and daily patterns, payment methods, and top expenses follow this top-bar selection. The monthly trend ends at the selected period and shows the previous ${anTrN-1} month${anTrN===2?'':'s'} as context.`}
+ {const f=D.from<=D.to?fdate(D.from):'No matching dates',t=D.from<=D.to?fdate(D.to):'';$('#an-sub').textContent=`${f}${t&&t!==f?' to '+t:''} · ${D.global.month<0?'Year '+D.global.year:MF[D.global.month]+' '+D.global.year}`;$('#an-period-notice').textContent=`Reporting period: ${D.global.month<0?'All months in '+D.global.year:MF[D.global.month]+' '+D.global.year}. The KPIs, category share, weekly and daily patterns, payment methods, and top expenses follow this top-bar selection. The monthly trend ends at the selected period and shows the previous ${anTrN-1} month${anTrN===2?'':'s'} as context.`}
  $('#an-fsum').textContent=`${D.n} ${D.n===1?'transaction':'transactions'} · ${inr(D.total)}`;
  const under=D.avgMonth<=D.budget,pc=D.budget?Math.abs((D.budget-D.avgMonth)/D.budget*100):0,top=D.cats[0];
  $('#an-stats').innerHTML=kcard('Total spent',inr(D.total),'wallet',`${D.n} transactions`,true)
