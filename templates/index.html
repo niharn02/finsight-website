@@ -1460,17 +1460,29 @@ $('#se-notif').addEventListener('click',e=>{const sw=e.target.closest('.fs-switc
    Google supplies the name in user_metadata; the verified Auth email is the source
    of truth. No editable profile form or browser-local profile copy is maintained. */
 let profileMenu=null;
-const profileState={name:'Google account',email:'Account details appear here'};
+const profileState={name:'Google account',email:'Account details appear here',avatarUrl:''};
 function profileInitials(name){
  return String(name||'').trim().split(/\s+/).filter(Boolean).slice(0,2).map(part=>part[0]).join('').toUpperCase()||'U';
 }
 function syncProfileUI(){
  const initials=profileInitials(profileState.name);
  const setText=(selector,value)=>{const node=$(selector);if(node)node.textContent=value};
- setText('#profile-sidebar-avatar',initials);
+ // Display the Google photo when available, otherwise retain the initials fallback.
+ const setAvatar=(node)=>{
+  if(!node)return;
+  node.replaceChildren();
+  if(profileState.avatarUrl){
+   const image=document.createElement('img');
+   image.src=profileState.avatarUrl;image.alt='Google profile picture';
+   image.referrerPolicy='no-referrer';image.className='w-full h-full object-cover rounded-full';
+   image.onerror=()=>{node.textContent=initials};
+   node.appendChild(image);
+  }else node.textContent=initials;
+ };
+ setAvatar($('#profile-sidebar-avatar'));
  setText('#profile-sidebar-name',profileState.name);
  setText('#profile-sidebar-email',profileState.email);
- setText('#profile-header-avatar',initials);
+ setAvatar($('#profile-header-avatar'));
  setText('#assistant-greeting',`Hi ${profileState.name==='Google account'?'there':profileState.name.split(/\s+/)[0]}, I'm Clarry, your finance assistant.`);
  const dashboardHeading=$('[data-page="dashboard"] h1');
  if(dashboardHeading&&dashboardHeading.textContent.includes(',')){
@@ -1481,7 +1493,7 @@ function syncProfileUI(){
   const avatar=profileMenu.querySelector('.fs-profile-avatar');
   const name=profileMenu.querySelector('strong');
   const email=profileMenu.querySelector('small');
-  if(avatar)avatar.textContent=initials;
+  if(avatar)setAvatar(avatar);
   if(name)name.textContent=profileState.name;
   if(email)email.textContent=profileState.email;
  }
@@ -1496,10 +1508,13 @@ async function loadGoogleAccountProfile(){
   const user=payload.data||{};
   profileState.name=user.name||'User';
   profileState.email=user.email||'Email unavailable';
+  // Restrict avatar display to HTTPS URLs from the verified profile response.
+  try{const url=new URL(user.avatar_url||'');profileState.avatarUrl=url.protocol==='https:'?url.href:'';}catch(e){profileState.avatarUrl='';}
  }catch(error){
   console.warn('Could not load signed-in account details.');
   profileState.name='User';
   profileState.email='Email unavailable';
+  profileState.avatarUrl='';
  }
  syncProfileUI();
 }
