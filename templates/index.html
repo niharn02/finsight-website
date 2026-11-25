@@ -2031,7 +2031,15 @@ async function loadDatabaseData(){
  const catPanel=$('.fs-ms-p',anCatEl);if(catPanel)catPanel.innerHTML=AN_CATS.map(n=>`<label class="fs-ms-o"><input type="checkbox" value="${esc(n)}"${anF.cats.has(n)?' checked':''}><span>${esc(n)}</span></label>`).join('');
  $('summary span',anPayEl).textContent='All methods';$('summary span',anCatEl).textContent='All categories';
  await loadBudgetAllocations();
- if(!window.__anRangeSet){window.__anRangeSet=true;anSetRange(AN_CUR,AN_END,'cur')}else{const pb=document.querySelector('#an-presets [aria-pressed="true"]');anSetRange(anF.from,anF.to,pb?pb.dataset.preset:'')}
+ // Analytics initialization is isolated so a renderer failure cannot abort
+ // the shared data load and leave the Budgets page blank.
+ try{
+  if(!window.__anRangeSet){window.__anRangeSet=true;anSetRange(AN_CUR,AN_END,'cur')}
+  else{const pb=document.querySelector('#an-presets [aria-pressed="true"]');anSetRange(anF.from,anF.to,pb?pb.dataset.preset:'')}
+ }catch(error){
+  console.error('Analytics initialization failed; continuing with other dashboard sections.',error);
+  try{renderBu()}catch(budgetError){console.error('Budget renderer also failed.',budgetError)}
+ }
 }
 (async()=>{
  // Do not silently render empty financial pages when the initial API load fails.
