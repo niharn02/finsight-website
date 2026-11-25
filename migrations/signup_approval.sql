@@ -29,3 +29,23 @@ ALTER TABLE public.finsight_access_notifications ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.finsight_access_audit ENABLE ROW LEVEL SECURITY;
 -- These tables are accessed only by the backend using DATABASE_URL. No client policies are granted.
 REVOKE ALL ON public.finsight_access_requests, public.finsight_access_notifications, public.finsight_access_audit FROM anon, authenticated;
+
+-- Preserve existing Supabase users by granting them approved status on migration.
+INSERT INTO public.finsight_access_requests(user_id,email,status)
+SELECT id,email,'approved' FROM auth.users
+ON CONFLICT(user_id) DO NOTHING;
+
+-- Automatically create pending requests for new Auth users.
+CREATE OR REPLACE FUNCTION public.finsight_create_access_request()
+RETURNS trigger LANGUAGE plpgsql SECURITY DEFINER SET search_path=public AS $$
+BEGIN
+  INSERT INTO public.finsight_access_requests(user_id,email,status)
+  VALUES (NEW.id,NEW.email,'pending')
+  ON CONFLICT(user_id) DO NOTHING;
+  RETURN NEW;
+END;
+$$;
+DROP TRIGGER IF EXISTS finsight_access_request_on_signup ON auth.users;
+CREATE TRIGGER finsight_access_request_on_signup
+AFTER INSERT ON auth.users FOR EACH ROW
+EXECUTE FUNCTION public.finsight_create_access_request();
