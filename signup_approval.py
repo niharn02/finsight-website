@@ -1,6 +1,7 @@
 """Server-side signup approval and administrator endpoints for FinSight."""
 import os
 import psycopg
+from uuid import UUID
 from flask import Blueprint, request, jsonify
 from auth import get_supabase_user
 
@@ -67,9 +68,12 @@ def admin_requests():
     user, error = _verified_user()
     if error: return error
     if user["id"] not in _admins(): return jsonify(error="Forbidden"), 403
-    with _db() as conn:
-        rows = conn.execute("SELECT user_id,email,status,created_at,updated_at FROM public.finsight_access_requests ORDER BY created_at DESC").fetchall()
-    return jsonify(requests=[dict(user_id=r[0],email=r[1],status=r[2],created_at=str(r[3]),updated_at=str(r[4])) for r in rows])
+    try:
+        with _db() as conn:
+            rows = conn.execute("SELECT user_id,email,status,created_at,updated_at FROM public.finsight_access_requests ORDER BY created_at DESC").fetchall()
+        return jsonify(requests=[dict(user_id=str(r[0]),email=r[1],status=r[2],created_at=str(r[3]),updated_at=str(r[4])) for r in rows])
+    except Exception:
+        return jsonify(error="Access requests could not be loaded"), 503
 
 @approval_bp.post("/api/admin/access-requests/<user_id>/<action>")
 def admin_action(user_id, action):
@@ -77,23 +81,34 @@ def admin_action(user_id, action):
     if error: return error
     if actor["id"] not in _admins(): return jsonify(error="Forbidden"), 403
     if action not in {"approve","reject","revoke"}: return jsonify(error="Invalid action"), 400
+    # Validate the route UUID before using it in database operations.
+    try:
+        target_id = str(UUID(user_id))
+    except (ValueError, TypeError, AttributeError):
+        return jsonify(error="Invalid user ID"), 400
     new_status = {"approve":"approved","reject":"rejected","revoke":"revoked"}[action]
-    with _db() as conn:
-        with conn.transaction():
-            row=conn.execute("SELECT status FROM public.finsight_access_requests WHERE user_id=%s FOR UPDATE",(user_id,)).fetchone()
-            if not row: return jsonify(error="Request not found"),404
-            conn.execute("UPDATE public.finsight_access_requests SET status=%s,updated_at=now() WHERE user_id=%s",(new_status,user_id))
-            conn.execute("INSERT INTO public.finsight_access_audit(actor_user_id,target_user_id,action,old_status,new_status) VALUES (%s,%s,%s,%s,%s)",(actor["id"],user_id,action,row[0],new_status))
-            conn.execute("INSERT INTO public.finsight_access_notifications(user_id,message) VALUES (%s,%s)",(user_id,"Your FinSight access status is now "+new_status+"."))
-    return jsonify(status=new_status)
+    try:
+        with _db() as conn:
+            with conn.transaction():
+                row=conn.execute("SELECT status FROM public.finsight_access_requests WHERE user_id=%s FOR UPDATE",(target_id,)).fetchone()
+                if not row: return jsonify(error="Request not found"),404
+                conn.execute("UPDATE public.finsight_access_requests SET status=%s,updated_at=now() WHERE user_id=%s",(new_status,target_id))
+                conn.execute("INSERT INTO public.finsight_access_audit(actor_user_id,target_user_id,action,old_status,new_status) VALUES (%s,%s,%s,%s,%s)",(actor["id"],target_id,action,row[0],new_status))
+                conn.execute("INSERT INTO public.finsight_access_notifications(user_id,message) VALUES (%s,%s)",(target_id,"Your FinSight access status is now "+new_status+"."))
+        return jsonify(status=new_status)
+    except Exception:
+        return jsonify(error="The access status could not be updated"), 503
 
 @approval_bp.get("/api/access/notifications")
 def access_notifications():
     user, error = _verified_user()
     if error: return error
-    with _db() as conn:
-        rows=conn.execute("SELECT notification_id,message,created_at,read_at FROM public.finsight_access_notifications WHERE user_id=%s ORDER BY created_at DESC LIMIT 50",(user["id"],)).fetchall()
-    return jsonify(notifications=[dict(id=r[0],message=r[1],created_at=str(r[2]),read_at=str(r[3]) if r[3] else None) for r in rows])
+    try:
+        with _db() as conn:
+            rows=conn.execute("SELECT notification_id,message,created_at,read_at FROM public.finsight_access_notifications WHERE user_id=%s ORDER BY created_at DESC LIMIT 50",(user["id"],)).fetchall()
+        return jsonify(notifications=[dict(id=r[0],message=r[1],created_at=str(r[2]),read_at=str(r[3]) if r[3] else None) for r in rows])
+    except Exception:
+        return jsonify(error="Notifications could not be loaded"), 503
 
 # Permit requests from the static Cloudflare site and the dashboard previews.
 _ALLOWED_ORIGINS = {
