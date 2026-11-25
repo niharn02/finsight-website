@@ -36,9 +36,13 @@ import calendar
 from datetime import datetime, timezone, timedelta
 from auth import require_supabase_auth
 from database_postgres import initialise_database
+from auth_handoff import handoff_bp
 
 # Initialise Flask application
 app = Flask(__name__)
+
+# Register the short-lived authentication handoff routes.
+app.register_blueprint(handoff_bp)
 
 
 # Initialise database
