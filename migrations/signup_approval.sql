@@ -44,7 +44,8 @@ BEGIN
   ON CONFLICT(user_id) DO NOTHING;
   RETURN NEW;
 END;
-$$;
+$;
+REVOKE EXECUTE ON FUNCTION public.finsight_create_access_request() FROM PUBLIC, anon, authenticated;
 DROP TRIGGER IF EXISTS finsight_access_request_on_signup ON auth.users;
 CREATE TRIGGER finsight_access_request_on_signup
 AFTER INSERT ON auth.users FOR EACH ROW
