@@ -1982,16 +1982,14 @@ function relabel(){const l=MLAB();relNodes.forEach(n=>{if(n.isConnected)n.nodeVa
  const hp=[...document.querySelectorAll('header p')].find(p=>/^Today,/.test(p.textContent));if(hp){const t=new Date();hp.textContent=`Today, ${t.getDate()} ${MS[t.getMonth()]} ${t.getFullYear()}`}}
 $('#mf-m').value=String(MFm);[$('#an-from'),$('#an-to'),$('#add-date')].forEach(i=>{i.max=AN_END});$('#add-date').min='2000-01-01';$('#add-date').value=AN_END;$('#an-from').value=AN_CUR;$('#an-to').value=AN_END;
 function renderAll(){
- // Render each dashboard section independently so a failure in analytics or
- // another panel cannot prevent the budget cards from appearing.
  setPeriodVars();
- try{fillCats()}catch(error){console.error('Category controls could not render.',error)}
- try{relabel()}catch(error){console.error('Labels could not be updated.',error)}
- try{renderDash()}catch(error){console.error('Dashboard render failed.',error)}
- try{renderTx()}catch(error){console.error('Transactions render failed.',error)}
- try{renderAn()}catch(error){console.error('Analytics render failed.',error)}
- try{renderBu()}catch(error){console.error('Budgets render failed.',error);$('#bu-hero').innerHTML='<p class="text-sm">Budget overview is temporarily unavailable. Please refresh.</p>';$('#bu-kpis').innerHTML='';$('#bu-grid').innerHTML=''}
- try{ntRefresh()}catch(error){console.error('Notifications render failed.',error)}
+ try{fillCats()}catch(e){console.error('fillCats failed',e)}
+ try{renderDash()}catch(e){console.error('Dashboard render failed',e)}
+ try{relabel()}catch(e){console.error('relabel failed',e)}
+ try{renderTx()}catch(e){console.error('Transactions render failed',e)}
+ try{renderAn()}catch(e){console.error('Analytics render failed',e)}
+ try{renderBu()}catch(e){console.error('Budgets render failed',e)}
+ try{ntRefresh()}catch(e){console.error('Notifications render failed',e)}
 }
 async function loadBudgetAllocations(){
  const month=`${String(DM()+1).padStart(2,'0')}-${selectedYear()}`;
