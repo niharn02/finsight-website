@@ -941,7 +941,7 @@ dialog#exp-dlg{width:min(32rem,calc(100vw - 2rem))}
 // Require a handoff-created Supabase access token before displaying the dashboard.
 (function(){
  const token=sessionStorage.getItem('finsight_access_token');
- if(!token){location.replace('https://finsight-website.pages.dev/sign_in.html');return;}
+ if(!token){location.replace('https://finsight-website.pages.dev/sign_in.html?return='+encodeURIComponent(location.origin));return;}
  // Attach the bearer token to same-origin financial API requests.
  const originalFetch=window.fetch.bind(window);
  window.fetch=function(input,init={}){
@@ -2330,7 +2330,7 @@ function toggleProfileMenu(){
   if(action==='settings')go('settings');
   else if(action==='appearance')themeBtn.click();
   else if(action==='privacy'){setPrivacy(!PRIV.on);toast(PRIV.on?'Privacy Mode on — amounts hidden':'Privacy Mode off')}
-  else if(action==='signout'){sessionStorage.removeItem('finsight_access_token');location.replace('https://finsight-website.pages.dev/sign_in.html');}
+  else if(action==='signout'){sessionStorage.removeItem('finsight_access_token');location.replace('https://finsight-website.pages.dev/sign_in.html?return='+encodeURIComponent(location.origin));}
  });
 }
 document.addEventListener('click',ev=>{if(profileMenu&&!profileMenu.contains(ev.target)&&!profileBtn.contains(ev.target))closeProfileMenu()});
