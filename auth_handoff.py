@@ -48,8 +48,9 @@ def start_handoff():
     payload = request.get_json(silent=True) or {}
     access_token = payload.get("access_token")
     target_origin = payload.get("return_origin", RENDER_ORIGIN)
-    if target_origin not in ALLOWED_DASHBOARD_ORIGINS:
-        target_origin = RENDER_ORIGIN
+    # Reject, rather than silently redirecting, untrusted destinations.
+    if not isinstance(target_origin, str) or target_origin not in ALLOWED_DASHBOARD_ORIGINS:
+        return _cors(jsonify(error="Dashboard destination not allowed")), 400
     try:
         user = get_supabase_user(access_token)
     except PermissionError as exc:
