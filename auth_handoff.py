@@ -22,19 +22,26 @@ LOCAL_DASHBOARD_ORIGINS = {"http://localhost:5000", "http://127.0.0.1:5000"}
 def _render_origin():
     return os.getenv("RENDER_EXTERNAL_URL", "").strip().rstrip("/")
 
-def _allowed_frontend_origins():
-    origins = set(LOCAL_FRONTEND_ORIGINS)
+def _configured_origins():
+    # Include Render's generated URL and any custom domain explicitly configured
+    # by the operator. Do not trust arbitrary browser-supplied origins.
+    origins = set()
+    configured = os.getenv("FINSIGHT_PUBLIC_ORIGINS", "")
+    origins.update(
+        item.strip().rstrip("/")
+        for item in configured.split(",")
+        if item.strip()
+    )
     render_origin = _render_origin()
     if render_origin:
         origins.add(render_origin)
     return origins
 
+def _allowed_frontend_origins():
+    return set(LOCAL_FRONTEND_ORIGINS) | _configured_origins()
+
 def _allowed_dashboard_origins():
-    origins = set(LOCAL_DASHBOARD_ORIGINS)
-    render_origin = _render_origin()
-    if render_origin:
-        origins.add(render_origin)
-    return origins
+    return set(LOCAL_DASHBOARD_ORIGINS) | _configured_origins()
 
 
 def _fernet():
