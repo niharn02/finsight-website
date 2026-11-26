@@ -1535,7 +1535,7 @@ $('#del-no').addEventListener('click',()=>$('#del-dlg').close());
 $('#del-yes').addEventListener('click',async()=>{
  const button=$('#del-yes');button.disabled=true;button.textContent='Deleting…';
  try{
-  const response=await fetch('/api/account/delete',{method:'POST',{headers:{'Accept':'application/json'}});
+  const response=await fetch('/api/account/delete',{method:'POST',headers:{'Accept':'application/json'}});
   const payload=await response.json().catch(()=>({}));
   if(!response.ok||payload.status!=='success')throw new Error(payload.message||'Account deletion failed. Please try again.');
   $('#del-dlg').close();
