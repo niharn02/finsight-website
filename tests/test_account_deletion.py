@@ -38,6 +38,11 @@ def app_module(monkeypatch):
         setattr(scoped_stub, name, lambda *args, **kwargs: None)
     monkeypatch.setitem(sys.modules, "chatbot.scoped_database", scoped_stub)
 
+    # Chatbot graph startup is unrelated to account-deletion route tests.
+    graph_stub = types.ModuleType("chatbot.graph")
+    graph_stub.build_chatbot_graph = lambda *args, **kwargs: None
+    monkeypatch.setitem(sys.modules, "chatbot.graph", graph_stub)
+
     memory_stub = types.ModuleType("chatbot.memory")
     memory_stub.initialise_checkpointer = lambda: None
     monkeypatch.setitem(sys.modules, "chatbot.memory", memory_stub)
