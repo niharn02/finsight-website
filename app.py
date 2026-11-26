@@ -1,3 +1,5 @@
+from dotenv import load_dotenv
+load_dotenv()
 # Import the Libraries
 from flask import Flask, jsonify, request, render_template, send_from_directory, g
 import psycopg
@@ -1342,4 +1344,5 @@ def chat_history():
 # -------------------------------------------------
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=5000)
+    
