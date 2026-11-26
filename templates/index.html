@@ -1532,10 +1532,21 @@ loadGoogleAccountProfile();
 $$('[data-toast]').forEach(b=>b.addEventListener('click',()=>toast(b.dataset.toast)));
 $('#se-delete').addEventListener('click',()=>$('#del-dlg').showModal());
 $('#del-no').addEventListener('click',()=>$('#del-dlg').close());
-$('#del-yes').addEventListener('click',()=>{$('#del-dlg').close();
- try{Object.keys(localStorage).filter(k=>k.startsWith('fs-')).forEach(k=>localStorage.removeItem(k))}catch(e){}
- AT.length=0;AT_TX.length=0;TX.length=0;Object.keys(CATS).forEach(k=>delete CATS[k]);
- try{renderAll()}catch(e){}go('dashboard',false);$('#del-done').showModal()});
+$('#del-yes').addEventListener('click',async()=>{
+ const button=$('#del-yes');button.disabled=true;button.textContent='Deleting…';
+ try{
+  const response=await fetch('/api/account',{method:'DELETE',headers:{'Accept':'application/json'}});
+  const payload=await response.json().catch(()=>({}));
+  if(!response.ok||payload.status!=='success')throw new Error(payload.message||'Account deletion failed. Please try again.');
+  $('#del-dlg').close();
+  try{Object.keys(localStorage).filter(k=>k.startsWith('fs-')).forEach(k=>localStorage.removeItem(k))}catch(e){}
+  try{sessionStorage.removeItem('finsight_access_token');sessionStorage.clear()}catch(e){}
+  AT.length=0;AT_TX.length=0;TX.length=0;Object.keys(CATS).forEach(k=>delete CATS[k]);
+  $('#del-done').showModal();
+ }catch(error){
+  $('#del-dlg').close();toast(error.message||'Account deletion failed. Please try again.');
+ }finally{button.disabled=false;button.textContent='Confirm'}
+});
 $('#del-restart').addEventListener('click',()=>location.reload());
 $('#del-done').addEventListener('cancel',e=>e.preventDefault());
 
