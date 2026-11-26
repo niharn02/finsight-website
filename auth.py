@@ -27,10 +27,24 @@ from flask import current_app, g, jsonify, request
 
 from user_context import user_context
 
+def admin_ids() -> set[str]:
+    """Return configured administrator UUIDs, normalised to lowercase hyphenated form.
+
+    Normalising means an uppercase UUID or stray whitespace in FINANCE_ADMIN_USER_IDS
+    still matches the verified Supabase user id. Invalid entries are ignored.
+    """
+    ids = set()
+    for raw in os.getenv("FINANCE_ADMIN_USER_IDS", "").split(","):
+        try:
+            ids.add(str(UUID(raw.strip())))
+        except ValueError:
+            continue
+    return ids
+
+
 # Signup approval is checked on every protected API request.
 def _approval_status(user_id: str) -> str:
-    admins = {x.strip() for x in os.getenv("FINANCE_ADMIN_USER_IDS", "").split(",") if x.strip()}
-    if user_id in admins:
+    if user_id in admin_ids():
         return "approved"
     database_url = os.getenv("DATABASE_URL", "").strip()
     if not database_url:
