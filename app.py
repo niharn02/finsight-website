@@ -205,19 +205,36 @@ def calculate_spending_projection(budget_month, monthly_summary):
 # The frontend is a single-page application.
 # All page URLs serve the same index.html file; its JavaScript
 # handles Dashboard, Transactions, Analytics and Budgets navigation.
+# Render hosts the public website and authenticated dashboard on one origin.
 @app.route("/")
+def landing_page():
+    return send_from_directory("website", "index.html")
+
+@app.route("/dashboard")
 @app.route("/dashboard.html")
 @app.route("/transactions.html")
 @app.route("/analytics.html")
 @app.route("/budget.html")
 def home():
-    # Always serve the current dashboard HTML instead of allowing browsers or
-    # intermediary caches to reuse an older inline-JavaScript version.
     response = send_from_directory(app.template_folder, "index.html")
     response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "0"
     return response
+
+@app.route("/<page_name>")
+def public_page(page_name):
+    allowed_pages = {
+        "sign_in.html", "create_account.html", "terms_of_service.html",
+        "privacy_policy.html", "security.html", "admin_access.html",
+    }
+    if page_name not in allowed_pages:
+        return jsonify(status="error", message="Not found"), 404
+    return send_from_directory("website", page_name)
+
+@app.route("/images/<path:image_path>")
+def public_image(image_path):
+    return send_from_directory("website/images", image_path)
 
 
 # Test API connection
