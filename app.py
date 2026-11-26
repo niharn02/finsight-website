@@ -4,6 +4,7 @@ load_dotenv()
 from flask import Flask, jsonify, request, render_template, send_from_directory, g
 import psycopg
 import os
+import requests
 from chatbot.scoped_database import (
     get_categories_for_month,
     create_category,
