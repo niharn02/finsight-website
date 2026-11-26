@@ -1,17 +1,15 @@
 
- // Shared Supabase client setup for local FinSight approval testing.
-
-// TEST Supabase project ONLY.
+// Shared Supabase client setup for the Render-hosted FinSight website.
 const SUPABASE_URL = "https://lzhmdjqvjantmkmlgbej.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Tf0pJqN4idxzkUXvUy_1bw_WqVjkuSp";
 
-// Local Flask dashboard only.
+// Render website and dashboard share an origin. Local standalone testing is retained.
 const ALLOWED_DASHBOARD_ORIGINS = new Set([
+  location.origin,
   "http://localhost:5000",
   "http://127.0.0.1:5000"
 ]);
-
-const DEFAULT_DASHBOARD_ORIGIN = "http://localhost:5000";
+const DEFAULT_DASHBOARD_ORIGIN = location.origin;
 
 window.supabaseClient = supabase.createClient(
   SUPABASE_URL,
