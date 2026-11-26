@@ -1,14 +1,46 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>FinSight Access Admin</title>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>FinSight Access Admin</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script>
-<style>body{font-family:system-ui,sans-serif;background:#f6f7fb;color:#182033;margin:0;padding:24px}main{max-width:900px;margin:auto;background:white;padding:24px;border-radius:16px;box-shadow:0 8px 28px #0001}button{padding:8px 12px;margin:4px;border:0;border-radius:8px;cursor:pointer;background:#3438d0;color:white}table{width:100%;border-collapse:collapse}td,th{padding:12px;border-bottom:1px solid #ddd;text-align:left}#msg{margin:12px 0}</style></head><body><main><h1>FinSight Access Management</h1><p id="msg">Loading...</p><table><thead><tr><th>Email</th><th>Status</th><th>Actions</th></tr></thead><tbody id="rows"></tbody></table></main>
+<style>
+body{font-family:system-ui,sans-serif;background:#f6f7fb;color:#182033;margin:0;padding:24px}
+main{max-width:1000px;margin:auto;background:white;padding:24px;border-radius:16px;box-shadow:0 8px 28px #0001}
+button{padding:8px 12px;margin:4px;border:0;border-radius:8px;cursor:pointer;background:#3438d0;color:white}
+button:disabled{opacity:.5;cursor:wait}table{width:100%;border-collapse:collapse}td,th{padding:12px;border-bottom:1px solid #ddd;text-align:left}
+#msg{margin:12px 0}.muted{color:#667085;font-size:.9rem}.pill{padding:4px 8px;border-radius:999px;background:#eef0ff}
+</style>
+</head>
+<body><main><h1>FinSight Access Management</h1><p id="identity" class="muted"></p><p id="msg">Checking administrator access…</p>
+<table id="requests-table" hidden><thead><tr><th>Email</th><th>Status</th><th>Requested / updated</th><th>Actions</th></tr></thead><tbody id="rows"></tbody></table></main>
 <script>
 (async()=>{
-const msg=document.getElementById('msg'),rows=document.getElementById('rows');
-const {data:{session}}=await window.supabaseClient.auth.getSession();
-if(!session){msg.textContent='Please sign in using an administrator account.';return;}
-const API_BASE='https://finsight-dashboard-xtk6.onrender.com';
-const call=async(path,opts={})=>{const r=await fetch(API_BASE+path,{...opts,headers:{Authorization:'Bearer '+session.access_token,'Content-Type':'application/json',...(opts.headers||{})}});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||d.message||'Request failed');return d;};
-try{const d=await call('/api/admin/access-requests');msg.textContent='Access requests';for(const item of d.requests){const tr=document.createElement('tr');const email=document.createElement('td');email.textContent=item.email||item.user_id;const status=document.createElement('td');status.textContent=item.status;const actions=document.createElement('td');for(const action of ['approve','reject','revoke']){const b=document.createElement('button');b.textContent=action;b.onclick=async()=>{b.disabled=true;try{await call('/api/admin/access-requests/'+encodeURIComponent(item.user_id)+'/'+action,{method:'POST'});location.reload();}catch(e){msg.textContent=e.message;b.disabled=false;}};actions.appendChild(b);}tr.append(email,status,actions);rows.appendChild(tr);}}catch(e){msg.textContent=e.message;}
+const msg=document.getElementById('msg'),rows=document.getElementById('rows'),table=document.getElementById('requests-table'),identity=document.getElementById('identity');
+const client=window.supabaseClient;
+if(!client){msg.textContent='Supabase client could not be initialized.';return;}
+const {data:{session},error:sessionError}=await client.auth.getSession();
+if(sessionError||!session){msg.textContent='Please sign in first with your FinSight administrator account.';return;}
+// Use the isolated PR preview backend for this test, not production.
+const API_BASE='https://finsight-dashboard-pr-3.onrender.com';
+const call=async(path,opts={})=>{const r=await fetch(API_BASE+path,{...opts,headers:{Authorization:'Bearer '+session.access_token,'Content-Type':'application/json',...(opts.headers||{})}});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||d.message||'Request failed ('+r.status+')');return d;};
+try{
+const access=await call('/api/access/status');
+if(!access.is_admin){msg.textContent='Forbidden: this signed-in account is not configured as a FinSight administrator.';return;}
+identity.textContent='Administrator session: '+(session.user.email||session.user.id);
+const d=await call('/api/admin/access-requests');
+msg.textContent=d.requests.length?'Access requests ('+d.requests.length+')':'No access requests currently.';
+table.hidden=false;
+for(const item of d.requests){
+const tr=document.createElement('tr'),email=document.createElement('td'),status=document.createElement('td'),updated=document.createElement('td'),actions=document.createElement('td');
+email.textContent=item.email||item.user_id;status.textContent=item.status;updated.textContent=item.updated_at||item.created_at||'—';
+for(const action of ['approve','reject','revoke']){
+const b=document.createElement('button');b.textContent=action;b.disabled=(action==='approve'&&item.status==='approved')||(action==='reject'&&item.status==='rejected')||(action==='revoke'&&item.status==='revoked');
+b.onclick=async()=>{if(!confirm('Are you sure you want to '+action+' access for '+(item.email||item.user_id)+'?'))return;b.disabled=true;msg.textContent='Updating access…';try{await call('/api/admin/access-requests/'+encodeURIComponent(item.user_id)+'/'+action,{method:'POST'});msg.textContent='Access '+action+'d successfully. Refreshing…';location.reload();}catch(e){msg.textContent=e.message;b.disabled=false;}};
+actions.appendChild(b);
+}
+tr.append(email,status,updated,actions);rows.appendChild(tr);
+}
+}catch(e){msg.textContent=e.message;}
 })();
 </script></body></html>
