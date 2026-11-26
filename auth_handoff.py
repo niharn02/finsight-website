@@ -5,7 +5,7 @@ from datetime import datetime, timedelta, timezone
 from flask import Blueprint, jsonify, request, make_response
 import psycopg
 from cryptography.fernet import Fernet, InvalidToken
-from auth import get_supabase_user
+from auth import get_supabase_user, admin_ids
 
 handoff_bp = Blueprint("auth_handoff", __name__)
 CLOUDFLARE_ORIGIN = "https://finsight-website.pages.dev"
@@ -61,8 +61,7 @@ def start_handoff():
         return _cors(jsonify(error="Unable to verify authentication")), 400
 
     # Gate dashboard handoff until the account has explicitly been approved.
-    admins = {x.strip() for x in os.getenv('FINANCE_ADMIN_USER_IDS', '').split(',') if x.strip()}
-    if user['id'] not in admins:
+    if user['id'] not in admin_ids():
         try:
             with _db() as conn:
                 status_row = conn.execute('SELECT status FROM public.finsight_access_requests WHERE user_id=%s', (user['id'],)).fetchone()
@@ -114,8 +113,7 @@ def exchange_handoff():
         return _cors(jsonify(error="Code expired or already used"), request.headers.get("Origin", "")), 401
     # Re-check approval when exchanging: approval may have been revoked after start.
     user_id = str(row[1])
-    admins = {x.strip() for x in os.getenv("FINANCE_ADMIN_USER_IDS", "").split(",") if x.strip()}
-    if user_id not in admins:
+    if user_id not in admin_ids():
         try:
             with _db() as conn:
                 approval_row = conn.execute(
