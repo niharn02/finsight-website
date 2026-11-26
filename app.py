@@ -259,6 +259,36 @@ def delete_account():
     return jsonify(status="success", message="Account and associated data deleted."), 200
 
 
+@app.route("/api/account/delete", methods=["POST"])
+@require_supabase_auth
+def delete_account():
+    """Delete the verified user's account; configured administrators are protected."""
+    user_id = g.user_id
+    if user_id in admin_ids():
+        return jsonify(status="error", message="Administrator accounts cannot be deleted."), 403
+
+    project_url = os.getenv("SUPABASE_URL", "").strip().rstrip("/")
+    service_role_key = os.getenv("SUPABASE_SERVICE_ROLE_KEY", "").strip()
+    if not project_url or not service_role_key:
+        app.logger.error("Account deletion unavailable: Supabase URL or service key missing.")
+        return jsonify(status="error", message="Account deletion service is not configured."), 503
+
+    try:
+        response = requests.delete(
+            f"{project_url}/auth/v1/admin/users/{user_id}",
+            headers={"apikey": service_role_key, "Authorization": f"Bearer {service_role_key}", "Accept": "application/json"},
+            timeout=(3.05, 12),
+        )
+    except requests.RequestException:
+        app.logger.exception("Supabase account deletion request failed.")
+        return jsonify(status="error", message="Unable to delete your account right now. Please try again."), 503
+
+    if response.status_code not in (200, 204):
+        app.logger.error("Supabase account deletion returned status %s.", response.status_code)
+        return jsonify(status="error", message="Account deletion failed. Please try again."), 502
+    return jsonify(status="success", message="Account deleted."), 200
+
+
 @app.route("/api/profile", methods=["GET"])
 @require_supabase_auth
 def profile():
