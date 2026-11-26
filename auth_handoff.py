@@ -15,19 +15,26 @@ from auth import get_supabase_user, admin_ids
 
 handoff_bp = Blueprint("auth_handoff", __name__)
 
-# Local frontend used during isolated approval testing.
-LOCAL_FRONTEND_ORIGIN = "http://localhost:5500"
+# Render pages and dashboard share an origin. Local testing is also retained.
+LOCAL_FRONTEND_ORIGINS = {"http://localhost:5500", "http://127.0.0.1:5500"}
+LOCAL_DASHBOARD_ORIGINS = {"http://localhost:5000", "http://127.0.0.1:5000"}
 
-ALLOWED_FRONTEND_ORIGINS = {
-    LOCAL_FRONTEND_ORIGIN,
-    "http://127.0.0.1:5500",
-}
+def _render_origin():
+    return os.getenv("RENDER_EXTERNAL_URL", "").strip().rstrip("/")
 
-# Local Flask dashboard only.
-ALLOWED_DASHBOARD_ORIGINS = {
-    "http://localhost:5000",
-    "http://127.0.0.1:5000",
-}
+def _allowed_frontend_origins():
+    origins = set(LOCAL_FRONTEND_ORIGINS)
+    render_origin = _render_origin()
+    if render_origin:
+        origins.add(render_origin)
+    return origins
+
+def _allowed_dashboard_origins():
+    origins = set(LOCAL_DASHBOARD_ORIGINS)
+    render_origin = _render_origin()
+    if render_origin:
+        origins.add(render_origin)
+    return origins
 
 
 def _fernet():
@@ -45,7 +52,7 @@ def _db():
 
 
 def _cors(response, origin=None):
-    if origin in ALLOWED_FRONTEND_ORIGINS or origin in ALLOWED_DASHBOARD_ORIGINS:
+    if origin in _allowed_frontend_origins() or origin in _allowed_dashboard_origins():
         response.headers["Access-Control-Allow-Origin"] = origin
         response.headers["Access-Control-Allow-Headers"] = (
             "Content-Type, Authorization"
@@ -62,7 +69,7 @@ def start_handoff():
     if request.method == "OPTIONS":
         return _cors(make_response("", 204), origin)
 
-    if origin not in ALLOWED_FRONTEND_ORIGINS:
+    if origin not in _allowed_frontend_origins():
         return _cors(jsonify(error="Origin not allowed"), origin), 403
 
     payload = request.get_json(silent=True) or {}
@@ -70,12 +77,12 @@ def start_handoff():
 
     target_origin = payload.get(
         "return_origin",
-        "http://localhost:5000",
+        _render_origin() or "http://localhost:5000",
     )
 
     if (
         not isinstance(target_origin, str)
-        or target_origin not in ALLOWED_DASHBOARD_ORIGINS
+        or target_origin not in _allowed_dashboard_origins()
     ):
         return (
             _cors(
@@ -206,7 +213,7 @@ def exchange_handoff():
     if request.method == "OPTIONS":
         return _cors(make_response("", 204), origin)
 
-    if origin not in ALLOWED_DASHBOARD_ORIGINS:
+    if origin not in _allowed_dashboard_origins():
         return _cors(jsonify(error="Origin not allowed"), origin), 403
 
     code = (request.get_json(silent=True) or {}).get("code", "")
@@ -336,7 +343,7 @@ def consume_page():
             d.access_token
         );
 
-        location.replace('/');
+        location.replace('/dashboard');
     }catch(e){
         status.textContent=
             e.message+' — return to FinSight sign-in and try again.';
