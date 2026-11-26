@@ -1535,19 +1535,18 @@ $('#del-no').addEventListener('click',()=>$('#del-dlg').close());
 $('#del-yes').addEventListener('click',async()=>{
  const button=$('#del-yes');button.disabled=true;button.textContent='Deleting…';
  try{
-  const response=await fetch('/api/account',{method:'DELETE',headers:{'Accept':'application/json'}});
+  const response=await fetch('/api/account/delete',{method:'POST',headers:{'Accept':'application/json'}});
   const payload=await response.json().catch(()=>({}));
   if(!response.ok||payload.status!=='success')throw new Error(payload.message||'Account deletion failed. Please try again.');
   $('#del-dlg').close();
   try{Object.keys(localStorage).filter(k=>k.startsWith('fs-')).forEach(k=>localStorage.removeItem(k))}catch(e){}
-  try{sessionStorage.removeItem('finsight_access_token');sessionStorage.clear()}catch(e){}
+  try{sessionStorage.clear()}catch(e){}
   AT.length=0;AT_TX.length=0;TX.length=0;Object.keys(CATS).forEach(k=>delete CATS[k]);
   $('#del-done').showModal();
- }catch(error){
-  $('#del-dlg').close();toast(error.message||'Account deletion failed. Please try again.');
- }finally{button.disabled=false;button.textContent='Confirm'}
+ }catch(error){toast(error.message||'Account deletion failed. Please try again.');}
+ finally{button.disabled=false;button.textContent='Confirm'}
 });
-$('#del-restart').addEventListener('click',()=>location.reload());
+$('#del-restart').addEventListener('click',()=>location.replace('https://finsight-website.pages.dev/sign_in.html'));
 $('#del-done').addEventListener('cancel',e=>e.preventDefault());
 
 const PRIV={on:false,orig:new WeakMap(),nodes:new Set()};
