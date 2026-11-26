@@ -3,7 +3,7 @@ import os
 import psycopg
 from uuid import UUID
 from flask import Blueprint, request, jsonify
-from auth import get_supabase_user
+from auth import get_supabase_user, admin_ids, SupabaseAuthConfigurationError
 
 approval_bp = Blueprint("signup_approval", __name__)
 
@@ -14,7 +14,7 @@ def _db():
     return psycopg.connect(url)
 
 def _admins():
-    return {x.strip() for x in os.getenv("FINANCE_ADMIN_USER_IDS", "").split(",") if x.strip()}
+    return admin_ids()
 
 def _verified_user():
     scheme, sep, token = request.headers.get("Authorization", "").partition(" ")
@@ -24,6 +24,9 @@ def _verified_user():
         return get_supabase_user(token.strip()), None
     except ConnectionError:
         return None, (jsonify(error="Authentication service unavailable"), 503)
+    except SupabaseAuthConfigurationError:
+        # A server misconfiguration is not a bad login; do not report it as one.
+        return None, (jsonify(error="Authentication service is not configured"), 503)
     except Exception:
         return None, (jsonify(error="Invalid authentication session"), 401)
 
