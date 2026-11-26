@@ -113,17 +113,23 @@ def access_notifications():
     except Exception:
         return jsonify(error="Notifications could not be loaded"), 503
 
-# Permit requests from the static Cloudflare site and the dashboard previews.
-_ALLOWED_ORIGINS = {
-    "https://finsight-website.pages.dev",
-    "https://finsight-dashboard-xtk6.onrender.com",
-    "https://finsight-dashboard-pr-3.onrender.com",
-}
+# Same-origin Render deployment; retain only explicitly configured/local origins.
+def _allowed_origins():
+    origins = set()
+    for raw in os.getenv("FINSIGHT_PUBLIC_ORIGINS", "").split(","):
+        origin = raw.strip().rstrip("/")
+        if origin:
+            origins.add(origin)
+    render_origin = os.getenv("RENDER_EXTERNAL_URL", "").strip().rstrip("/")
+    if render_origin:
+        origins.add(render_origin)
+    origins.update({"http://localhost:5000", "http://127.0.0.1:5000"})
+    return origins
 
 @approval_bp.after_request
 def _approval_cors(response):
-    origin = request.headers.get("Origin", "")
-    if origin in _ALLOWED_ORIGINS:
+    origin = request.headers.get("Origin", "").rstrip("/")
+    if origin and origin in _allowed_origins():
         response.headers["Access-Control-Allow-Origin"] = origin
         response.headers["Access-Control-Allow-Headers"] = "Authorization, Content-Type"
         response.headers["Access-Control-Allow-Methods"] = "GET, POST, OPTIONS"
