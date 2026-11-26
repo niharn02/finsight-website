@@ -5,6 +5,7 @@ Supabase project or delete a real account.
 """
 import importlib
 import sys
+from pathlib import Path
 from types import SimpleNamespace
 
 import pytest
@@ -12,6 +13,11 @@ import pytest
 
 @pytest.fixture
 def app_module(monkeypatch):
+    # Ensure the repository root is importable regardless of pytest invocation.
+    repo_root = str(Path(__file__).resolve().parents[1])
+    if repo_root not in sys.path:
+        sys.path.insert(0, repo_root)
+
     # Stub optional startup modules absent from the test checkout and avoid
     # real DB/checkpointer initialization.
     import types
