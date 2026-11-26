@@ -50,3 +50,9 @@ DROP TRIGGER IF EXISTS finsight_access_request_on_signup ON auth.users;
 CREATE TRIGGER finsight_access_request_on_signup
 AFTER INSERT ON auth.users FOR EACH ROW
 EXECUTE FUNCTION public.finsight_create_access_request();
+
+-- Close the gap between the backfill above and trigger creation: any account created in
+-- that window gets a pending row so it appears in the admin list.
+INSERT INTO public.finsight_access_requests(user_id,email,status)
+SELECT id,email,'pending' FROM auth.users
+ON CONFLICT(user_id) DO NOTHING;
