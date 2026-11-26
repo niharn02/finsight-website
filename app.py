@@ -236,6 +236,10 @@ def public_page(page_name):
 def public_image(image_path):
     return send_from_directory("website/images", image_path)
 
+@app.route("/supabase-config.js")
+def supabase_config():
+    return send_from_directory("website", "supabase-config.js")
+
 
 # Test API connection
 @app.route("/api/health", methods=["GET"])
