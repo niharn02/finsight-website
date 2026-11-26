@@ -21,8 +21,8 @@ const client=window.supabaseClient;
 if(!client){msg.textContent='Supabase client could not be initialized.';return;}
 const {data:{session},error:sessionError}=await client.auth.getSession();
 if(sessionError||!session){msg.textContent='Please sign in first with your FinSight administrator account.';return;}
-// Use the isolated PR preview backend for this test, not production.
-const API_BASE='https://finsight-dashboard-pr-3.onrender.com';
+// Website and API share the Render origin.
+const API_BASE=location.origin;
 const call=async(path,opts={})=>{const r=await fetch(API_BASE+path,{...opts,headers:{Authorization:'Bearer '+session.access_token,'Content-Type':'application/json',...(opts.headers||{})}});const d=await r.json().catch(()=>({}));if(!r.ok)throw new Error(d.error||d.message||'Request failed ('+r.status+')');return d;};
 try{
 const access=await call('/api/access/status');
