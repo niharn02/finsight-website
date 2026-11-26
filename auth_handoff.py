@@ -74,17 +74,21 @@ def start_handoff():
 
 
     # Code is random, short-lived and stored by hash; the token is encrypted at rest.
-    code = secrets.token_urlsafe(32)
-    code_hash = hashlib.sha256(code.encode()).hexdigest()
-    encrypted_token = _fernet().encrypt(access_token.encode()).decode()
-    expiry = datetime.now(timezone.utc) + timedelta(seconds=90)
-    with _db() as conn:
-        conn.execute("DELETE FROM finsight_auth_handoff WHERE expires_at < now()")
-        conn.execute(
-            "INSERT INTO finsight_auth_handoff(code_hash,user_id,encrypted_token,expires_at) VALUES (%s,%s,%s,%s)",
-            (code_hash, user["id"], encrypted_token, expiry),
-        )
-    return _cors(jsonify(redirect_url=f"{target_origin}/auth/handoff/consume?code={code}"))
+    # Persist a short-lived handoff only when server dependencies are available.
+    try:
+        code = secrets.token_urlsafe(32)
+        code_hash = hashlib.sha256(code.encode()).hexdigest()
+        encrypted_token = _fernet().encrypt(access_token.encode()).decode()
+        expiry = datetime.now(timezone.utc) + timedelta(seconds=90)
+        with _db() as conn:
+            conn.execute("DELETE FROM finsight_auth_handoff WHERE expires_at < now()")
+            conn.execute(
+                "INSERT INTO finsight_auth_handoff(code_hash,user_id,encrypted_token,expires_at) VALUES (%s,%s,%s,%s)",
+                (code_hash, user["id"], encrypted_token, expiry),
+            )
+        return _cors(jsonify(redirect_url=f"{target_origin}/auth/handoff/consume?code={code}"))
+    except Exception:
+        return _cors(jsonify(error="Sign-in handoff is temporarily unavailable")), 503
 
 
 @handoff_bp.route("/auth/handoff/exchange", methods=["POST", "OPTIONS"])
@@ -98,13 +102,30 @@ def exchange_handoff():
         return _cors(jsonify(error="Invalid handoff code"), request.headers.get("Origin", "")), 400
     code_hash = hashlib.sha256(code.encode()).hexdigest()
     # DELETE ... RETURNING makes consumption atomic and strictly single-use.
-    with _db() as conn:
-        row = conn.execute(
-            "DELETE FROM finsight_auth_handoff WHERE code_hash=%s AND expires_at > now() RETURNING encrypted_token",
-            (code_hash,),
-        ).fetchone()
+    try:
+        with _db() as conn:
+            row = conn.execute(
+                "DELETE FROM finsight_auth_handoff WHERE code_hash=%s AND expires_at > now() RETURNING encrypted_token,user_id",
+                (code_hash,),
+            ).fetchone()
+    except Exception:
+        return _cors(jsonify(error="Sign-in handoff is temporarily unavailable"), request.headers.get("Origin", "")), 503
     if not row:
         return _cors(jsonify(error="Code expired or already used"), request.headers.get("Origin", "")), 401
+    # Re-check approval when exchanging: approval may have been revoked after start.
+    user_id = str(row[1])
+    admins = {x.strip() for x in os.getenv("FINANCE_ADMIN_USER_IDS", "").split(",") if x.strip()}
+    if user_id not in admins:
+        try:
+            with _db() as conn:
+                approval_row = conn.execute(
+                    "SELECT status FROM public.finsight_access_requests WHERE user_id=%s",
+                    (user_id,),
+                ).fetchone()
+            if not approval_row or approval_row[0] != "approved":
+                return _cors(jsonify(error="Access is no longer approved"), request.headers.get("Origin", "")), 403
+        except Exception:
+            return _cors(jsonify(error="Approval service unavailable"), request.headers.get("Origin", "")), 503
     try:
         token = _fernet().decrypt(row[0].encode()).decode()
     except InvalidToken:
