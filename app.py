@@ -35,7 +35,7 @@ from chatbot.safety import (
 )
 import calendar
 from datetime import datetime, timezone, timedelta
-from auth import require_supabase_auth
+from auth import require_supabase_auth, admin_ids
 from database_postgres import initialise_database
 from auth_handoff import handoff_bp
 from signup_approval import approval_bp
@@ -229,6 +229,36 @@ def health_check():
 
 
 # Return the authenticated user's display identity for the dashboard.
+@app.route("/api/account", methods=["DELETE"])
+@require_supabase_auth
+def delete_account():
+    """Delete the authenticated non-admin account through Supabase Auth."""
+    user_id = g.user_id
+    if user_id in admin_ids():
+        return jsonify(status="error", message="Administrator accounts cannot be deleted through this endpoint."), 403
+
+    project_url = os.getenv("SUPABASE_URL", "").strip().rstrip("/")
+    service_role_key = os.getenv("SUPABASE_SERVICE_ROLE_KEY", "").strip()
+    if not project_url or not service_role_key:
+        app.logger.error("Account deletion unavailable: Supabase admin configuration missing.")
+        return jsonify(status="error", message="Account deletion service is not configured."), 503
+
+    try:
+        response = requests.delete(
+            f"{project_url}/auth/v1/admin/users/{user_id}",
+            headers={"apikey": service_role_key, "Authorization": f"Bearer {service_role_key}", "Accept": "application/json"},
+            timeout=(3.05, 12),
+        )
+    except requests.RequestException:
+        app.logger.exception("Supabase account deletion request failed.")
+        return jsonify(status="error", message="Unable to delete your account right now. Please try again."), 503
+
+    if response.status_code not in (200, 204):
+        app.logger.error("Supabase account deletion failed with status %s.", response.status_code)
+        return jsonify(status="error", message="Account deletion failed. Please try again."), 502
+    return jsonify(status="success", message="Account and associated data deleted."), 200
+
+
 @app.route("/api/profile", methods=["GET"])
 @require_supabase_auth
 def profile():
