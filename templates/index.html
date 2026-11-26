@@ -941,10 +941,10 @@ dialog#exp-dlg{width:min(32rem,calc(100vw - 2rem))}
 // Require a handoff-created Supabase access token before displaying the dashboard.
 (function(){
  const token=sessionStorage.getItem('finsight_access_token');
- if(!token){location.replace('https://finsight-website.pages.dev/sign_in.html?return='+encodeURIComponent(location.origin));return;}
+ if(!token){location.replace('/sign_in.html?return='+encodeURIComponent(location.origin));return;}
  // Attach the bearer token to same-origin financial API requests.
  const originalFetch=window.fetch.bind(window);
- const signInUrl='https://finsight-website.pages.dev/sign_in.html?return='+encodeURIComponent(location.origin);
+ const signInUrl='/sign_in.html?return='+encodeURIComponent(location.origin);
  window.fetch=async function(input,init={}){
   const url=typeof input==='string'?input:(input&&input.url)||'';
   const isApi=url.startsWith('/api/');
@@ -1543,7 +1543,7 @@ $('#del-yes').addEventListener('click',async()=>{
   try{localStorage.clear()}catch(e){}
   try{sessionStorage.clear()}catch(e){}
   AT.length=0;AT_TX.length=0;TX.length=0;Object.keys(CATS).forEach(k=>delete CATS[k]);
-  location.replace('https://finsight-website.pages.dev/sign_in.html');
+  location.replace('/sign_in.html');
  }catch(error){toast(error.message||'Account deletion failed. Please try again.');}
  finally{button.disabled=false;button.textContent='Confirm'}
 });
@@ -2384,7 +2384,7 @@ function toggleProfileMenu(){
   if(action==='settings')go('settings');
   else if(action==='appearance')themeBtn.click();
   else if(action==='privacy'){setPrivacy(!PRIV.on);toast(PRIV.on?'Privacy Mode on — amounts hidden':'Privacy Mode off')}
-  else if(action==='signout'){sessionStorage.removeItem('finsight_access_token');location.replace('https://finsight-website.pages.dev/sign_in.html?return='+encodeURIComponent(location.origin));}
+  else if(action==='signout'){sessionStorage.removeItem('finsight_access_token');location.replace('/sign_in.html?return='+encodeURIComponent(location.origin));}
  });
 }
 document.addEventListener('click',ev=>{if(profileMenu&&!profileMenu.contains(ev.target)&&!profileBtn.contains(ev.target))closeProfileMenu()});
