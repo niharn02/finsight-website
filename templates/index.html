@@ -938,21 +938,29 @@ dialog#exp-dlg{width:min(32rem,calc(100vw - 2rem))}
 .exp-pdf{background:#e11d48}.exp-csv{background:#059669}
 @media(max-width:520px){.exp-fmt,.exp-dates{grid-template-columns:1fr}}
 </style><script>
-// FinSight diagnostic marker: fix/chatbot-budget-profile-clarry
 // Require a handoff-created Supabase access token before displaying the dashboard.
 (function(){
  const token=sessionStorage.getItem('finsight_access_token');
  if(!token){location.replace('https://finsight-website.pages.dev/sign_in.html?return='+encodeURIComponent(location.origin));return;}
  // Attach the bearer token to same-origin financial API requests.
  const originalFetch=window.fetch.bind(window);
- window.fetch=function(input,init={}){
+ const signInUrl='https://finsight-website.pages.dev/sign_in.html?return='+encodeURIComponent(location.origin);
+ window.fetch=async function(input,init={}){
   const url=typeof input==='string'?input:(input&&input.url)||'';
-  if(url.startsWith('/')&&url.startsWith('/api/')){
+  const isApi=url.startsWith('/api/');
+  if(isApi){
    const headers=new Headers(init.headers||(input instanceof Request?input.headers:undefined));
    headers.set('Authorization','Bearer '+token);
    init={...init,headers};
   }
-  return originalFetch(input,init);
+  const response=await originalFetch(input,init);
+  // An expired session (401) or revoked/unapproved access (403 access_blocked) ends the session.
+  if(isApi&&(response.status===401||response.status===403)){
+   let blocked=response.status===401;
+   if(response.status===403){try{blocked=(await response.clone().json()).status==='access_blocked'}catch(e){}}
+   if(blocked){sessionStorage.removeItem('finsight_access_token');location.replace(signInUrl);}
+  }
+  return response;
  };
 })();
 </script>
