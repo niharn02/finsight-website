@@ -25,6 +25,19 @@ def app_module(monkeypatch):
     database_stub.initialise_database = lambda: None
     monkeypatch.setitem(sys.modules, "database_postgres", database_stub)
 
+    # Stub the user-scoped database adapter as app imports its functions at startup.
+    scoped_stub = types.ModuleType("chatbot.scoped_database")
+    for name in (
+        "get_categories_for_month", "create_category", "delete_category_for_month",
+        "get_category_budgets", "update_category_budget", "add_expense",
+        "get_expenses", "search_expenses", "get_expense_by_id", "update_expense",
+        "delete_expense", "get_monthly_summary", "get_dashboard_summary",
+        "get_category_summary", "get_daily_summary", "get_top_expenses",
+        "get_payment_method_summary", "get_monthly_trend",
+    ):
+        setattr(scoped_stub, name, lambda *args, **kwargs: None)
+    monkeypatch.setitem(sys.modules, "chatbot.scoped_database", scoped_stub)
+
     memory_stub = types.ModuleType("chatbot.memory")
     memory_stub.initialise_checkpointer = lambda: None
     monkeypatch.setitem(sys.modules, "chatbot.memory", memory_stub)
