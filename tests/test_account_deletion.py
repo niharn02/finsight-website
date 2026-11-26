@@ -12,22 +12,22 @@ import pytest
 
 @pytest.fixture
 def app_module(monkeypatch):
-    # Prevent application startup from opening a real database/checkpointer.
-    import database_postgres
-    import chatbot.memory
+    # Stub optional startup modules absent from the test checkout and avoid
+    # real DB/checkpointer initialization.
+    import types
+    database_stub = types.ModuleType("database_postgres")
+    database_stub.initialise_database = lambda: None
+    monkeypatch.setitem(sys.modules, "database_postgres", database_stub)
 
-    monkeypatch.setattr(database_postgres, "initialise_database", lambda: None)
-    monkeypatch.setattr(chatbot.memory, "initialise_checkpointer", lambda: None)
+    memory_stub = types.ModuleType("chatbot.memory")
+    memory_stub.initialise_checkpointer = lambda: None
+    monkeypatch.setitem(sys.modules, "chatbot.memory", memory_stub)
 
     if "app" in sys.modules:
-        module = sys.modules["app"]
-        monkeypatch.setattr(module, "initialise_database", lambda: None, raising=False)
-        monkeypatch.setattr(module, "initialise_checkpointer", lambda: None, raising=False)
-        module = importlib.reload(module)
+        module = importlib.reload(sys.modules["app"])
     else:
         module = importlib.import_module("app")
     return module
-
 
 @pytest.fixture
 def client(app_module, monkeypatch):
