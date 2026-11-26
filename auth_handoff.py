@@ -140,7 +140,11 @@ def start_handoff():
                     status_row[0] if status_row else "pending"
                 )
 
-        except Exception:
+        except Exception as exc:
+            # Log the server-side cause for diagnosis without exposing it to the client.
+            import traceback
+            print("Approval-status database query failed:", repr(exc), flush=True)
+            traceback.print_exc()
             return (
                 _cors(
                     jsonify(error="Approval service unavailable"),
