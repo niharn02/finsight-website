@@ -5,7 +5,7 @@ const PRODUCTION_HOST = "finsight-dashboard-xtk6.onrender.com";
 const PRODUCTION_SUPABASE_URL = "https://iglfciogemwqpfhqhwkl.supabase.co";
 const PRODUCTION_PUBLISHABLE_KEY = "sb_publishable_Bhz5fQTPgDVLG2MToojskg_s2gZkug3";
 const TEST_SUPABASE_URL = "https://lzhmdjqvjantmkmlgbej.supabase.co";
-const TEST_PUBLISHABLE_KEY = "sb_publishable_Tf0pJq4NidxzkUXvUy_1bw_WqVjkuSp";
+const TEST_PUBLISHABLE_KEY = "sb_publishable_Tf0pJqN4idxzkUXvUy_1bw_WqVjkuSp";
 
 const isProductionHost = location.hostname === PRODUCTION_HOST;
 const SUPABASE_URL = isProductionHost ? PRODUCTION_SUPABASE_URL : TEST_SUPABASE_URL;
