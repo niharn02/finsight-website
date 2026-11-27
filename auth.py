@@ -18,6 +18,7 @@ proof that financial data is isolated.
 from __future__ import annotations
 
 import os
+import psycopg
 from functools import wraps
 from uuid import UUID
 
@@ -25,6 +26,35 @@ import requests
 from flask import current_app, g, jsonify, request
 
 from user_context import user_context
+
+def admin_ids() -> set[str]:
+    """Return configured administrator UUIDs, normalised to lowercase hyphenated form.
+
+    Normalising means an uppercase UUID or stray whitespace in FINANCE_ADMIN_USER_IDS
+    still matches the verified Supabase user id. Invalid entries are ignored.
+    """
+    ids = set()
+    for raw in os.getenv("FINANCE_ADMIN_USER_IDS", "").split(","):
+        try:
+            ids.add(str(UUID(raw.strip())))
+        except ValueError:
+            continue
+    return ids
+
+
+# Signup approval is checked on every protected API request.
+def _approval_status(user_id: str) -> str:
+    if user_id in admin_ids():
+        return "approved"
+    database_url = os.getenv("DATABASE_URL", "").strip()
+    if not database_url:
+        raise RuntimeError("DATABASE_URL is not configured")
+    with psycopg.connect(database_url) as conn:
+        row = conn.execute(
+            "SELECT status FROM public.finsight_access_requests WHERE user_id=%s",
+            (user_id,),
+        ).fetchone()
+    return row[0] if row else "pending"
 
 
 class SupabaseAuthConfigurationError(RuntimeError):
@@ -138,6 +168,19 @@ def require_supabase_auth(view_function):
                 "status": "error",
                 "message": "Unable to verify your login right now. Please try again.",
             }), 503
+
+        # Check approval before any protected handler executes; fail closed on DB errors.
+        try:
+            approval = _approval_status(user["id"])
+        except Exception:
+            current_app.logger.exception("FinSight approval check failed.")
+            return jsonify(status="error", message="Access approval service is unavailable."), 503
+        if approval != "approved":
+            return jsonify(
+                status="access_blocked",
+                access_status=approval,
+                message="Your FinSight account is not approved for access yet.",
+            ), 403
 
         # Downstream routes use this verified identity, never client input.
         g.supabase_user = user

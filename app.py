@@ -1,7 +1,10 @@
+from dotenv import load_dotenv
+load_dotenv()
 # Import the Libraries
 from flask import Flask, jsonify, request, render_template, send_from_directory, g
 import psycopg
 import os
+import requests
 from chatbot.scoped_database import (
     get_categories_for_month,
     create_category,
@@ -33,9 +36,10 @@ from chatbot.safety import (
 )
 import calendar
 from datetime import datetime, timezone, timedelta
-from auth import require_supabase_auth
+from auth import require_supabase_auth, admin_ids
 from database_postgres import initialise_database
 from auth_handoff import handoff_bp
+from signup_approval import approval_bp
 from chatbot.memory import initialise_checkpointer
 
 # Initialise Flask application
@@ -43,6 +47,7 @@ app = Flask(__name__)
 
 # Register the short-lived authentication handoff routes.
 app.register_blueprint(handoff_bp)
+app.register_blueprint(approval_bp)
 
 
 # Initialise database
@@ -200,19 +205,40 @@ def calculate_spending_projection(budget_month, monthly_summary):
 # The frontend is a single-page application.
 # All page URLs serve the same index.html file; its JavaScript
 # handles Dashboard, Transactions, Analytics and Budgets navigation.
+# Render hosts the public website and authenticated dashboard on one origin.
 @app.route("/")
+def landing_page():
+    return send_from_directory("website", "index.html")
+
+@app.route("/dashboard")
 @app.route("/dashboard.html")
 @app.route("/transactions.html")
 @app.route("/analytics.html")
 @app.route("/budget.html")
 def home():
-    # Always serve the current dashboard HTML instead of allowing browsers or
-    # intermediary caches to reuse an older inline-JavaScript version.
     response = send_from_directory(app.template_folder, "index.html")
     response.headers["Cache-Control"] = "no-store, no-cache, must-revalidate, max-age=0"
     response.headers["Pragma"] = "no-cache"
     response.headers["Expires"] = "0"
     return response
+
+@app.route("/<page_name>")
+def public_page(page_name):
+    allowed_pages = {
+        "sign_in.html", "create_account.html", "terms_of_service.html",
+        "privacy_policy.html", "security.html", "admin_access.html",
+    }
+    if page_name not in allowed_pages:
+        return jsonify(status="error", message="Not found"), 404
+    return send_from_directory("website", page_name)
+
+@app.route("/images/<path:image_path>")
+def public_image(image_path):
+    return send_from_directory("website/images", image_path)
+
+@app.route("/supabase-config.js")
+def supabase_config():
+    return send_from_directory("website", "supabase-config.js")
 
 
 # Test API connection
@@ -225,6 +251,36 @@ def health_check():
 
 
 # Return the authenticated user's display identity for the dashboard.
+@app.route("/api/account/delete", methods=["POST"])
+@require_supabase_auth
+def delete_account():
+    """Delete the verified user's account through Supabase Auth Admin API."""
+    user_id = g.user_id
+    if user_id in admin_ids():
+        return jsonify(status="error", message="Administrator accounts cannot be deleted."), 403
+
+    project_url = os.getenv("SUPABASE_URL", "").strip().rstrip("/")
+    service_role_key = os.getenv("SUPABASE_SERVICE_ROLE_KEY", "").strip()
+    if not project_url or not service_role_key:
+        app.logger.error("Account deletion unavailable: Supabase URL or service key missing.")
+        return jsonify(status="error", message="Account deletion service is not configured."), 503
+
+    try:
+        response = requests.delete(
+            f"{project_url}/auth/v1/admin/users/{user_id}",
+            headers={"apikey": service_role_key, "Authorization": f"Bearer {service_role_key}", "Accept": "application/json"},
+            timeout=(3.05, 12),
+        )
+    except requests.RequestException:
+        app.logger.exception("Supabase account deletion request failed.")
+        return jsonify(status="error", message="Unable to delete your account right now. Please try again."), 503
+
+    if response.status_code not in (200, 204):
+        app.logger.error("Supabase account deletion returned status %s.", response.status_code)
+        return jsonify(status="error", message="Account deletion failed. Please try again."), 502
+    return jsonify(status="success", message="Account deleted."), 200
+
+
 @app.route("/api/profile", methods=["GET"])
 @require_supabase_auth
 def profile():
@@ -1340,4 +1396,5 @@ def chat_history():
 # -------------------------------------------------
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(debug=True, port=5000)
+    

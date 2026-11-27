@@ -938,21 +938,29 @@ dialog#exp-dlg{width:min(32rem,calc(100vw - 2rem))}
 .exp-pdf{background:#e11d48}.exp-csv{background:#059669}
 @media(max-width:520px){.exp-fmt,.exp-dates{grid-template-columns:1fr}}
 </style><script>
-// FinSight diagnostic marker: fix/chatbot-budget-profile-clarry
 // Require a handoff-created Supabase access token before displaying the dashboard.
 (function(){
  const token=sessionStorage.getItem('finsight_access_token');
- if(!token){location.replace('https://finsight-website.pages.dev/sign_in.html?return='+encodeURIComponent(location.origin));return;}
+ if(!token){location.replace('/sign_in.html?return='+encodeURIComponent(location.origin));return;}
  // Attach the bearer token to same-origin financial API requests.
  const originalFetch=window.fetch.bind(window);
- window.fetch=function(input,init={}){
+ const signInUrl='/sign_in.html?return='+encodeURIComponent(location.origin);
+ window.fetch=async function(input,init={}){
   const url=typeof input==='string'?input:(input&&input.url)||'';
-  if(url.startsWith('/')&&url.startsWith('/api/')){
+  const isApi=url.startsWith('/api/');
+  if(isApi){
    const headers=new Headers(init.headers||(input instanceof Request?input.headers:undefined));
    headers.set('Authorization','Bearer '+token);
    init={...init,headers};
   }
-  return originalFetch(input,init);
+  const response=await originalFetch(input,init);
+  // An expired session (401) or revoked/unapproved access (403 access_blocked) ends the session.
+  if(isApi&&(response.status===401||response.status===403)){
+   let blocked=response.status===401;
+   if(response.status===403){try{blocked=(await response.clone().json()).status==='access_blocked'}catch(e){}}
+   if(blocked){sessionStorage.removeItem('finsight_access_token');location.replace(signInUrl);}
+  }
+  return response;
  };
 })();
 </script>
@@ -1170,7 +1178,7 @@ dialog#exp-dlg{width:min(32rem,calc(100vw - 2rem))}
 <div class="fs-toast" id="fs-toast" role="status" aria-live="polite"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 6 9 17l-5-5"/></svg><span></span></div>
 <dialog class="fs-modal" id="cur-dlg" aria-labelledby="cur-dlg-t"><div class="fs-modal-h"><h2 id="cur-dlg-t" style="margin:0;font-size:1.0625rem;font-weight:600">Change currency?</h2></div><div class="fs-card-b" id="cur-dlg-b"></div><div class="fs-card-f"><button type="button" class="fs-btn" id="cur-no">Cancel</button><button type="button" class="fs-btn fs-btn-p" id="cur-yes">Confirm</button></div></dialog>
 <dialog class="fs-modal" id="del-dlg" aria-labelledby="del-dlg-t"><div class="fs-modal-h"><h2 id="del-dlg-t" style="margin:0;font-size:1.0625rem;font-weight:600">Delete your account?</h2></div><div class="fs-card-b"><p style="margin:0;font-size:.9375rem;line-height:1.5">Are you sure you want to delete your account?</p><p class="fs-muted" style="margin:.5rem 0 0;font-size:.8125rem;line-height:1.5">Once you delete your account, all your data and your account will be permanently removed. You won’t be able to recover the account or the data.</p></div><div class="fs-card-f"><button type="button" class="fs-btn" id="del-no">Cancel</button><button type="button" class="fs-btn fs-btn-d" id="del-yes">Confirm</button></div></dialog>
-<dialog class="fs-modal" id="del-done" aria-labelledby="del-done-t"><div class="fs-modal-h"><h2 id="del-done-t" style="margin:0;font-size:1.0625rem;font-weight:600">Account deleted</h2></div><div class="fs-card-b"><p style="margin:0;font-size:.9375rem;line-height:1.5">Your account and all of its data have been permanently deleted.</p></div><div class="fs-card-f"><button type="button" class="fs-btn fs-btn-p" id="del-restart">Start over</button></div></dialog>
+
 <script>
 (()=>{
 const $=(q,r=document)=>r.querySelector(q), $$=(q,r=document)=>[...r.querySelectorAll(q)];
@@ -1524,12 +1532,21 @@ loadGoogleAccountProfile();
 $$('[data-toast]').forEach(b=>b.addEventListener('click',()=>toast(b.dataset.toast)));
 $('#se-delete').addEventListener('click',()=>$('#del-dlg').showModal());
 $('#del-no').addEventListener('click',()=>$('#del-dlg').close());
-$('#del-yes').addEventListener('click',()=>{$('#del-dlg').close();
- try{Object.keys(localStorage).filter(k=>k.startsWith('fs-')).forEach(k=>localStorage.removeItem(k))}catch(e){}
- AT.length=0;AT_TX.length=0;TX.length=0;Object.keys(CATS).forEach(k=>delete CATS[k]);
- try{renderAll()}catch(e){}go('dashboard',false);$('#del-done').showModal()});
-$('#del-restart').addEventListener('click',()=>location.reload());
-$('#del-done').addEventListener('cancel',e=>e.preventDefault());
+$('#del-yes').addEventListener('click',async()=>{
+ const button=$('#del-yes');button.disabled=true;button.textContent='Deleting…';
+ try{
+  const response=await fetch('/api/account/delete',{method:'POST',headers:{'Accept':'application/json'}});
+  const payload=await response.json().catch(()=>({}));
+  if(!response.ok||payload.status!=='success')throw new Error(payload.message||'Account deletion failed. Please try again.');
+  $('#del-dlg').close();
+  // Account removal is complete server-side; clear every client auth/app state and redirect.
+  try{localStorage.clear()}catch(e){}
+  try{sessionStorage.clear()}catch(e){}
+  AT.length=0;AT_TX.length=0;TX.length=0;Object.keys(CATS).forEach(k=>delete CATS[k]);
+  location.replace('/sign_in.html');
+ }catch(error){toast(error.message||'Account deletion failed. Please try again.');}
+ finally{button.disabled=false;button.textContent='Confirm'}
+});
 
 const PRIV={on:false,orig:new WeakMap(),nodes:new Set()};
 /* ===== Analytics: reference layout, filterable (date range, payment method, category) ===== */
@@ -2367,7 +2384,7 @@ function toggleProfileMenu(){
   if(action==='settings')go('settings');
   else if(action==='appearance')themeBtn.click();
   else if(action==='privacy'){setPrivacy(!PRIV.on);toast(PRIV.on?'Privacy Mode on — amounts hidden':'Privacy Mode off')}
-  else if(action==='signout'){sessionStorage.removeItem('finsight_access_token');location.replace('https://finsight-website.pages.dev/sign_in.html?return='+encodeURIComponent(location.origin));}
+  else if(action==='signout'){sessionStorage.removeItem('finsight_access_token');location.replace('/sign_in.html?return='+encodeURIComponent(location.origin));}
  });
 }
 document.addEventListener('click',ev=>{if(profileMenu&&!profileMenu.contains(ev.target)&&!profileBtn.contains(ev.target))closeProfileMenu()});

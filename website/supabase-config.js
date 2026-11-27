@@ -1,19 +1,31 @@
-// Shared Supabase client setup for FinSight's static Cloudflare Pages website.
-const SUPABASE_URL = "https://iglfciogemwqpfhqhwkl.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Bhz5fQTPgDVLG2MToojskg_s2gZkug3";
+// Shared Supabase client setup for the Render-hosted FinSight website.
+// Production uses the existing production Supabase project. PR previews/local testing
+// use the isolated test project so preview signups never affect production accounts.
+const PRODUCTION_HOST = "finsight-dashboard-xtk6.onrender.com";
+const PRODUCTION_SUPABASE_URL = "https://iglfciogemwqpfhqhwkl.supabase.co";
+const PRODUCTION_PUBLISHABLE_KEY = "sb_publishable_Bhz5fQTPgDVLG2MToojskg_s2gZkug3";
+const TEST_SUPABASE_URL = "https://lzhmdjqvjantmkmlgbej.supabase.co";
+const TEST_PUBLISHABLE_KEY = "sb_publishable_Tf0pJqN4idxzkUXvUy_1bw_WqVjkuSp";
 
-// Only these exact dashboard origins are allowed as handoff destinations.
+const isProductionHost = location.hostname === PRODUCTION_HOST;
+const SUPABASE_URL = isProductionHost ? PRODUCTION_SUPABASE_URL : TEST_SUPABASE_URL;
+const SUPABASE_PUBLISHABLE_KEY = isProductionHost ? PRODUCTION_PUBLISHABLE_KEY : TEST_PUBLISHABLE_KEY;
+
+// Render website and dashboard share an origin. Local standalone testing is retained.
 const ALLOWED_DASHBOARD_ORIGINS = new Set([
+  location.origin,
   "https://finsight-dashboard-xtk6.onrender.com",
-  "https://finsight-dashboard-pr-3.onrender.com"
+  "http://localhost:5000",
+  "http://127.0.0.1:5000"
 ]);
+const DEFAULT_DASHBOARD_ORIGIN = location.origin;
 
-// The production dashboard is the default destination when no valid return origin is supplied.
-const DEFAULT_DASHBOARD_ORIGIN = "https://finsight-dashboard-xtk6.onrender.com";
+window.supabaseClient = supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_PUBLISHABLE_KEY
+);
 
-window.supabaseClient = supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
-
-// Accept a return destination only when it exactly matches the allowlisted dashboard origins.
+// Accept only allowlisted local dashboard destinations.
 function finsightReturnOrigin() {
   const candidate = new URLSearchParams(location.search).get("return");
   return ALLOWED_DASHBOARD_ORIGINS.has(candidate)
@@ -21,20 +33,17 @@ function finsightReturnOrigin() {
     : DEFAULT_DASHBOARD_ORIGIN;
 }
 
-// Exchange a Supabase token for a short-lived, one-time dashboard handoff.
+// Exchange Supabase session for a one-time dashboard handoff.
 async function finsightHandoff(session) {
   if (!session?.access_token) {
     throw new Error("No active authentication session.");
   }
 
-  // Use the validated destination for both the handoff endpoint and return-origin payload.
   const targetOrigin = finsightReturnOrigin();
 
   const response = await fetch(targetOrigin + "/auth/handoff/start", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-
-    // The backend independently validates this origin against its own allowlist.
     body: JSON.stringify({
       access_token: session.access_token,
       return_origin: targetOrigin
@@ -44,10 +53,13 @@ async function finsightHandoff(session) {
   const payload = await response.json().catch(() => ({}));
 
   if (!response.ok || !payload.redirect_url) {
-    throw new Error(payload.error || "Dashboard sign-in handoff failed.");
+    const accessError = new Error(
+      payload.error || "Dashboard sign-in handoff failed."
+    );
+    accessError.accessStatus = payload.access_status || null;
+    throw accessError;
   }
 
-  // Redirect only after the backend successfully generates the handoff URL.
   location.assign(payload.redirect_url);
 }
 
@@ -55,7 +67,6 @@ document.addEventListener("DOMContentLoaded", async () => {
   const client = window.supabaseClient;
   const status = document.getElementById("auth-message");
 
-  // Update the authentication status message displayed on the page.
   const message = (text, error = false) => {
     if (status) {
       status.textContent = text;
@@ -64,13 +75,13 @@ document.addEventListener("DOMContentLoaded", async () => {
     }
   };
 
-  // Preserve the validated dashboard destination across Google's OAuth round-trip.
+  // OAuth callback URL for the locally hosted frontend.
   const callbackUrl = () =>
     location.origin +
     "/sign_in.html?handoff=1&return=" +
     encodeURIComponent(finsightReturnOrigin());
 
-  // Handle Google OAuth sign-in buttons.
+  // Google OAuth.
   document.querySelectorAll("[data-google-auth]").forEach(button =>
     button.addEventListener("click", async () => {
       button.disabled = true;
@@ -95,7 +106,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     data: { session }
   } = await client.auth.getSession();
 
-  // Complete dashboard handoff when returning from OAuth or when a token is present.
+  // Complete OAuth or token-based handoff.
   if (
     session &&
     (
@@ -108,11 +119,20 @@ document.addEventListener("DOMContentLoaded", async () => {
     try {
       await finsightHandoff(session);
     } catch (e) {
-      message(e.message, true);
+      message(
+        e.accessStatus === "pending"
+          ? "Your FinSight account is awaiting administrator approval. You can sign in again after approval."
+          : e.accessStatus === "rejected"
+          ? "Your access request was rejected. Please contact the administrator."
+          : e.accessStatus === "revoked"
+          ? "Your FinSight access has been revoked. Please contact the administrator."
+          : e.message,
+        true
+      );
     }
   }
 
-  // Handle email/password sign-in.
+  // Email/password sign-in.
   const form = document.getElementById("signin-form");
 
   if (form) {
@@ -143,7 +163,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // Handle account creation with email/password.
+  // Email/password signup.
   const signup = document.getElementById("signup-form");
 
   if (signup) {
@@ -156,7 +176,6 @@ document.addEventListener("DOMContentLoaded", async () => {
       const password = document.getElementById("password").value;
       const confirm = document.getElementById("confirm-password").value;
 
-      // Ensure the user has entered the same password in both fields.
       if (password !== confirm) {
         message("Passwords do not match.", true);
         btn.disabled = false;
@@ -179,14 +198,14 @@ document.addEventListener("DOMContentLoaded", async () => {
         return;
       }
 
-      // If email confirmation is required, ask the user to verify their email.
+      // Email verification required.
       if (!data.session) {
         message("Account created. Check your email to confirm, then sign in.");
         btn.disabled = false;
         return;
       }
 
-      // Immediately hand off the session if signup returned an active session.
+      // Immediate handoff if signup returns a session.
       try {
         await finsightHandoff(data.session);
       } catch (e) {
@@ -196,7 +215,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     });
   }
 
-  // Handle password-reset requests.
+  // Password reset.
   const reset = document.getElementById("forgot-password");
 
   if (reset) {

@@ -1,9 +1,0 @@
-{
-  "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "finsight-website",
-  "compatibility_date": "2026-11-25",
-  "assets": {
-    "directory": "./website"
-  },
-  "previews": {}
-}
