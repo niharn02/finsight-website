@@ -1,11 +1,20 @@
-
 // Shared Supabase client setup for the Render-hosted FinSight website.
-const SUPABASE_URL = "https://lzhmdjqvjantmkmlgbej.supabase.co";
-const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_Tf0pJqN4idxzkUXvUy_1bw_WqVjkuSp";
+// Production uses the existing production Supabase project. PR previews/local testing
+// use the isolated test project so preview signups never affect production accounts.
+const PRODUCTION_HOST = "finsight-dashboard-xtk6.onrender.com";
+const PRODUCTION_SUPABASE_URL = "https://iglfciogemwqpfhqhwkl.supabase.co";
+const PRODUCTION_PUBLISHABLE_KEY = "sb_publishable_Bhz5fQTPgDVLG2MToojskg_s2gZkug3";
+const TEST_SUPABASE_URL = "https://lzhmdjqvjantmkmlgbej.supabase.co";
+const TEST_PUBLISHABLE_KEY = "sb_publishable_Tf0pJq4NidxzkUXvUy_1bw_WqVjkuSp";
+
+const isProductionHost = location.hostname === PRODUCTION_HOST;
+const SUPABASE_URL = isProductionHost ? PRODUCTION_SUPABASE_URL : TEST_SUPABASE_URL;
+const SUPABASE_PUBLISHABLE_KEY = isProductionHost ? PRODUCTION_PUBLISHABLE_KEY : TEST_PUBLISHABLE_KEY;
 
 // Render website and dashboard share an origin. Local standalone testing is retained.
 const ALLOWED_DASHBOARD_ORIGINS = new Set([
   location.origin,
+  "https://finsight-dashboard-xtk6.onrender.com",
   "http://localhost:5000",
   "http://127.0.0.1:5000"
 ]);
