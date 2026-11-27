@@ -1,74 +1,328 @@
-<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>FinSight Access Admin</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="supabase-config.js"></script>
-<style>
-body{font-family:system-ui,sans-serif;background:#f6f7fb;color:#182033;margin:0;padding:24px}
-main{max-width:1000px;margin:auto;background:white;padding:24px;border-radius:16px;box-shadow:0 8px 28px #0001}
-button{padding:8px 12px;margin:4px;border:0;border-radius:8px;cursor:pointer;background:#3438d0;color:white}
-button:disabled{opacity:.5;cursor:wait}button#signout{background:#b42318}table{width:100%;border-collapse:collapse}td,th{padding:12px;border-bottom:1px solid #ddd;text-align:left}
-#msg{margin:12px 0}.muted{color:#667085;font-size:.9rem}.nav{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}.nav a{display:inline-block;padding:9px 13px;border-radius:8px;text-decoration:none;background:#eef0ff;color:#3438d0;font-weight:600}
-</style>
-</head>
-<body><main><h1>FinSight Access Management</h1><div class="nav"><a href="/">← Back to Home</a><a href="sign_in.html?return=admin_access.html" id="signin-link">Sign in again</a><button id="signout" type="button">Sign out</button></div><p id="identity" class="muted"></p><p id="msg">Checking administrator access…</p>
-<table id="requests-table" hidden><thead><tr><th>Email</th><th>Status</th><th>Requested / updated</th><th>Actions</th></tr></thead><tbody id="rows"></tbody></table></main>
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="noindex, nofollow" name="robots"/><meta content="web_standard" name="shell-type"/><title>FinSight Access Management</title><link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><style>@layer base { html, body { margin: 0; padding: 0; } body { overscroll-behavior: none; } main > :first-child { margin-top: 0 !important; } main > :last-child { margin-bottom: 0 !important; } } ::-webkit-scrollbar { display: none; }</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { "colors": { "input-border-light": "#E0E3E8", "accent-bg-dark": "#26316A", "on-tertiary-container": "#dddeff", "on-tertiary-fixed": "#000c61", "surface-bright": "#f9f9ff", "surface-variant": "#dce2f6", "tertiary-fixed-dim": "#bcc2ff", "on-surface": "#151c2a", "border-light": "#E3E6EC", "on-secondary-container": "#29308b", "border-dark": "#2F3B5C", "text-muted-light": "#696F7B", "surface-container-highest": "#dce2f6", "page-bg-light": "#F8F9FC", "text-muted-dark": "#CBD3E6", "secondary-fixed": "#e0e0ff", "on-surface-variant": "#454555", "on-tertiary": "#ffffff", "on-tertiary-fixed-variant": "#1c32be", "nav-footer-dark": "#04070F", "on-primary-container": "#dedeff", "error": "#ba1a1a", "state-danger": "#F04438", "page-bg-dark": "#070B16", "primary-fixed-dim": "#bec2ff", "primary-accent-dark": "#5F6BF5", "state-success": "#12B76A", "inverse-primary": "#bec2ff", "surface": "#f9f9ff", "on-primary-fixed": "#00016d", "error-container": "#ffdad6", "primary-container": "#4650e4", "background": "#f9f9ff", "on-secondary-fixed-variant": "#353c97", "primary-fixed": "#e0e0ff", "on-primary-fixed-variant": "#232bc7", "tertiary": "#2338c2", "outline": "#767686", "surface-tint": "#404ade", "surface-container-low": "#f1f3ff", "inverse-on-surface": "#edf0ff", "surface-container-lowest": "#ffffff", "secondary-fixed-dim": "#bec2ff", "secondary-container": "#969eff", "outline-variant": "#c6c5d8", "on-error-container": "#93000a", "text-primary-dark": "#FFFFFF", "surface-dim": "#d3daee", "primary": "#2a33cc", "card-bg-light": "#FFFFFF", "surface-container": "#e8edff", "surface-subtle-light": "#F1F3F8", "inverse-surface": "#29303f", "on-background": "#151c2a", "tertiary-container": "#4154db", "surface-container-high": "#e1e8fc", "card-bg-dark": "#111729", "secondary": "#4d55b1", "on-secondary": "#ffffff", "state-warning": "#F79009", "on-error": "#ffffff", "on-secondary-fixed": "#00036b", "tertiary-fixed": "#dfe0ff", "strong-surface-text": "#B1B7C5", "on-primary": "#ffffff", "strong-surface": "#0D1323", "accent-bg-light": "#EBF0FE", "surface-subtle-dark": "#1B2338" }, "borderRadius": { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, "spacing": { "space-xl": "2.5rem", "margin": "2rem", "space-md": "1rem", "gutter-mobile": "1rem", "margin-mobile": "1.25rem", "space-sm": "0.5rem", "space-xs": "0.25rem", "space-lg": "1.5rem", "gutter": "1.5rem" }, "fontFamily": { "display-hero": ["Geist"], "body-lg": ["Geist"], "headline-lg-mobile": ["Geist"], "numeric-metric": ["Geist"], "headline-lg": ["Geist"], "display-hero-mobile": ["Geist"], "body-md": ["Geist"], "label-sm": ["Geist"], "headline-sm": ["Geist"], "label-md": ["Geist"], "headline-md": ["Geist"], "body-sm": ["Geist"] }, "fontSize": { "display-hero": ["56px", { "lineHeight": "64px", "letterSpacing": "-0.03em", "fontWeight": "700" }], "body-lg": ["18px", { "lineHeight": "28px", "fontWeight": "400" }], "headline-lg-mobile": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "numeric-metric": ["28px", { "lineHeight": "34px", "letterSpacing": "-0.02em", "fontWeight": "600" }], "headline-lg": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "600" }], "display-hero-mobile": ["36px", { "lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700" }], "body-md": ["16px", { "lineHeight": "24px", "fontWeight": "400" }], "label-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }], "headline-sm": ["18px", { "lineHeight": "26px", "fontWeight": "600" }], "label-md": ["14px", { "lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500" }], "headline-md": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600" }], "body-sm": ["14px", { "lineHeight": "20px", "fontWeight": "400" }] } } } };</script><script>if (localStorage.getItem('fs-theme') === 'dark' || (!('fs-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) { document.documentElement.classList.add('dark'); } else { document.documentElement.classList.remove('dark'); }</script></head><body class="bg-surface font-body-md text-on-surface antialiased selection:bg-primary-container selection:text-on-primary-container"><header class="fixed top-0 inset-x-0 z-50 bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]"><div class="h-16 max-w-[1200px] mx-auto px-margin-mobile md:px-margin flex items-center justify-between gap-gutter"><div class="flex items-center gap-space-sm"><img alt="FinSight" class="h-8 w-auto object-contain" src="https://lh3.googleusercontent.com/aida/ALJJyrDv_KSXdI_ooNpU3eTvc3lzo-AsOBaacVtKPau20EqYzN3kXsxB1xAMQNpkB-83U8HyEe_0BvMvg8zBHpSptD7KJ6QtxFVOtPsytFWy-Lkqo7PX1oh3WFiqjvftCtWlmu2ML0BfQq_fTftwVT3RAEH_cDS9op-XP7cQmx37pzUpN5-0n_0HnUZk7T0vUMSdO3ClfSUGsDj2llKl3mgR_JtVJcJR56ETMCK0aioAcWP5NMNUBIPizCd0OMs"/><span class="font-headline-sm text-headline-sm text-on-surface tracking-tight font-semibold">FinSight</span></div><nav class="hidden md:flex items-center gap-space-lg"><a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors py-space-xs px-space-xs" href="index.html">Home</a><a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors py-space-xs px-space-xs" href="sign_in.html">Sign In</a><a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors py-space-xs px-space-xs" href="create_account.html">Register</a><a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors py-space-xs px-space-xs" href="privacy_policy.html">Privacy</a><a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors py-space-xs px-space-xs" href="terms_of_service.html">Terms</a><a class="font-label-md text-label-md text-on-surface-variant hover:text-on-surface transition-colors py-space-xs px-space-xs" href="security.html">Security</a></nav><div class="flex items-center gap-space-sm"><button aria-label="Switch to dark mode" class="w-10 h-10 rounded-lg flex items-center justify-center text-on-surface-variant hover:bg-surface-subtle-light hover:text-on-surface transition-colors focus:outline-none focus:ring-2 focus:ring-primary" id="theme-toggle-btn" onclick="const isDark = document.documentElement.classList.toggle('dark'); localStorage.setItem('fs-theme', isDark ? 'dark' : 'light'); this.setAttribute('aria-label', isDark ? 'Switch to light mode' : 'Switch to dark mode'); document.getElementById('theme-icon').textContent = isDark ? 'light_mode' : 'dark_mode';" type="button"><span class="material-symbols-outlined text-[20px]" id="theme-icon">dark_mode</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center ml-space-xs"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></header><main class="w-full pt-16 bg-surface min-h-[calc(100vh-16rem)]"><div class="flex flex-col w-full">
+<div class="max-w-[1200px] w-full mx-auto px-margin-mobile md:px-margin py-space-xl flex flex-col gap-space-lg">
+
+<!-- Top Action Bar / Header Card -->
+<section class="bg-surface-container-lowest dark:bg-card-bg-dark rounded-xl shadow-sm p-space-lg md:p-space-xl">
+<div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-space-lg">
+<div class="flex flex-col gap-space-sm min-w-0">
+<div class="flex items-center gap-space-sm">
+<span class="inline-flex items-center gap-space-xs px-space-sm py-space-xs rounded-full bg-accent-bg-light dark:bg-accent-bg-dark text-primary dark:text-primary-accent-dark font-label-sm text-label-sm uppercase tracking-wider">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">admin_panel_settings</span>
+              ADMINISTRATION
+            </span>
+</div>
+<h1 class="font-headline-lg text-headline-lg text-on-surface dark:text-text-primary-dark tracking-tight">
+            FinSight Access Management
+          </h1>
+<p class="font-body-md text-body-md text-on-surface-variant dark:text-text-muted-dark max-w-2xl">
+            Review, approve, reject, or revoke user access requests for FinSight.
+          </p>
+</div>
+<div class="flex flex-wrap items-center gap-space-sm shrink-0">
+<a class="inline-flex items-center justify-center gap-space-xs h-10 px-space-md rounded-lg bg-surface-subtle-light dark:bg-surface-subtle-dark text-on-surface dark:text-text-primary-dark hover:bg-surface-container dark:hover:bg-accent-bg-dark font-label-md text-label-md transition-colors" href="/">
+<span class="material-symbols-outlined text-[18px]">arrow_back</span>
+<span>Back to Home</span>
+</a>
+<a class="inline-flex items-center justify-center gap-space-xs h-10 px-space-md rounded-lg bg-surface-subtle-light dark:bg-surface-subtle-dark text-on-surface dark:text-text-primary-dark hover:bg-surface-container dark:hover:bg-accent-bg-dark font-label-md text-label-md transition-colors" href="sign_in.html?return=admin_access.html" id="signin-link">
+<span class="material-symbols-outlined text-[18px]">login</span>
+<span>Sign in again</span>
+</a>
+<button class="inline-flex items-center justify-center gap-space-xs h-10 px-space-md rounded-lg bg-error-container text-on-error-container hover:bg-state-danger hover:text-on-error font-label-md text-label-md transition-colors cursor-pointer disabled:opacity-60 disabled:cursor-wait" id="signout" type="button">
+<span class="material-symbols-outlined text-[18px]">logout</span>
+<span id="signout-label">Sign out</span>
+</button>
+</div>
+</div>
+</section>
+
+<!-- Status & Identity Bar -->
+<section class="grid grid-cols-1 md:grid-cols-12 gap-gutter">
+<div class="md:col-span-5 bg-surface-container-low dark:bg-surface-subtle-dark rounded-xl px-space-lg py-space-md flex items-center gap-space-md">
+<div class="w-10 h-10 rounded-lg bg-accent-bg-light dark:bg-accent-bg-dark text-primary dark:text-primary-accent-dark flex items-center justify-center shrink-0">
+<span class="material-symbols-outlined text-[20px]">verified_user</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-sm text-label-sm text-text-muted-light dark:text-text-muted-dark uppercase">Administrator Session</span>
+<span class="font-label-md text-label-md text-on-surface dark:text-text-primary-dark truncate" id="identity">Verifying session…</span>
+</div>
+</div>
+<div class="md:col-span-7 bg-surface-container-low dark:bg-surface-subtle-dark rounded-xl px-space-lg py-space-md flex items-center gap-space-md">
+<div class="w-10 h-10 rounded-lg bg-surface-container-lowest dark:bg-card-bg-dark text-primary dark:text-primary-accent-dark flex items-center justify-center shrink-0 shadow-sm">
+<span class="material-symbols-outlined text-[20px]">info</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="font-label-sm text-label-sm text-text-muted-light dark:text-text-muted-dark uppercase">System Status</span>
+<span aria-live="polite" class="font-body-sm text-body-sm text-on-surface dark:text-text-primary-dark" id="msg">Checking administrator access…</span>
+</div>
+</div>
+</section>
+
+<!-- Access Requests Table Card -->
+<section class="bg-surface-container-lowest dark:bg-card-bg-dark rounded-xl shadow-sm overflow-hidden">
+<div class="px-space-lg py-space-md bg-surface-container-low/60 dark:bg-surface-subtle-dark/60 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-primary dark:text-primary-accent-dark text-[20px]">group</span>
+<h2 class="font-headline-sm text-headline-sm text-on-surface dark:text-text-primary-dark">Access Requests</h2>
+<span class="font-label-sm text-label-sm text-text-muted-light dark:text-text-muted-dark" id="count"></span>
+</div>
+<span class="font-label-sm text-label-sm text-text-muted-light dark:text-text-muted-dark">
+          Manage user onboarding &amp; permissions
+        </span>
+</div>
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse" id="requests-table">
+<thead>
+<tr class="bg-surface-subtle-light dark:bg-surface-subtle-dark text-text-muted-light dark:text-text-muted-dark font-label-sm text-label-sm uppercase tracking-wider">
+<th class="py-space-md px-space-lg">Email</th>
+<th class="py-space-md px-space-lg">Status</th>
+<th class="py-space-md px-space-lg">Requested / updated</th>
+<th class="py-space-md px-space-lg text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="font-body-sm text-body-sm text-on-surface dark:text-text-primary-dark" id="rows">
+<tr>
+<td class="py-space-xl px-space-lg text-center text-text-muted-light dark:text-text-muted-dark" colspan="4">
+<div class="inline-flex items-center gap-space-sm">
+<span class="material-symbols-outlined text-[20px] animate-spin text-primary dark:text-primary-accent-dark">progress_activity</span>
+<span>Loading access requests…</span>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+
+</div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-config.js"></script>
 <script>
-(async()=>{
-const msg=document.getElementById('msg'),rows=document.getElementById('rows'),table=document.getElementById('requests-table'),identity=document.getElementById('identity');
-const client=window.supabaseClient;
-const signout=document.getElementById('signout');
-signout.addEventListener('click',async()=>{
-  signout.disabled=true;signout.textContent='Signing out…';
-  try{
-    if(client) await client.auth.signOut({scope:'global'});
-  }catch(e){console.error('Supabase sign-out failed:',e);}
-  try{sessionStorage.removeItem('finsight_access_token');}catch(e){}
-  location.replace('/sign_in.html');
-});
-if(!client){msg.textContent='Supabase client could not be initialized. Use the sign-in link above.';return;}
-let session=null;
-try {
-  let result=await client.auth.getSession(); session=result.data?.session;
-  if(session && session.expires_at && session.expires_at*1000<Date.now()+60000){
-    const refreshed=await client.auth.refreshSession(); session=refreshed.data?.session||null;
+(function () {
+  'use strict';
+
+  const msgEl = document.getElementById('msg');
+  const identityEl = document.getElementById('identity');
+  const countEl = document.getElementById('count');
+  const rowsEl = document.getElementById('rows');
+  const signoutBtn = document.getElementById('signout');
+  const signoutLabel = document.getElementById('signout-label');
+  const client = window.supabaseClient;
+
+  // The pages are served by Cloudflare, which does not proxy /api, so the API host is explicit.
+  // A page served from localhost talks to the local Flask backend on port 5000.
+  const IS_LOCAL = ['localhost', '127.0.0.1'].includes(location.hostname);
+  const API_BASE = IS_LOCAL
+    ? location.protocol + '//' + location.hostname + ':5000'
+    : 'https://finsight-dashboard-xtk6.onrender.com';
+
+  const PAST = { approve: 'approved', reject: 'rejected', revoke: 'revoked' };
+
+  const BADGE = {
+    approved: 'bg-state-success/15 text-state-success',
+    pending: 'bg-state-warning/15 text-state-warning',
+    rejected: 'bg-error-container text-on-error-container',
+    revoked: 'bg-surface-subtle-light dark:bg-surface-subtle-dark text-text-muted-light dark:text-text-muted-dark'
+  };
+
+  const BTN = 'action-btn h-8 px-space-sm rounded-lg font-label-sm text-label-sm disabled:opacity-40 disabled:cursor-not-allowed transition-colors cursor-pointer ';
+  const BTN_CLASS = {
+    approve: BTN + 'bg-primary text-on-primary hover:bg-primary-container',
+    reject: BTN + 'bg-surface-subtle-light dark:bg-surface-subtle-dark text-on-surface dark:text-text-primary-dark hover:bg-error-container hover:text-on-error-container',
+    revoke: BTN + 'bg-error-container text-on-error-container hover:bg-state-danger hover:text-on-error'
+  };
+
+  function setMsg(text) { msgEl.textContent = text; }
+
+  // ---- DOM helpers: every value from the API is inserted as text, never as HTML ----
+  function el(tag, className, text) {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text !== undefined) node.textContent = text;
+    return node;
   }
-} catch(e){ session=null; }
-if(!session){msg.textContent='Your login session is invalid or expired. Please sign in again using the button above.';return;}
-const API_BASE=location.origin;
-const call=async(path,opts={})=>{
-  // Refresh close-to-expiry tokens before each API call and retry once on 401.
-  let current=(await client.auth.getSession()).data?.session;
-  if(!current){const rr=await client.auth.refreshSession();current=rr.data?.session||null;}
-  if(!current)throw new Error('Your login session is invalid or expired. Please sign in again.');
-  const requestOnce=async(s)=>fetch(API_BASE+path,{...opts,headers:{Authorization:'Bearer '+s.access_token,'Content-Type':'application/json',...(opts.headers||{})}});
-  let r=await requestOnce(current),d=await r.json().catch(()=>({}));
-  if(r.status===401){
-    const rr=await client.auth.refreshSession();current=rr.data?.session||null;
-    if(current){r=await requestOnce(current);d=await r.json().catch(()=>({}));}
+
+  function stateRow(text, extraClass) {
+    const tr = el('tr');
+    const td = el('td', 'py-space-xl px-space-lg text-center ' + (extraClass || 'text-text-muted-light dark:text-text-muted-dark'), text);
+    td.colSpan = 4;
+    tr.appendChild(td);
+    return tr;
   }
-  if(!r.ok)throw new Error(d.error||d.message||'Request failed ('+r.status+')');
-  return d;
-};
-try{
-const access=await call('/api/access/status');
-if(!access.is_admin){msg.textContent='Forbidden: this signed-in account is not configured as a FinSight administrator.';return;}
-const latest=(await client.auth.getSession()).data?.session||session;
-identity.textContent='Administrator session: '+(latest.user.email||latest.user.id);
-const d=await call('/api/admin/access-requests');
-msg.textContent=d.requests.length?'Access requests ('+d.requests.length+')':'No access requests currently.';
-table.hidden=false;
-for(const item of d.requests){
-const tr=document.createElement('tr'),email=document.createElement('td'),status=document.createElement('td'),updated=document.createElement('td'),actions=document.createElement('td');
-email.textContent=item.email||item.user_id;status.textContent=item.status;updated.textContent=item.updated_at||item.created_at||'—';
-for(const action of ['approve','reject','revoke']){
-const b=document.createElement('button');b.textContent=action;b.disabled=(action==='approve'&&item.status==='approved')||(action==='reject'&&item.status==='rejected')||(action==='revoke'&&item.status==='revoked');
-b.onclick=async()=>{if(!confirm('Are you sure you want to '+action+' access for '+(item.email||item.user_id)+'?'))return;b.disabled=true;msg.textContent='Updating access…';try{await call('/api/admin/access-requests/'+encodeURIComponent(item.user_id)+'/'+action,{method:'POST'});msg.textContent='Access '+action+'d successfully. Refreshing…';location.reload();}catch(e){msg.textContent=e.message;b.disabled=false;}};
-actions.appendChild(b);
-}
-tr.append(email,status,updated,actions);rows.appendChild(tr);
-}
-}catch(e){msg.textContent=e.message+' Use the sign-in link above if your session needs renewal.';}
+
+  function showState(text, extraClass) {
+    rowsEl.replaceChildren(stateRow(text, extraClass));
+    countEl.textContent = '';
+  }
+
+  function formatDate(value) {
+    if (!value) return '—';
+    const d = new Date(String(value).replace(' ', 'T'));
+    return isNaN(d.getTime()) ? String(value) : d.toLocaleString();
+  }
+
+  // ---- Session and API access ----
+  async function currentSession() {
+    let session = null;
+    try {
+      const result = await client.auth.getSession();
+      session = result.data && result.data.session;
+      if (session && session.expires_at && session.expires_at * 1000 < Date.now() + 60000) {
+        const refreshed = await client.auth.refreshSession();
+        session = (refreshed.data && refreshed.data.session) || null;
+      }
+    } catch (e) {
+      session = null;
+    }
+    return session;
+  }
+
+  async function call(path, options) {
+    options = options || {};
+    // Refresh a close-to-expiry token before the call and retry once on 401.
+    let session = (await client.auth.getSession()).data;
+    session = session && session.session;
+    if (!session) {
+      const refreshed = await client.auth.refreshSession();
+      session = (refreshed.data && refreshed.data.session) || null;
+    }
+    if (!session) throw new Error('Your login session is invalid or expired. Please sign in again.');
+
+    const requestOnce = (s) => fetch(API_BASE + path, Object.assign({}, options, {
+      headers: Object.assign({
+        'Authorization': 'Bearer ' + s.access_token,
+        'Content-Type': 'application/json'
+      }, options.headers || {})
+    }));
+
+    let response;
+    try {
+      response = await requestOnce(session);
+      if (response.status === 401) {
+        const refreshed = await client.auth.refreshSession();
+        const retry = refreshed.data && refreshed.data.session;
+        if (retry) response = await requestOnce(retry);
+      }
+    } catch (networkError) {
+      throw new Error('Could not reach the FinSight server. Check your connection and try again.');
+    }
+
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.error || data.message || 'Request failed (' + response.status + ')');
+    return data;
+  }
+
+  // ---- Rendering ----
+  function badge(status) {
+    const key = BADGE[status] ? status : 'pending';
+    return el('span', 'inline-flex items-center px-space-sm py-space-xs rounded-full font-label-sm text-label-sm capitalize ' + BADGE[key], status || 'pending');
+  }
+
+  function buildRow(item) {
+    const uid = item.user_id || '';
+    const label = item.email || uid || 'Unknown user';
+    const status = String(item.status || 'pending').toLowerCase();
+
+    const tr = el('tr', 'odd:bg-surface-container-lowest even:bg-surface-container-low/40 dark:odd:bg-card-bg-dark dark:even:bg-surface-subtle-dark/40 transition-colors');
+    tr.appendChild(el('td', 'py-space-md px-space-lg font-label-md text-label-md', label));
+
+    const statusCell = el('td', 'py-space-md px-space-lg');
+    statusCell.appendChild(badge(status));
+    tr.appendChild(statusCell);
+
+    tr.appendChild(el('td', 'py-space-md px-space-lg text-text-muted-light dark:text-text-muted-dark', formatDate(item.updated_at || item.created_at)));
+
+    const actionsCell = el('td', 'py-space-md px-space-lg text-right');
+    const group = el('div', 'inline-flex items-center justify-end gap-space-xs');
+    ['approve', 'reject', 'revoke'].forEach((action) => {
+      const btn = el('button', BTN_CLASS[action], action.charAt(0).toUpperCase() + action.slice(1));
+      btn.type = 'button';
+      btn.disabled = PAST[action] === status;
+      btn.addEventListener('click', () => runAction(uid, action, label, group));
+      group.appendChild(btn);
+    });
+    actionsCell.appendChild(group);
+    tr.appendChild(actionsCell);
+    return tr;
+  }
+
+  async function loadRequests() {
+    const data = await call('/api/admin/access-requests');
+    const items = Array.isArray(data.requests) ? data.requests : [];
+    countEl.textContent = items.length ? '(' + items.length + ')' : '';
+    if (!items.length) {
+      showState('No access requests found.');
+      return;
+    }
+    rowsEl.replaceChildren(...items.map(buildRow));
+  }
+
+  async function runAction(uid, action, label, group) {
+    if (!uid) { setMsg('This request has no user ID and cannot be updated.'); return; }
+    if (!window.confirm('Are you sure you want to ' + action + ' access for ' + label + '?')) return;
+
+    const buttons = group.querySelectorAll('button');
+    buttons.forEach((b) => { b.disabled = true; });
+    setMsg('Updating access…');
+    try {
+      await call('/api/admin/access-requests/' + encodeURIComponent(uid) + '/' + encodeURIComponent(action), { method: 'POST' });
+      setMsg('Access ' + PAST[action] + ' for ' + label + '.');
+      await loadRequests();
+    } catch (err) {
+      setMsg(err.message || 'Failed to update access.');
+      await loadRequests().catch(() => {});
+    }
+  }
+
+  // ---- Sign out ----
+  signoutBtn.addEventListener('click', async () => {
+    signoutBtn.disabled = true;
+    signoutLabel.textContent = 'Signing out…';
+    try {
+      if (client) await client.auth.signOut({ scope: 'global' });
+    } catch (e) {
+      console.error('Supabase sign-out failed:', e);
+    }
+    try { sessionStorage.removeItem('finsight_access_token'); } catch (e) {}
+    location.replace('/sign_in.html');
+  });
+
+  // ---- Startup ----
+  async function init() {
+    if (!client) {
+      identityEl.textContent = 'Not signed in';
+      setMsg('Supabase client could not be initialised. Use the sign-in link above.');
+      showState('Sign in to continue.');
+      return;
+    }
+
+    const session = await currentSession();
+    if (!session) {
+      identityEl.textContent = 'Not signed in';
+      setMsg('Your login session is invalid or expired. Please sign in again using the button above.');
+      showState('Sign in to continue.');
+      return;
+    }
+    identityEl.textContent = (session.user && (session.user.email || session.user.id)) || 'Signed in';
+
+    try {
+      const access = await call('/api/access/status');
+      if (!access.is_admin) {
+        setMsg('Forbidden: this signed-in account is not configured as a FinSight administrator.');
+        showState('Access denied.', 'text-state-danger');
+        return;
+      }
+      setMsg('Administrator access verified.');
+      await loadRequests();
+    } catch (err) {
+      setMsg((err.message || 'Unable to verify administrator access.') + ' Use the sign-in link above if your session needs renewal.');
+      showState('Could not load access requests.', 'text-state-danger');
+    }
+  }
+
+  init();
 })();
-</script></body></html>
+</script></main><footer class="w-full bg-surface-container-low"><div class="max-w-[1200px] mx-auto px-margin-mobile md:px-margin py-space-xl flex flex-col md:flex-row items-center justify-between gap-gutter"><div class="flex flex-col items-center md:items-start gap-space-xs"><p class="font-body-sm text-body-sm text-text-muted-light">© 2026 FinSight. All rights reserved.</p></div><nav class="flex flex-wrap items-center justify-center gap-space-md md:gap-space-lg"><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="privacy_policy.html">Privacy Policy</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="terms_of_service.html">Terms of Service</a><a class="font-body-sm text-body-sm text-on-surface-variant hover:text-on-surface transition-colors" href="security.html">Security &amp; Compliance</a></nav></div></footer></body></html>
